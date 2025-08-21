@@ -48,6 +48,7 @@ Workflows de inteligência artificial e agentes automatizados.
 - **26-n8n-gemini/** - Integração n8n com Google Gemini
 - **27-multiagent-post-blog/** - Sistema multiagent para blog
 - **28-multiagent-post-blog-titulos/** - Multiagent para títulos de blog
+- **29-curadoria-automatica-github-hackernews/** - Curadoria automática de projetos GitHub do Hacker News
 
 ### 📊 [Monitoramento](./monitoramento/)
 
@@ -79,6 +80,7 @@ Workflows relacionados a marketing digital e redes sociais.
 
 - **01-criacao-postagem-redes-sociais/** - Criação de postagem redes sociais
 - **02-criacao-postagem-redes-sociais-com-logs/** - Criação com sistema de logs
+- **03-publicador-social-automatico-wordpress/** - Publicador automático WordPress para redes sociais
 
 ### ⚙️ [Automação](./automacao/)
 
@@ -96,6 +98,13 @@ Workflows de backup e segurança de dados.
 
 - **01-backup-workflow-gdrive/** - Backup workflow Google Drive
 - **02-backup-workflow-credenciais-gdrive/** - Backup workflow e credenciais
+- **03-backup-automatico-gitlab/** - Backup automático para GitLab
+
+### 🔗 [Integração](./integracao/)
+
+Workflows de conectores e sincronização entre sistemas.
+
+- **01-sincronizador-playlist-spotify-youtube/** - Sincronização de playlists Spotify → YouTube
 
 ### 👔 [Recursos Humanos](./recursos-humanos/)
 
@@ -105,62 +114,66 @@ Workflows relacionados a gestão de recursos humanos.
 
 ## 🔄 Workflows Disponíveis
 
-| Categoria        | Nome                                                                                                  | Descrição                         |
-| ---------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------- |
-| Agendamento      | [01-agente-agendamento-agendar](./agendamento/01-agente-agendamento-agendar/)                         | Agendamento via API Cal.com       |
-| Agendamento      | [02-agendar-evento-whatsapp](./agendamento/02-agendar-evento-whatsapp/)                               | Agendamento via WhatsApp          |
-| Agendamento      | [03-agente-agendamento](./agendamento/03-agente-agendamento/)                                         | Agente principal de agendamento   |
-| Agendamento      | [04-agente-agendamento-reagendamento](./agendamento/04-agente-agendamento-reagendamento/)             | Reagendamento de eventos          |
-| Agendamento      | [05-agente-agendamento-detalhes-evento](./agendamento/05-agente-agendamento-detalhes-evento/)         | Consulta de detalhes              |
-| Agendamento      | [06-agente-agendamento-cancelar-evento](./agendamento/06-agente-agendamento-cancelar-evento/)         | Cancelamento de eventos           |
-| Agendamento      | [07-agente-gestao-calendario](./agendamento/07-agente-gestao-calendario/)                             | Gestão de calendário              |
-| IA e Agentes     | [01-agente-grok4](./ia-agentes/01-agente-grok4/)                                                      | Agente de IA com Grok 4           |
-| IA e Agentes     | [02-agente-selecao-modelos](./ia-agentes/02-agente-selecao-modelos/)                                  | Agente de seleção de modelos      |
-| IA e Agentes     | [03-agente-ia-postgres](./ia-agentes/03-agente-ia-postgres/)                                          | Agente de IA com PostgreSQL       |
-| IA e Agentes     | [04-agente-previsao-tempo](./ia-agentes/04-agente-previsao-tempo/)                                    | Agente de previsão do tempo       |
-| IA e Agentes     | [05-agente-previsao-tempo-pegar-previsao](./ia-agentes/05-agente-previsao-tempo-pegar-previsao/)      | Pegar previsão do tempo           |
-| IA e Agentes     | [06-agente-ideias-conteudo-yt](./ia-agentes/06-agente-ideias-conteudo-yt/)                            | Agente de ideias de conteúdo YT   |
-| IA e Agentes     | [07-agente-ideias-conteudo-yt-titulos](./ia-agentes/07-agente-ideias-conteudo-yt-titulos/)            | Geração de títulos YT             |
-| IA e Agentes     | [08-agente-ideias-conteudo-yt-thumb](./ia-agentes/08-agente-ideias-conteudo-yt-thumb/)                | Ideias de thumbnails YT           |
-| IA e Agentes     | [09-agente-ideias-conteudo-yt-roteiro](./ia-agentes/09-agente-ideias-conteudo-yt-roteiro/)            | Geração de roteiros YT            |
-| IA e Agentes     | [10-agente-ideias-conteudo-yt-pesquisa](./ia-agentes/10-agente-ideias-conteudo-yt-pesquisa/)          | Pesquisa para conteúdo YT         |
-| Monitoramento    | [01-agent-tracker](./monitoramento/01-agent-tracker/)                                                 | Tracking de execuções             |
-| WhatsApp         | [01-agente-catalogo-produtos](./whatsapp/01-agente-catalogo-produtos/)                                | Catálogo automático de produtos   |
-| Financeiro       | [01-agente-despesas-pessoais-adicionar](./financeiro/01-agente-despesas-pessoais-adicionar/)          | Adicionar despesas pessoais       |
-| WhatsApp         | [02-agente-ia-whatsapp](./whatsapp/02-agente-ia-whatsapp/)                                            | Agente de IA com WhatsApp         |
-| WhatsApp         | [03-agente-whatsapp-agendamento](./whatsapp/03-agente-whatsapp-agendamento/)                          | Agente WhatsApp de agendamento    |
-| WhatsApp         | [04-teste-whatsapp-p1](./whatsapp/04-teste-whatsapp-p1/)                                            | Teste e validação WhatsApp        |
-| Marketing        | [01-criacao-postagem-redes-sociais](./marketing/01-criacao-postagem-redes-sociais/)                   | Criação de postagem redes sociais |
-| Marketing        | [02-criacao-postagem-redes-sociais-com-logs](./marketing/02-criacao-postagem-redes-sociais-com-logs/) | Criação com sistema de logs       |
-| Automação        | [01-classificador-emails](./automacao/01-classificador-emails/)                                       | Classificador de e-mails          |
-| Backup           | [01-backup-workflow-gdrive](./backup/01-backup-workflow-gdrive/)                                      | Backup workflow Google Drive      |
-| Backup           | [02-backup-workflow-credenciais-gdrive](./backup/02-backup-workflow-credenciais-gdrive/)              | Backup workflow e credenciais     |
-| Recursos Humanos | [01-analisador-curriculo](./recursos-humanos/01-analisador-curriculo/)                                | Analisador de currículo           |
-| IA e Agentes     | [11-ai-nodes](./ia-agentes/11-ai-nodes/)                                                              | AI Nodes especializados           |
-| IA e Agentes     | [12-ai-agent-configs](./ia-agentes/12-ai-agent-configs/)                                              | Configurações de agentes de IA    |
-| IA e Agentes     | [13-agentes-ia-mais-precisos](./ia-agentes/13-agentes-ia-mais-precisos/)                              | Agentes de IA mais precisos       |
-| IA e Agentes     | [14-multiagent-post-blog-corpo](./ia-agentes/14-multiagent-post-blog-corpo/)                          | Multiagent para post de blog     |
-| IA e Agentes     | [15-integracao-perplexity](./ia-agentes/15-integracao-perplexity/)                                    | Integração com Perplexity         |
-| IA e Agentes     | [16-integracao-deepseek](./ia-agentes/16-integracao-deepseek/)                                        | Integração com DeepSeek           |
-| IA e Agentes     | [17-integracao-gemini-flash](./ia-agentes/17-integracao-gemini-flash/)                                | Integração com Gemini Flash       |
-| IA e Agentes     | [18-hitl-exemplo-telegram](./ia-agentes/18-hitl-exemplo-telegram/)                                    | HITL exemplo com Telegram         |
-| IA e Agentes     | [19-tutor-alunos-enviar-dados](./ia-agentes/19-tutor-alunos-enviar-dados/)                            | Sistema de tutoria para alunos    |
-| IA e Agentes     | [20-tutor-alunos-agente](./ia-agentes/20-tutor-alunos-agente/)                                        | Agente de tutoria educacional     |
-| IA e Agentes     | [21-rag-pipeline-chatbot-reranker](./ia-agentes/21-rag-pipeline-chatbot-reranker/)                    | Pipeline RAG com chatbot          |
-| IA e Agentes     | [22-rag-agente-auto-aprendizado](./ia-agentes/22-rag-agente-auto-aprendizado/)                        | Agente RAG com auto-aprendizado   |
-| IA e Agentes     | [23-propriedade-agentes](./ia-agentes/23-propriedade-agentes/)                                        | Sistema de propriedade de agentes |
-| IA e Agentes     | [24-primeiro-agente-ia](./ia-agentes/24-primeiro-agente-ia/)                                         | Primeiro agente de IA básico      |
-| IA e Agentes     | [25-orquestracao-agentes](./ia-agentes/25-orquestracao-agentes/)                                      | Orquestração de múltiplos agentes |
-| IA e Agentes     | [26-n8n-gemini](./ia-agentes/26-n8n-gemini/)                                                        | Integração n8n com Gemini         |
-| IA e Agentes     | [27-multiagent-post-blog](./ia-agentes/27-multiagent-post-blog/)                                     | Sistema multiagent para blog      |
-| IA e Agentes     | [28-multiagent-post-blog-titulos](./ia-agentes/28-multiagent-post-blog-titulos/)                     | Multiagent para títulos           |
-| Monitoramento    | [02-error-logger](./monitoramento/02-error-logger/)                                                   | Sistema de log de erros           |
-| Monitoramento    | [03-seguranca-webhook](./monitoramento/03-seguranca-webhook/)                                         | Sistema de segurança para webhooks|
-| Automação        | [02-funcionalidades-novas-198](./automacao/02-funcionalidades-novas-198/)                             | Funcionalidades novas 1.98       |
-| Automação        | [03-funcionalidades-novas-1102](./automacao/03-funcionalidades-novas-1102/)                           | Funcionalidades novas 1.102+     |
-| Automação        | [04-funcionalidades-novas-1101](./automacao/04-funcionalidades-novas-1101/)                           | Funcionalidades novas 1.101      |
-| Automação        | [05-funcionalidades-novas-1100](./automacao/05-funcionalidades-novas-1100/)                           | Funcionalidades novas 1.100      |
-| Financeiro       | [02-agentes-despesas-pessoais](./financeiro/02-agentes-despesas-pessoais/)                            | Agentes de despesas pessoais      |
+| Categoria        | Nome                                                                                                  | Descrição                          |
+| ---------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Agendamento      | [01-agente-agendamento-agendar](./agendamento/01-agente-agendamento-agendar/)                         | Agendamento via API Cal.com        |
+| Agendamento      | [02-agendar-evento-whatsapp](./agendamento/02-agendar-evento-whatsapp/)                               | Agendamento via WhatsApp           |
+| Agendamento      | [03-agente-agendamento](./agendamento/03-agente-agendamento/)                                         | Agente principal de agendamento    |
+| Agendamento      | [04-agente-agendamento-reagendamento](./agendamento/04-agente-agendamento-reagendamento/)             | Reagendamento de eventos           |
+| Agendamento      | [05-agente-agendamento-detalhes-evento](./agendamento/05-agente-agendamento-detalhes-evento/)         | Consulta de detalhes               |
+| Agendamento      | [06-agente-agendamento-cancelar-evento](./agendamento/06-agente-agendamento-cancelar-evento/)         | Cancelamento de eventos            |
+| Agendamento      | [07-agente-gestao-calendario](./agendamento/07-agente-gestao-calendario/)                             | Gestão de calendário               |
+| IA e Agentes     | [01-agente-grok4](./ia-agentes/01-agente-grok4/)                                                      | Agente de IA com Grok 4            |
+| IA e Agentes     | [02-agente-selecao-modelos](./ia-agentes/02-agente-selecao-modelos/)                                  | Agente de seleção de modelos       |
+| IA e Agentes     | [03-agente-ia-postgres](./ia-agentes/03-agente-ia-postgres/)                                          | Agente de IA com PostgreSQL        |
+| IA e Agentes     | [04-agente-previsao-tempo](./ia-agentes/04-agente-previsao-tempo/)                                    | Agente de previsão do tempo        |
+| IA e Agentes     | [05-agente-previsao-tempo-pegar-previsao](./ia-agentes/05-agente-previsao-tempo-pegar-previsao/)      | Pegar previsão do tempo            |
+| IA e Agentes     | [06-agente-ideias-conteudo-yt](./ia-agentes/06-agente-ideias-conteudo-yt/)                            | Agente de ideias de conteúdo YT    |
+| IA e Agentes     | [07-agente-ideias-conteudo-yt-titulos](./ia-agentes/07-agente-ideias-conteudo-yt-titulos/)            | Geração de títulos YT              |
+| IA e Agentes     | [08-agente-ideias-conteudo-yt-thumb](./ia-agentes/08-agente-ideias-conteudo-yt-thumb/)                | Ideias de thumbnails YT            |
+| IA e Agentes     | [09-agente-ideias-conteudo-yt-roteiro](./ia-agentes/09-agente-ideias-conteudo-yt-roteiro/)            | Geração de roteiros YT             |
+| IA e Agentes     | [10-agente-ideias-conteudo-yt-pesquisa](./ia-agentes/10-agente-ideias-conteudo-yt-pesquisa/)          | Pesquisa para conteúdo YT          |
+| Monitoramento    | [01-agent-tracker](./monitoramento/01-agent-tracker/)                                                 | Tracking de execuções              |
+| WhatsApp         | [01-agente-catalogo-produtos](./whatsapp/01-agente-catalogo-produtos/)                                | Catálogo automático de produtos    |
+| Financeiro       | [01-agente-despesas-pessoais-adicionar](./financeiro/01-agente-despesas-pessoais-adicionar/)          | Adicionar despesas pessoais        |
+| WhatsApp         | [02-agente-ia-whatsapp](./whatsapp/02-agente-ia-whatsapp/)                                            | Agente de IA com WhatsApp          |
+| WhatsApp         | [03-agente-whatsapp-agendamento](./whatsapp/03-agente-whatsapp-agendamento/)                          | Agente WhatsApp de agendamento     |
+| WhatsApp         | [04-teste-whatsapp-p1](./whatsapp/04-teste-whatsapp-p1/)                                              | Teste e validação WhatsApp         |
+| Marketing        | [01-criacao-postagem-redes-sociais](./marketing/01-criacao-postagem-redes-sociais/)                   | Criação de postagem redes sociais  |
+| Marketing        | [02-criacao-postagem-redes-sociais-com-logs](./marketing/02-criacao-postagem-redes-sociais-com-logs/) | Criação com sistema de logs        |
+| Marketing        | [03-publicador-social-automatico-wordpress](./marketing/03-publicador-social-automatico-wordpress/)   | Publicador automático WordPress    |
+| Automação        | [01-classificador-emails](./automacao/01-classificador-emails/)                                       | Classificador de e-mails           |
+| Backup           | [01-backup-workflow-gdrive](./backup/01-backup-workflow-gdrive/)                                      | Backup workflow Google Drive       |
+| Backup           | [02-backup-workflow-credenciais-gdrive](./backup/02-backup-workflow-credenciais-gdrive/)              | Backup workflow e credenciais      |
+| Backup           | [03-backup-automatico-gitlab](./backup/03-backup-automatico-gitlab/)                                | Backup automático para GitLab      |
+| Integração       | [01-sincronizador-playlist-spotify-youtube](./integracao/01-sincronizador-playlist-spotify-youtube/)  | Sincronização Spotify → YouTube    |
+| Recursos Humanos | [01-analisador-curriculo](./recursos-humanos/01-analisador-curriculo/)                                | Analisador de currículo            |
+| IA e Agentes     | [11-ai-nodes](./ia-agentes/11-ai-nodes/)                                                              | AI Nodes especializados            |
+| IA e Agentes     | [12-ai-agent-configs](./ia-agentes/12-ai-agent-configs/)                                              | Configurações de agentes de IA     |
+| IA e Agentes     | [13-agentes-ia-mais-precisos](./ia-agentes/13-agentes-ia-mais-precisos/)                              | Agentes de IA mais precisos        |
+| IA e Agentes     | [14-multiagent-post-blog-corpo](./ia-agentes/14-multiagent-post-blog-corpo/)                          | Multiagent para post de blog       |
+| IA e Agentes     | [15-integracao-perplexity](./ia-agentes/15-integracao-perplexity/)                                    | Integração com Perplexity          |
+| IA e Agentes     | [16-integracao-deepseek](./ia-agentes/16-integracao-deepseek/)                                        | Integração com DeepSeek            |
+| IA e Agentes     | [17-integracao-gemini-flash](./ia-agentes/17-integracao-gemini-flash/)                                | Integração com Gemini Flash        |
+| IA e Agentes     | [18-hitl-exemplo-telegram](./ia-agentes/18-hitl-exemplo-telegram/)                                    | HITL exemplo com Telegram          |
+| IA e Agentes     | [19-tutor-alunos-enviar-dados](./ia-agentes/19-tutor-alunos-enviar-dados/)                            | Sistema de tutoria para alunos     |
+| IA e Agentes     | [20-tutor-alunos-agente](./ia-agentes/20-tutor-alunos-agente/)                                        | Agente de tutoria educacional      |
+| IA e Agentes     | [21-rag-pipeline-chatbot-reranker](./ia-agentes/21-rag-pipeline-chatbot-reranker/)                    | Pipeline RAG com chatbot           |
+| IA e Agentes     | [22-rag-agente-auto-aprendizado](./ia-agentes/22-rag-agente-auto-aprendizado/)                        | Agente RAG com auto-aprendizado    |
+| IA e Agentes     | [23-propriedade-agentes](./ia-agentes/23-propriedade-agentes/)                                        | Sistema de propriedade de agentes  |
+| IA e Agentes     | [24-primeiro-agente-ia](./ia-agentes/24-primeiro-agente-ia/)                                          | Primeiro agente de IA básico       |
+| IA e Agentes     | [25-orquestracao-agentes](./ia-agentes/25-orquestracao-agentes/)                                      | Orquestração de múltiplos agentes  |
+| IA e Agentes     | [26-n8n-gemini](./ia-agentes/26-n8n-gemini/)                                                          | Integração n8n com Gemini          |
+| IA e Agentes     | [27-multiagent-post-blog](./ia-agentes/27-multiagent-post-blog/)                                      | Sistema multiagent para blog       |
+| IA e Agentes     | [28-multiagent-post-blog-titulos](./ia-agentes/28-multiagent-post-blog-titulos/)                      | Multiagent para títulos            |
+| IA e Agentes     | [29-curadoria-automatica-github-hackernews](./ia-agentes/29-curadoria-automatica-github-hackernews/)  | Curadoria automática GitHub HN     |
+| Monitoramento    | [02-error-logger](./monitoramento/02-error-logger/)                                                   | Sistema de log de erros            |
+| Monitoramento    | [03-seguranca-webhook](./monitoramento/03-seguranca-webhook/)                                         | Sistema de segurança para webhooks |
+| Automação        | [02-funcionalidades-novas-198](./automacao/02-funcionalidades-novas-198/)                             | Funcionalidades novas 1.98         |
+| Automação        | [03-funcionalidades-novas-1102](./automacao/03-funcionalidades-novas-1102/)                           | Funcionalidades novas 1.102+       |
+| Automação        | [04-funcionalidades-novas-1101](./automacao/04-funcionalidades-novas-1101/)                           | Funcionalidades novas 1.101        |
+| Automação        | [05-funcionalidades-novas-1100](./automacao/05-funcionalidades-novas-1100/)                           | Funcionalidades novas 1.100        |
+| Financeiro       | [02-agentes-despesas-pessoais](./financeiro/02-agentes-despesas-pessoais/)                            | Agentes de despesas pessoais       |
 
 ## 📋 Convenções de Nomenclatura
 
