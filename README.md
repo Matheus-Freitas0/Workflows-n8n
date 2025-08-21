@@ -177,9 +177,8 @@ Cada workflow segue um padrão de documentação consistente e profissional:
 
 ### 🆘 **Precisa de Ajuda?**
 
-- 📧 **Email**: [seu-email@exemplo.com](mailto:seu-email@exemplo.com)
-- 💬 **Issues**: [GitHub Issues](https://github.com/your-username/workflows-n8n/issues)
-- 📚 **Documentação**: [Wiki do Projeto](https://github.com/your-username/workflows-n8n/wiki)
+- 📧 **Email**: [seu-email@exemplo.com](mailto:moncaomatheus@gmail.com)
+- 📚 **Documentação**: [Wiki do Projeto](https://github.com/Matheus-Freitas0/Workflows-n8n/blob/main/workflows/README.md)
 
 ### 🔗 **Links Úteis**
 
@@ -189,24 +188,9 @@ Cada workflow segue um padrão de documentação consistente e profissional:
 
 ---
 
-## 📊 Estatísticas do Projeto
-
-![GitHub Stars](https://img.shields.io/github/stars/your-username/workflows-n8n?style=social)
-![GitHub Forks](https://img.shields.io/github/forks/your-username/workflows-n8n?style=social)
-![GitHub Issues](https://img.shields.io/github/issues/your-username/workflows-n8n)
-![GitHub Pull Requests](https://img.shields.io/github/issues-pr/your-username/workflows-n8n)
-
----
-
-## 📄 Licença
-
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
-
----
-
 ## 👨‍💻 Autor
 
-**Matheus Freitas** - [GitHub](https://github.com/your-username) | [LinkedIn](https://linkedin.com/in/your-profile)
+**Matheus Freitas** - [GitHub](https://github.com/Matheus-Freitas0) | [LinkedIn](https://www.linkedin.com/in/matheus-m-freitas)
 
 ---
 
@@ -214,7 +198,7 @@ Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICE
 
 **⭐ Se este projeto te ajudou, considere dar uma estrela! ⭐**
 
-_Última atualização: $(date +%Y-%m-%d)_  
+_Última atualização: 08/2025_  
 _Versão: 2.0.0_
 
 </div>
