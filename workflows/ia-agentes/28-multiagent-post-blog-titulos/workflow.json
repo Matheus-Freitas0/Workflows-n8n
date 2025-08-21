@@ -1,0 +1,114 @@
+[
+  {
+    "createdAt": "2025-05-09T14:01:16.760Z",
+    "updatedAt": "2025-05-27T11:34:17.000Z",
+    "id": "V6WzIA50l0YrGkhL",
+    "name": "[FA] Multiagent para post de Blog - Titulos",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "topic"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "d8ab3f61-d97d-4f7d-9994-e85c09f29d68",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Tópico do artigo: {{ $json.topic }}",
+          "options": {
+            "systemMessage": "Baseado no tópico do artigo recebido você deve enviar 5 sugestões de título para um post de blog."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "ce7efa26-2815-42ea-8abd-dfeb73710e38",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          140,
+          260
+        ],
+        "id": "e98dfde6-9d11-44fc-8e09-601502d93382",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "5fbbce7d-04cf-459d-8c67-6a5f58864138",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

@@ -1,0 +1,181 @@
+[
+  {
+    "createdAt": "2025-07-25T11:29:44.023Z",
+    "updatedAt": "2025-07-25T11:46:24.000Z",
+    "id": "crmZ1GLQuenUcEYS",
+    "name": "[FA] n8n com Gemini",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "formTitle": "Geração de Video",
+          "formDescription": "Crie um vídeo rápido basedo em um tema",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Tema",
+                "placeholder": "Tema de Vídeo",
+                "requiredField": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.2,
+        "position": [
+          -128,
+          0
+        ],
+        "id": "26c6ffd9-9554-4fb1-a253-5805a338a6b4",
+        "name": "On form submission",
+        "webhookId": "97ddbfa2-b75f-4b6a-9527-a10a0260c5c4"
+      },
+      {
+        "parameters": {
+          "resource": "video",
+          "modelId": {
+            "__rl": true,
+            "value": "models/veo-2.0-generate-001",
+            "mode": "list",
+            "cachedResultName": "models/veo-2.0-generate-001"
+          },
+          "prompt": "={{ $json.content.parts[0].text }}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1,
+        "position": [
+          496,
+          0
+        ],
+        "id": "364e18dc-5df4-4102-91ae-11455a7bc4e2",
+        "name": "Generate a video",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "wRFo4GleNS3V53yt",
+            "name": "Google Gemini(PaLM) Api account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "name": "=VIdeo_{{ $now.format('dd_MM_yyyy_hh_mm_ss') }}.mp4",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1EYSFEM6Jf3aTAWenYzxtBKPKuNJ3mdW7",
+            "mode": "list",
+            "cachedResultName": "Videos Gemini",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1EYSFEM6Jf3aTAWenYzxtBKPKuNJ3mdW7"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          704,
+          0
+        ],
+        "id": "6d5a4d98-1a9c-4b28-a76c-2f90a01e3a9a",
+        "name": "Upload file",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-2.5-pro",
+            "mode": "list",
+            "cachedResultName": "models/gemini-2.5-pro"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=Você é um especialista em prompts para geração de vídeos pelo modelo Veo\n\nCrie um prompt para um vídeo, baseado no tema que o usuário te envia\n\nTema: {{ $json.Tema }}\n\nEntregue apenas um prompt em inglês otimizado para o Veo"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1,
+        "position": [
+          80,
+          0
+        ],
+        "id": "64300e51-fb65-458d-af87-5c801163f32c",
+        "name": "Message a model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "6cNk0nqmnko9nUJR",
+            "name": "Teste API Gemini"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "On form submission": {
+        "main": [
+          [
+            {
+              "node": "Message a model",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate a video": {
+        "main": [
+          [
+            {
+              "node": "Upload file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Message a model": {
+        "main": [
+          [
+            {
+              "node": "Generate a video",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "f8b6e668-f07f-4af3-9462-4b8477d0f33f",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

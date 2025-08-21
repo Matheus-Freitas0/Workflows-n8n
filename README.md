@@ -90,6 +90,9 @@ Ative o workflow e monitore sua execução através dos logs e métricas dispon�
 - [Multiagent para Blog](./workflows/ia-agentes/) - Geração de conteúdo para blog
 - [Integrações IA](./workflows/ia-agentes/) - Perplexity, DeepSeek, Gemini Flash
 - [HITL com Telegram](./workflows/ia-agentes/) - Human-in-the-Loop automatizado
+- [Sistema Educacional](./workflows/ia-agentes/) - Tutoria e agentes educacionais
+- [Pipeline RAG Avançado](./workflows/ia-agentes/) - Chatbot com reranker e auto-aprendizado
+- [Orquestração de Agentes](./workflows/ia-agentes/) - Coordenação de múltiplos agentes
 
 ### 💰 **Financeiro**
 
@@ -100,6 +103,7 @@ Ative o workflow e monitore sua execução através dos logs e métricas dispon�
 
 - [Agent Tracker](./workflows/monitoramento/) - Tracking de execuções de agentes
 - [Error Logger](./workflows/monitoramento/) - Sistema automatizado de log de erros
+- [Segurança Webhook](./workflows/monitoramento/) - Sistema de segurança para webhooks
 
 ### 📢 **Marketing & Redes Sociais**
 
@@ -110,6 +114,7 @@ Ative o workflow e monitore sua execução através dos logs e métricas dispon�
 
 - [Catálogo de Produtos](./workflows/whatsapp/) - Gestão de produtos via WhatsApp
 - [Agente IA WhatsApp](./workflows/whatsapp/) - Atendimento inteligente automatizado
+- [Testes WhatsApp](./workflows/whatsapp/) - Validação e testes de integração
 
 ### 💾 **Backup & Segurança**
 

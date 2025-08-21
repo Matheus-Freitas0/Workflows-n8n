@@ -1,0 +1,186 @@
+[
+  {
+    "createdAt": "2025-06-19T22:47:13.071Z",
+    "updatedAt": "2025-06-20T18:31:25.000Z",
+    "id": "wybH8f4pHlBEaLCX",
+    "name": "[FA] Propriedade dos Agentes",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "3131c261-f1b4-4c01-a615-ee99cd412861",
+        "name": "When chat message received",
+        "webhookId": "019beb0c-4e17-45ce-86bb-385005904864"
+      },
+      {
+        "parameters": {
+          "hasOutputParser": true,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "9a685228-f2bd-46ab-83bd-d9a8635c78ff",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {
+            "frequencyPenalty": 2,
+            "maxTokens": -1,
+            "responseFormat": "text",
+            "presencePenalty": 0,
+            "temperature": 0.7,
+            "timeout": 60000,
+            "maxRetries": 2,
+            "topP": 1
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          20,
+          500
+        ],
+        "id": "b361b78b-aa59-4d85-9924-30c730c3ec67",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "claude-opus-4-20250514",
+            "mode": "list",
+            "cachedResultName": "Claude Opus 4"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+        "typeVersion": 1.3,
+        "position": [
+          540,
+          360
+        ],
+        "id": "4cdab55e-4377-4548-bffc-0b551c68eb28",
+        "name": "Anthropic Chat Model",
+        "credentials": {
+          "anthropicApi": {
+            "id": "PzC81dqlQFz6crFt",
+            "name": "Anthropic account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Alguns modelos\nNão tem todas!",
+          "height": 320
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          460,
+          220
+        ],
+        "typeVersion": 1,
+        "id": "c95510ef-a34e-4095-b38e-0c336d94839d",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "## Guia das Propriedades de Agentes\n\n### Frequency Penalty\n\n#### Para que serve:\nEsse ajuste serve para evitar que o agente do n8n repita palavras ou frases demais nas respostas. Se o texto estiver ficando repetitivo, aumentar o Frequency Penalty faz o modelo variar mais o vocabulário. Para instruções técnicas ou tutoriais, onde repetições são necessárias, pode deixar zerado.\n\n#### Quando usar:\nIdeal para criação de textos criativos, marketing, posts para redes sociais ou qualquer conteúdo que precise ser mais variado e interessante.\n\n#### Exemplo:\nVai gerar ideias para títulos de vídeos ou posts? Deixe o Frequency Penalty mais alto (por exemplo, 0.8). Precisa de um passo a passo técnico? Mantenha baixo ou em zero.\n\n#### Valores:\n- Mínimo: 0\n- Máximo: 2\n- Ideal: 0.2 para respostas técnicas, 0.8 para textos criativos\n\n---\n\n### Maximum Number of Tokens\n\n#### Para que serve:\nLimita o tamanho da resposta do agente, definindo quantos “tokens” podem ser usados. Um token é aproximadamente ¾ de uma palavra. Quanto maior o número, mais extenso o texto final.\n\n#### Quando usar:\nPara respostas curtas, como em chatbots ou FAQs, use valores baixos. Para relatórios, resumos longos ou e-mails completos, aumente bastante esse número.\n\n#### Exemplo:\nChatbot ou resposta rápida: 100 tokens  \nRelatórios, artigos ou e-mails extensos: 1000 tokens ou mais\n\n#### Valores:\n- Mínimo: 1\n- Máximo: 16.384 (varia conforme modelo)\n- Ideal: 100 para chat, 500–2000 para textos longos\n\n---\n\n### Response Format\n\n#### Para que serve:\nEscolhe o formato de saída da resposta: texto puro, JSON, Markdown ou outro. É importante quando a resposta vai alimentar outra ferramenta ou automação.\n\n#### Quando usar:\nPara integração com bancos de dados ou sistemas, use JSON. Para chat, documentos ou exibição formatada, prefira Markdown. Se não precisa de formatação, use texto puro.\n\n#### Exemplo:\nSlack ou Discord: Markdown  \nBanco de dados ou API: JSON  \nMensagem simples: texto puro\n\n#### Valores:\n- Opções: text (padrão), markdown, json\n\n---\n\n### Presence Penalty\n\n#### Para que serve:\nPresence Penalty faz com que o agente evite repetir palavras já usadas na resposta, mesmo que só uma vez. Isso incentiva respostas mais diversificadas.\n\n#### Quando usar:\nUse quando quer sugestões criativas, brainstorming ou criação de nomes. Para textos técnicos, onde a repetição é normal, deixe baixo ou no padrão.\n\n#### Exemplo:\nCriação de nomes de produtos: Presence Penalty alto (0.8)  \nDocumentação técnica: Presence Penalty padrão (0–0.2)\n\n#### Valores:\n- Mínimo: 0\n- Máximo: 2\n- Ideal: 0.2 para textos técnicos, 0.8 para criatividade\n",
+          "height": 2020,
+          "width": 620,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -580,
+          640
+        ],
+        "id": "a0500670-67a6-4158-9e96-ef1a3b3916ba",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "content": "## Guia das Propriedades de Agentes\n\n### Sampling Temperature\n\n#### Para que serve:\nA Sampling Temperature define o grau de criatividade das respostas geradas pelo agente. Temperaturas baixas resultam em respostas mais objetivas e previsíveis. Temperaturas altas deixam o texto mais criativo, variado e até imprevisível.\n\n#### Quando usar:\nUse temperaturas baixas (0.1 a 0.4) para fluxos que exigem precisão, como suporte ao cliente ou instruções técnicas. Para campanhas de marketing, brainstorms, roteiros ou qualquer tarefa que se beneficie de criatividade, aumente o valor (0.7 a 1.0).\n\n#### Exemplo:\nAtendimento técnico: 0.2  \nSugestão de nomes, roteiros, ideias: 0.8 a 1.0\n\n#### Valores:\n- Mínimo: 0  \n- Máximo: 2  \n- Ideal: 0.2 para respostas técnicas, 0.8 para criatividade\n\n---\n\n### Timeout\n\n#### Para que serve:\nTimeout define quanto tempo o agente tem para entregar uma resposta antes que o n8n marque como erro. É essencial para controlar o fluxo e evitar travamentos ou esperas infinitas.\n\n#### Quando usar:\nAumente em automações que processam grande volume de dados ou dependem de respostas de APIs lentas. Reduza em fluxos que exigem resposta rápida, como bots interativos.\n\n#### Exemplo:\nProcessamento de arquivos grandes: 60 segundos ou mais  \nChatbot para usuário final: 10 a 20 segundos\n\n#### Valores:\n- Mínimo: 1 segundo  \n- Máximo: depende do limite do ambiente (geralmente até 300 segundos)  \n- Ideal: 10–30s para resposta rápida, 60–120s para processamento intenso\n\n---\n\n### Max Retries\n\n#### Para que serve:\nDetermina quantas vezes o n8n deve tentar novamente executar o agente em caso de erro temporário.\n\n#### Quando usar:\nSe sua automação depende de serviços instáveis ou com histórico de falhas, aumente esse valor. Se prioriza agilidade, use menos tentativas.\n\n#### Exemplo:\nChamando APIs de terceiros: 3 a 5 tentativas  \nFluxo que precisa ser rápido: 1 tentativa\n\n#### Valores:\n- Mínimo: 0  \n- Máximo: 10 (recomendado pelo n8n)  \n- Ideal: 2–3 para balancear robustez e rapidez\n\n---\n\n### Top P\n\n#### Para que serve:\nControla a variedade das respostas. Um valor mais baixo deixa o texto mais focado nas palavras mais prováveis, enquanto um valor mais alto deixa as respostas mais criativas e abertas.\n\n#### Quando usar:\nUse Top P baixo (0.5–0.8) para respostas técnicas e diretas, e alto (1.0) para geração criativa de ideias, textos e brainstorms.\n\n#### Exemplo:\nFAQ ou atendimento: 0.8  \nCriação de slogans, ideias ou textos soltos: 1.0\n\n#### Valores:\n- Mínimo: 0.1  \n- Máximo: 1.0  \n- Ideal: 0.8 para respostas seguras, 1.0 para criatividade máxima\n\n",
+          "height": 2100,
+          "width": 620,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          100,
+          640
+        ],
+        "id": "72863902-2a16-4330-a1f1-2acb344459a1",
+        "name": "Sticky Note2"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "ec444e06-a425-4c33-aab9-e13b8058abc8",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

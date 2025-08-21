@@ -1,0 +1,850 @@
+[
+  {
+    "createdAt": "2025-05-03T19:08:23.449Z",
+    "updatedAt": "2025-05-27T11:34:34.000Z",
+    "id": "rB9CNR7NsetNX86D",
+    "name": "[FA] RAG Agente de Auto Aprendizado",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## Classificar msg que chega\n",
+          "height": 320
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          140,
+          -120
+        ],
+        "typeVersion": 1,
+        "id": "a542de33-0d08-4e60-849c-a1c45ea88927",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "## Agente RAG - tirar dúvidas",
+          "height": 580,
+          "width": 700,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          480,
+          -560
+        ],
+        "typeVersion": 1,
+        "id": "79f257ca-e21e-4be2-91ab-e543d270b988",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          540,
+          -180
+        ],
+        "id": "bb76abd5-b3fb-47aa-98a4-c5d488a39fbb",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('Recebe Mensagem').item.json.message.chat.id }}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          680,
+          -180
+        ],
+        "id": "2efa1780-eec8-4d52-a935-b5864f406eb9",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "8279e393-dfff-412c-b537-5523d3664a0a",
+        "name": "Recebe Mensagem",
+        "webhookId": "7504fe17-96db-4c1c-8249-18cc02108d84",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.message.text }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "exists",
+                        "singleValue": true
+                      },
+                      "id": "ca57f613-8d13-4a6a-a657-c515d7e278a6"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "text"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "9404a6aa-39e8-4e43-8e9b-1ef1b8b868b4",
+                      "leftValue": "={{ $json.message.photo }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "array",
+                        "operation": "exists",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "img"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "5c11083c-4ade-4aae-ae5d-845478b68a5f",
+                      "leftValue": "={{ $json.message.document.file_name }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "exists",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "file"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "f4f68c57-4a8c-48bb-a883-f9cc22bc3aed",
+        "name": "Verifica tipo msg"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $('Recebe Mensagem').item.json.message.text }}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          640,
+          -460
+        ],
+        "id": "5e559649-15b9-43f3-a656-87970c7019e1",
+        "name": "Agente Tira Dúvidas"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Recebe Mensagem').item.json.message.chat.id }}",
+          "text": "={{ $json.output }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1040,
+          -460
+        ],
+        "id": "de6d6c3b-8b76-4631-a2cb-02e8846e22ae",
+        "name": "Envio msg",
+        "webhookId": "dbbc8066-6e2f-40fe-9177-f56c76673d5b",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Aprendizado Contínuo\n",
+          "height": 820,
+          "width": 1840,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          480,
+          40
+        ],
+        "typeVersion": 1,
+        "id": "4adda351-25cb-4963-ac01-80fe11634d75",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "fileId": "={{ $json.message.photo[2].file_id }}"
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          580,
+          140
+        ],
+        "id": "1fd3088d-9742-4040-a55c-624b1bf9489b",
+        "name": "Baixar Imagem",
+        "webhookId": "5340776c-980f-4d8e-9416-a5ddf866e1da",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "fileId": "={{ $('Recebe Mensagem').item.json.message.document.file_id }}"
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          580,
+          420
+        ],
+        "id": "f6116cad-006c-4f59-a530-b7eafa6608f2",
+        "name": "Baixar Arquivo",
+        "webhookId": "3ef79c28-a766-482c-b575-78b4d8b28a88",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "name": "={{ $json.result.file_unique_id }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1Bp0YjITI_zI2G9Lah1-VrwdMi70LrJ95",
+            "mode": "list",
+            "cachedResultName": "RAG auto aprendizado",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1Bp0YjITI_zI2G9Lah1-VrwdMi70LrJ95"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          820,
+          260
+        ],
+        "id": "98ec196e-b320-4286-82e1-a1421960d419",
+        "name": "Enviar Arquivo",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1020,
+          260
+        ],
+        "id": "7cdee5c5-656b-4d16-ab88-dffad61f6d0f",
+        "name": "Baixar Arquivo do Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "bc0ffb7b-f320-42f2-891f-e1108f70e116",
+                "leftValue": "={{ $json.mimeType }}",
+                "rightValue": "image",
+                "operator": {
+                  "type": "string",
+                  "operation": "notContains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1240,
+          260
+        ],
+        "id": "2fd4eb8a-37ba-4398-95b1-3707650c63b3",
+        "name": "Verifica se NAO e uma imagem"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1600,
+          320
+        ],
+        "id": "8ecf48e0-1011-4bd1-8c0f-bd9b6efa546b",
+        "name": "Embeddings OpenAI",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "dataType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1,
+        "position": [
+          1740,
+          320
+        ],
+        "id": "176a3974-baa9-418f-a42a-20f9fa2c7bd2",
+        "name": "Default Data Loader"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+        "typeVersion": 1,
+        "position": [
+          1840,
+          480
+        ],
+        "id": "2390f0dd-2a1c-4848-bac5-ae44cf681c03",
+        "name": "Recursive Character Text Splitter"
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "pineconeIndex": {
+            "__rl": true,
+            "value": "rag-autoprendizado",
+            "mode": "list",
+            "cachedResultName": "rag-autoprendizado"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+        "typeVersion": 1.1,
+        "position": [
+          1580,
+          80
+        ],
+        "id": "e301cf40-c66a-4ad2-81cb-3417d4129c12",
+        "name": "Envio de Documentos",
+        "credentials": {
+          "pineconeApi": {
+            "id": "U8Qa6YI91EYXKjl3",
+            "name": "PineconeApi account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          1940,
+          80
+        ],
+        "id": "e61a6a25-7dd8-4894-89be-6cb2a87420a0",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Recebe Mensagem').item.json.message.chat.id }}",
+          "text": "Documento enviado com Sucesso!",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          2160,
+          80
+        ],
+        "id": "289b0fda-3d4c-47d8-bd06-034bb7fe905a",
+        "name": "Mensagem de Sucesso",
+        "webhookId": "037ff783-eeeb-457c-9d8d-6caf358638ae",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolName": "GetKnowledge",
+          "toolDescription": "Use esta tool para buscar a soluçao dos problemas que o usuario pede para o agente",
+          "pineconeIndex": {
+            "__rl": true,
+            "value": "rag-autoprendizado",
+            "mode": "list",
+            "cachedResultName": "rag-autoprendizado"
+          },
+          "topK": 6,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+        "typeVersion": 1.1,
+        "position": [
+          800,
+          -260
+        ],
+        "id": "e176d953-ce5e-4388-9226-62b3cbbbe64f",
+        "name": "Pinecone Vector Store",
+        "credentials": {
+          "pineconeApi": {
+            "id": "U8Qa6YI91EYXKjl3",
+            "name": "PineconeApi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          920,
+          -120
+        ],
+        "id": "7dbefac0-1408-4ba3-9a71-b483f02d15b3",
+        "name": "Embeddings OpenAI1",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "Extraia informacoes da imagem",
+          "options": {
+            "systemMessage": "Transcreva todo o texto que voce encontrar na imagem enviada para voce e envie para o proximo passo.\n\nEnvie apenas as informações de texto da imagem, nada mais.",
+            "passthroughBinaryImages": true
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          920,
+          580
+        ],
+        "id": "47ab623f-fd82-477a-b87c-fdcb008733cb",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          800,
+          740
+        ],
+        "id": "a7262727-71c0-4d2f-bb82-7909e3c00aec",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "toJson",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          1280,
+          580
+        ],
+        "id": "f03dc0f3-6ad1-44d5-94f8-86861cde79e8",
+        "name": "Retorno para JSON"
+      }
+    ],
+    "connections": {
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          []
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Agente Tira Dúvidas",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recebe Mensagem": {
+        "main": [
+          [
+            {
+              "node": "Verifica tipo msg",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verifica tipo msg": {
+        "main": [
+          [
+            {
+              "node": "Agente Tira Dúvidas",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Baixar Imagem",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Baixar Arquivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente Tira Dúvidas": {
+        "main": [
+          [
+            {
+              "node": "Envio msg",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixar Imagem": {
+        "main": [
+          [
+            {
+              "node": "Enviar Arquivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixar Arquivo": {
+        "main": [
+          [
+            {
+              "node": "Enviar Arquivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar Arquivo": {
+        "main": [
+          [
+            {
+              "node": "Baixar Arquivo do Drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixar Arquivo do Drive": {
+        "main": [
+          [
+            {
+              "node": "Verifica se NAO e uma imagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verifica se NAO e uma imagem": {
+        "main": [
+          [
+            {
+              "node": "Envio de Documentos",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings OpenAI": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Envio de Documentos",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Default Data Loader": {
+        "ai_document": [
+          [
+            {
+              "node": "Envio de Documentos",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recursive Character Text Splitter": {
+        "ai_textSplitter": [
+          [
+            {
+              "node": "Default Data Loader",
+              "type": "ai_textSplitter",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envio de Documentos": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "Mensagem de Sucesso",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pinecone Vector Store": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente Tira Dúvidas",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings OpenAI1": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Pinecone Vector Store",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Retorno para JSON",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Retorno para JSON": {
+        "main": [
+          [
+            {
+              "node": "Envio de Documentos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "callerPolicy": "workflowsFromSameOwner",
+      "errorWorkflow": "m6Z0YEdWjp0gNZAp"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "abd69541-f23c-4867-a725-8a52d2e7aed1",
+    "triggerCount": 1,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

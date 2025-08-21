@@ -1,0 +1,239 @@
+[
+  {
+    "createdAt": "2025-07-09T11:29:11.434Z",
+    "updatedAt": "2025-07-09T11:29:13.000Z",
+    "id": "tpJ1XSdMb2KoX3UU",
+    "name": "[FA] Teste WhatsApp p1",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "6efe9d7d-9144-4cfe-ba55-42c3dbaf185a",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -620,
+          180
+        ],
+        "id": "f8f3adfc-fe2b-41a8-b27c-36fff74d662f",
+        "name": "Webhook",
+        "webhookId": "6efe9d7d-9144-4cfe-ba55-42c3dbaf185a"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "93f9e0fc-3b4e-455b-a570-3075fb77f0a3",
+                "name": "From",
+                "value": "={{ $json.body.data.key.remoteJid }}",
+                "type": "string"
+              },
+              {
+                "id": "5d438126-fbbd-47e1-80a2-5beb6635b890",
+                "name": "Instance",
+                "value": "={{ $json.body.instance }}",
+                "type": "string"
+              },
+              {
+                "id": "b9556714-6286-4ab8-a502-646aa5e16aec",
+                "name": "Message",
+                "value": "={{ $json.body.data.message.conversation }}",
+                "type": "string"
+              },
+              {
+                "id": "707e89a2-e3b3-4b1a-8f17-939b146d66dc",
+                "name": "MessageId",
+                "value": "={{ $json.body.data.key.id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -400,
+          180
+        ],
+        "id": "d98adb5d-774d-4a0e-ba41-afc071afd216",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "6b76d564-d9d8-41b3-a14b-589c057d4440",
+                "leftValue": "={{ $json.From }}",
+                "rightValue": "0404",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -180,
+          180
+        ],
+        "id": "d0bfce10-f88a-49d4-806e-f6e4a4a2b3c0",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "={{ $('Edit Fields').item.json.Instance }}",
+          "remoteJid": "={{ $('Edit Fields').item.json.From }}",
+          "messageText": "Olá Mundo!",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          160,
+          160
+        ],
+        "id": "f2a6e060-5344-4178-9f3b-34ee507a5d1e",
+        "name": "Enviar texto"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Enviar texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {
+      "Webhook": [
+        {
+          "json": {
+            "headers": {
+              "host": "n8n.matheusbattisti.com.br",
+              "user-agent": "axios/1.7.9",
+              "content-length": "1133",
+              "accept-encoding": "gzip, compress, deflate, br",
+              "content-type": "application/json",
+              "x-forwarded-for": "31.97.170.130",
+              "x-forwarded-host": "n8n.matheusbattisti.com.br",
+              "x-forwarded-port": "443",
+              "x-forwarded-proto": "https",
+              "x-forwarded-server": "d301f7c09df8",
+              "x-real-ip": "31.97.170.130"
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "event": "messages.upsert",
+              "instance": "Formacao Agentes de IA",
+              "data": {
+                "key": {
+                  "remoteJid": "554899900404@s.whatsapp.net",
+                  "fromMe": false,
+                  "id": "3EB08448AAC5C25EB51B26"
+                },
+                "pushName": "Matheus Battisti",
+                "status": "DELIVERY_ACK",
+                "message": {
+                  "messageContextInfo": {
+                    "deviceListMetadata": {
+                      "senderKeyHash": "p9lXZTcJak4IOQ==",
+                      "senderTimestamp": "1752004469",
+                      "senderAccountType": "E2EE",
+                      "receiverAccountType": "E2EE",
+                      "recipientKeyHash": "R87HHUkUM0axtw==",
+                      "recipientTimestamp": "1752004041"
+                    },
+                    "deviceListMetadataVersion": 2,
+                    "messageSecret": "IcLslZlZSzLZl0VKE87NzT96f9S7550QS4SulxSwAFs="
+                  },
+                  "conversation": "teste"
+                },
+                "contextInfo": {
+                  "ephemeralSettingTimestamp": "1750709840",
+                  "disappearingMode": {
+                    "initiator": "CHANGED_IN_CHAT",
+                    "trigger": "CHAT_SETTING",
+                    "initiatedByMe": false
+                  }
+                },
+                "messageType": "conversation",
+                "messageTimestamp": 1752059185,
+                "instanceId": "d40c531b-842c-4ffb-bcd3-96d1260da1c8",
+                "source": "web"
+              },
+              "destination": "https://n8n.matheusbattisti.com.br/webhook-test/6efe9d7d-9144-4cfe-ba55-42c3dbaf185a",
+              "date_time": "2025-07-09T08:06:25.659Z",
+              "sender": "554899468716@s.whatsapp.net",
+              "server_url": "http://localhost:8080",
+              "apikey": "33655F9A8C81-43BE-B068-DB12FC23FCCA"
+            },
+            "webhookUrl": "https://n8n.matheusbattisti.com.br/webhook-test/6efe9d7d-9144-4cfe-ba55-42c3dbaf185a",
+            "executionMode": "test"
+          }
+        }
+      ]
+    },
+    "versionId": "35c9de25-00d2-4855-874b-4667813cae07",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

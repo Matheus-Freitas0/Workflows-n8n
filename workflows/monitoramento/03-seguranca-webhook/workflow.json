@@ -1,0 +1,200 @@
+[
+  {
+    "createdAt": "2025-07-25T15:17:15.810Z",
+    "updatedAt": "2025-07-31T11:53:45.000Z",
+    "id": "qnQPa2e82Mfd2UwY",
+    "name": "[FA] Segurança Webhook",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "teste",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          208,
+          0
+        ],
+        "id": "d5beb552-29ef-467f-92c1-dc3f635bc122",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+        "typeVersion": 1,
+        "position": [
+          272,
+          336
+        ],
+        "id": "549b8829-b7b3-4ad6-93ef-b38aeb44c3ed",
+        "name": "Mistral Cloud Chat Model",
+        "credentials": {
+          "mistralCloudApi": {
+            "id": "7InooZQKxvSCxE9C",
+            "name": "Mistral Cloud account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "path": "7c94465b-ce6e-4007-aac9-0965e076a499",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -208,
+          0
+        ],
+        "id": "a6b551f0-5004-4803-a929-070eb26c191f",
+        "name": "Webhook",
+        "webhookId": "7c94465b-ce6e-4007-aac9-0965e076a499"
+      },
+      {
+        "parameters": {
+          "path": "06d6c0a6-4db6-43d2-942c-d328f6ff9476",
+          "authentication": "headerAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -208,
+          176
+        ],
+        "id": "a862fe6a-5724-416c-bc76-8598d22dccd6",
+        "name": "Webhook1",
+        "webhookId": "06d6c0a6-4db6-43d2-942c-d328f6ff9476",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "azRXxHpJPtfiQjSC",
+            "name": "Webhook Teste"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "path": "660b7ab2-f44c-4ac6-a9e1-f2fb609fe718",
+          "authentication": "basicAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -208,
+          352
+        ],
+        "id": "00182d59-62e7-416d-940d-126492c5655f",
+        "name": "Webhook2",
+        "webhookId": "660b7ab2-f44c-4ac6-a9e1-f2fb609fe718",
+        "credentials": {
+          "httpBasicAuth": {
+            "id": "sByxAE2k5jKyN0Fw",
+            "name": "Unnamed credential"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "path": "70452c5a-101a-4c3a-aedf-556a4a10869f",
+          "authentication": "jwtAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -208,
+          544
+        ],
+        "id": "93c1872d-5b6d-444f-b9a2-12b80542f768",
+        "name": "Webhook3",
+        "webhookId": "70452c5a-101a-4c3a-aedf-556a4a10869f",
+        "credentials": {
+          "jwtAuth": {
+            "id": "X5N6r35mvwo9iIlC",
+            "name": "JWT Auth account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## 🔐 Autenticações Webhook\n\n### 1. Header Auth\n- **Descrição:** Verifica se um valor específico está presente em um cabeçalho HTTP.\n\n- **Quando usar:**  \n  - Integrações simples e seguras entre sistemas controlados.\n  - Quando você quer validar com um valor secreto como uma API Key.\n\n---\n\n### 2. Basic Auth\n- **Descrição:** Usa usuário e senha codificados em base64 no cabeçalho Authorization.\n\n- **Quando usar:**  \n  - Para proteger rapidamente um webhook com autenticação básica.\n  - Útil para sistemas legados ou de testes.\n\n---\n\n### 3. JWT (JSON Web Token)\n- **Descrição:** Usa um token JWT no cabeçalho Authorization que pode ser validado com uma chave secreta.\n\n- **Quando usar:**  \n  - Quando quiser autenticação robusta baseada em identidade.\n  - Ideal para sistemas que já usam autenticação JWT.",
+          "height": 752,
+          "width": 592,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          592,
+          -48
+        ],
+        "id": "92b05beb-97c1-4c15-8fcc-a510a7c0a0d5",
+        "name": "Sticky Note"
+      }
+    ],
+    "connections": {
+      "Mistral Cloud Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          []
+        ]
+      },
+      "Webhook1": {
+        "main": [
+          []
+        ]
+      },
+      "Webhook2": {
+        "main": [
+          []
+        ]
+      },
+      "Webhook3": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "c1e1327b-6007-40c7-9b04-445f4d5c1b3c",
+    "triggerCount": 4,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

@@ -1,0 +1,265 @@
+[
+  {
+    "createdAt": "2025-04-23T23:21:30.193Z",
+    "updatedAt": "2025-05-27T11:20:16.000Z",
+    "id": "SbXKHoAtB457WGsE",
+    "name": "[FA] Primeiro Agente de IA",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "e29f3244-d761-4d22-8eb7-914a046e3171",
+        "name": "When chat message received",
+        "webhookId": "c11b3133-a903-4c97-8dd4-1f7de67a72c0"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          120,
+          300
+        ],
+        "id": "5312e26c-54e1-4737-bf4d-6e74d9b29382",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "hU2tzNa31nheQ62T",
+            "name": "Teste p/ Vídeo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Use esta ferramenta para pesquisar produtos na tabela products.",
+          "operation": "getAll",
+          "tableId": "products",
+          "returnAll": true
+        },
+        "type": "n8n-nodes-base.supabaseTool",
+        "typeVersion": 1,
+        "position": [
+          480,
+          400
+        ],
+        "id": "e9b84cba-798c-4b66-bfe0-414ad9683ab9",
+        "name": "Consultar Produtos",
+        "credentials": {
+          "supabaseApi": {
+            "id": "Gw4xu06J8EQySvmQ",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "products",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "id",
+                "condition": "eq",
+                "keyValue": "={{ $fromAI('id', `Envie o id como valor numérico`, 'string') }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "stock_quantity",
+                "fieldValue": "={{ $fromAI('stock_quantity', `Envie o stock_quantitiy como valor numérico`, 'string') }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabaseTool",
+        "typeVersion": 1,
+        "position": [
+          680,
+          400
+        ],
+        "id": "0f7fe70e-d1f0-4db6-826f-af3eb2115cb6",
+        "name": "Atualizar Quantidade",
+        "credentials": {
+          "supabaseApi": {
+            "id": "Gw4xu06J8EQySvmQ",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "tableId": "products",
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "name",
+                "fieldValue": "={{ $fromAI('name', `Nome do produto em texto`, 'string') }}"
+              },
+              {
+                "fieldId": "description",
+                "fieldValue": "={{ $fromAI('description', `Descrição do produto`, 'string') }}"
+              },
+              {
+                "fieldId": "stock_quantity",
+                "fieldValue": "={{ $fromAI('stock_quantity', `Estoque do produto em inteiro`, 'string') }}"
+              },
+              {
+                "fieldId": "price",
+                "fieldValue": "={{ $fromAI('price', `Preço do produto em inteiro`, 'string') }}"
+              },
+              {
+                "fieldId": "category",
+                "fieldValue": "={{ $fromAI('category', `Categoria do produto em texto`, 'string') }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.supabaseTool",
+        "typeVersion": 1,
+        "position": [
+          880,
+          400
+        ],
+        "id": "b22b3458-913f-416a-920d-988369a689b3",
+        "name": "Criar Produto",
+        "credentials": {
+          "supabaseApi": {
+            "id": "Gw4xu06J8EQySvmQ",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          300,
+          300
+        ],
+        "id": "419c994c-acb6-4d64-a1e8-4826cc5445be",
+        "name": "Memória do Sistema"
+      },
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "=Se o usuário pedir um produto ou mais, sempre tente trazer algum insight junto dos dados do produto.\n\nPara atualizar produtos envie o id do produto e a stock_quantitiy, ambos em integer.\n\nSe o usuário quiser adicionar um produto, instrua todos os campos que ele precisa enviar.\n\nDepois que ele enviar todos os dados, junte e envie em apenas numa chamada a tool de Criar Produto.\n\nAtente-se para o nome das colunas ser em inglês."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "47c2bc04-e1fd-448f-8f90-374d00bd9bf7",
+        "name": "Agente de Produtos"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "Agente de Produtos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente de Produtos",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Consultar Produtos": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Produtos",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualizar Quantidade": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Produtos",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Criar Produto": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Produtos",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Memória do Sistema": {
+        "ai_memory": [
+          [
+            {
+              "node": "Agente de Produtos",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "82818b2b-f276-4b80-8410-f63523231e61",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

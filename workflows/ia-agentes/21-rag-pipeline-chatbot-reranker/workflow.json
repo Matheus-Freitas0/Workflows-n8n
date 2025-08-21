@@ -1,0 +1,400 @@
+[
+  {
+    "createdAt": "2025-07-03T18:53:15.859Z",
+    "updatedAt": "2025-07-03T18:53:15.859Z",
+    "id": "lOgoaT9fDolZwfjJ",
+    "name": "[FA] RAG Pipeline & Chatbot com Reranker",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1pDfIPzhnimuyZbt1_srL6lVgVoEuOpDO",
+            "mode": "list",
+            "cachedResultName": "FAQ",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1pDfIPzhnimuyZbt1_srL6lVgVoEuOpDO"
+          },
+          "event": "fileCreated",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "e83dbd13-6ab1-415a-b7c0-36f6a0fc59d8",
+        "name": "Ativa ao colocar arquivo",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          220,
+          0
+        ],
+        "id": "0068d18b-be8a-4a31-9720-742a6809f2b4",
+        "name": "Baixa o arquivo",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "tableName": {
+            "__rl": true,
+            "value": "faq_documents",
+            "mode": "list",
+            "cachedResultName": "faq_documents"
+          },
+          "options": {
+            "queryName": "match_documents"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.1,
+        "position": [
+          440,
+          0
+        ],
+        "id": "33f1315f-32bd-4d40-8466-8e3a0dde187c",
+        "name": "Supabase Vector Store",
+        "credentials": {
+          "supabaseApi": {
+            "id": "Gw4xu06J8EQySvmQ",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          380,
+          280
+        ],
+        "id": "5fcc568e-b03a-4192-9c4a-ec5d73a1d2af",
+        "name": "Embeddings OpenAI",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "dataType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1,
+        "position": [
+          580,
+          220
+        ],
+        "id": "9be4ffe7-b1a7-4e6c-9ff3-555cdbdd945b",
+        "name": "Default Data Loader"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+        "typeVersion": 1,
+        "position": [
+          560,
+          440
+        ],
+        "id": "db3a90be-2e55-4cd8-8dcd-00fd8c623864",
+        "name": "Recursive Character Text Splitter"
+      },
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "You are a helpful assistant"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          1100,
+          0
+        ],
+        "id": "6608fc0a-fd32-47bc-bf2a-4a37bbc9ab6e",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "options": {},
+          "path": "662e8e42-ff07-4ba3-8696-3402977f888c"
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          940,
+          0
+        ],
+        "id": "8cdd9f8b-b52d-47b1-a7bc-2fc15890c7d8",
+        "name": "When chat message received",
+        "webhookId": "662e8e42-ff07-4ba3-8696-3402977f888c"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1060,
+          300
+        ],
+        "id": "15daa482-f517-42b3-b63b-61b8d54a681b",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolName": "documents",
+          "toolDescription": "Chame esta ferramenta para acessar o FAQ",
+          "tableName": {
+            "__rl": true,
+            "value": "faq_documents",
+            "mode": "list",
+            "cachedResultName": "faq_documents"
+          },
+          "useReranker": true,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.1,
+        "position": [
+          1400,
+          300
+        ],
+        "id": "3f283288-04a9-4c10-b996-dbdc39120c78",
+        "name": "Supabase Vector Store1",
+        "credentials": {
+          "supabaseApi": {
+            "id": "z2Y3Mllj1kSR3wg1",
+            "name": "Supabase account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1280,
+          560
+        ],
+        "id": "aa76f56f-1c4c-4c84-afa9-62d8ea644609",
+        "name": "Embeddings OpenAI1",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
+        "typeVersion": 1,
+        "position": [
+          1580,
+          560
+        ],
+        "id": "40abda85-b5ff-40e7-a19d-1790be1e5772",
+        "name": "Reranker Cohere",
+        "credentials": {
+          "cohereApi": {
+            "id": "9J6nKjl3oidZhwzw",
+            "name": "CohereApi account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Ativa ao colocar arquivo": {
+        "main": [
+          [
+            {
+              "node": "Baixa o arquivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixa o arquivo": {
+        "main": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings OpenAI": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Default Data Loader": {
+        "ai_document": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recursive Character Text Splitter": {
+        "ai_textSplitter": [
+          [
+            {
+              "node": "Default Data Loader",
+              "type": "ai_textSplitter",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase Vector Store": {
+        "main": [
+          []
+        ]
+      },
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase Vector Store1": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings OpenAI1": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Supabase Vector Store1",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reranker Cohere": {
+        "ai_reranker": [
+          [
+            {
+              "node": "Supabase Vector Store1",
+              "type": "ai_reranker",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "97bf0833-50f5-4132-8bd8-243fcd5bd979",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

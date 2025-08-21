@@ -38,6 +38,16 @@ Workflows de inteligência artificial e agentes automatizados.
 - **16-integracao-deepseek/** - Integração com DeepSeek
 - **17-integracao-gemini-flash/** - Integração com Gemini Flash
 - **18-hitl-exemplo-telegram/** - HITL exemplo com Telegram
+- **19-tutor-alunos-enviar-dados/** - Sistema de tutoria para alunos
+- **20-tutor-alunos-agente/** - Agente de tutoria educacional
+- **21-rag-pipeline-chatbot-reranker/** - Pipeline RAG com chatbot e reranker
+- **22-rag-agente-auto-aprendizado/** - Agente RAG com auto-aprendizado
+- **23-propriedade-agentes/** - Sistema de propriedade e gestão de agentes
+- **24-primeiro-agente-ia/** - Primeiro agente de IA básico
+- **25-orquestracao-agentes/** - Orquestração de múltiplos agentes
+- **26-n8n-gemini/** - Integração n8n com Google Gemini
+- **27-multiagent-post-blog/** - Sistema multiagent para blog
+- **28-multiagent-post-blog-titulos/** - Multiagent para títulos de blog
 
 ### 📊 [Monitoramento](./monitoramento/)
 
@@ -45,6 +55,7 @@ Workflows de tracking, monitoramento e análise de dados.
 
 - **01-agent-tracker/** - Tracking de execuções de agentes
 - **02-error-logger/** - Sistema de log de erros automatizado
+- **03-seguranca-webhook/** - Sistema de segurança para webhooks
 
 ### 💰 [Financeiro](./financeiro/)
 
@@ -60,6 +71,7 @@ Workflows específicos para integração com WhatsApp.
 - **01-agente-catalogo-produtos/** - Catálogo automático de produtos
 - **02-agente-ia-whatsapp/** - Agente de IA com WhatsApp
 - **03-agente-whatsapp-agendamento/** - Agente WhatsApp de agendamento
+- **04-teste-whatsapp-p1/** - Teste e validação WhatsApp
 
 ### 📢 [Marketing](./marketing/)
 
@@ -117,6 +129,7 @@ Workflows relacionados a gestão de recursos humanos.
 | Financeiro       | [01-agente-despesas-pessoais-adicionar](./financeiro/01-agente-despesas-pessoais-adicionar/)          | Adicionar despesas pessoais       |
 | WhatsApp         | [02-agente-ia-whatsapp](./whatsapp/02-agente-ia-whatsapp/)                                            | Agente de IA com WhatsApp         |
 | WhatsApp         | [03-agente-whatsapp-agendamento](./whatsapp/03-agente-whatsapp-agendamento/)                          | Agente WhatsApp de agendamento    |
+| WhatsApp         | [04-teste-whatsapp-p1](./whatsapp/04-teste-whatsapp-p1/)                                            | Teste e validação WhatsApp        |
 | Marketing        | [01-criacao-postagem-redes-sociais](./marketing/01-criacao-postagem-redes-sociais/)                   | Criação de postagem redes sociais |
 | Marketing        | [02-criacao-postagem-redes-sociais-com-logs](./marketing/02-criacao-postagem-redes-sociais-com-logs/) | Criação com sistema de logs       |
 | Automação        | [01-classificador-emails](./automacao/01-classificador-emails/)                                       | Classificador de e-mails          |
@@ -131,7 +144,18 @@ Workflows relacionados a gestão de recursos humanos.
 | IA e Agentes     | [16-integracao-deepseek](./ia-agentes/16-integracao-deepseek/)                                        | Integração com DeepSeek           |
 | IA e Agentes     | [17-integracao-gemini-flash](./ia-agentes/17-integracao-gemini-flash/)                                | Integração com Gemini Flash       |
 | IA e Agentes     | [18-hitl-exemplo-telegram](./ia-agentes/18-hitl-exemplo-telegram/)                                    | HITL exemplo com Telegram         |
+| IA e Agentes     | [19-tutor-alunos-enviar-dados](./ia-agentes/19-tutor-alunos-enviar-dados/)                            | Sistema de tutoria para alunos    |
+| IA e Agentes     | [20-tutor-alunos-agente](./ia-agentes/20-tutor-alunos-agente/)                                        | Agente de tutoria educacional     |
+| IA e Agentes     | [21-rag-pipeline-chatbot-reranker](./ia-agentes/21-rag-pipeline-chatbot-reranker/)                    | Pipeline RAG com chatbot          |
+| IA e Agentes     | [22-rag-agente-auto-aprendizado](./ia-agentes/22-rag-agente-auto-aprendizado/)                        | Agente RAG com auto-aprendizado   |
+| IA e Agentes     | [23-propriedade-agentes](./ia-agentes/23-propriedade-agentes/)                                        | Sistema de propriedade de agentes |
+| IA e Agentes     | [24-primeiro-agente-ia](./ia-agentes/24-primeiro-agente-ia/)                                         | Primeiro agente de IA básico      |
+| IA e Agentes     | [25-orquestracao-agentes](./ia-agentes/25-orquestracao-agentes/)                                      | Orquestração de múltiplos agentes |
+| IA e Agentes     | [26-n8n-gemini](./ia-agentes/26-n8n-gemini/)                                                        | Integração n8n com Gemini         |
+| IA e Agentes     | [27-multiagent-post-blog](./ia-agentes/27-multiagent-post-blog/)                                     | Sistema multiagent para blog      |
+| IA e Agentes     | [28-multiagent-post-blog-titulos](./ia-agentes/28-multiagent-post-blog-titulos/)                     | Multiagent para títulos           |
 | Monitoramento    | [02-error-logger](./monitoramento/02-error-logger/)                                                   | Sistema de log de erros           |
+| Monitoramento    | [03-seguranca-webhook](./monitoramento/03-seguranca-webhook/)                                         | Sistema de segurança para webhooks|
 | Automação        | [02-funcionalidades-novas-198](./automacao/02-funcionalidades-novas-198/)                             | Funcionalidades novas 1.98       |
 | Automação        | [03-funcionalidades-novas-1102](./automacao/03-funcionalidades-novas-1102/)                           | Funcionalidades novas 1.102+     |
 | Automação        | [04-funcionalidades-novas-1101](./automacao/04-funcionalidades-novas-1101/)                           | Funcionalidades novas 1.101      |
@@ -275,6 +299,36 @@ workflows/
 │   └── 18-hitl-exemplo-telegram/
 │       ├── README.md
 │       └── workflow.json
+│   ├── 19-tutor-alunos-enviar-dados/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 20-tutor-alunos-agente/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 21-rag-pipeline-chatbot-reranker/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 22-rag-agente-auto-aprendizado/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 23-propriedade-agentes/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 24-primeiro-agente-ia/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 25-orquestracao-agentes/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 26-n8n-gemini/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 27-multiagent-post-blog/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   └── 28-multiagent-post-blog-titulos/
+│       ├── README.md
+│       └── workflow.json
 ├── financeiro/
 │   ├── 01-agente-despesas-pessoais-adicionar/
 │   │   ├── README.md
@@ -289,6 +343,9 @@ workflows/
 │   └── 02-error-logger/
 │       ├── README.md
 │       └── workflow.json
+│   └── 03-seguranca-webhook/
+│       ├── README.md
+│       └── workflow.json
 ├── whatsapp/
 │   ├── 01-agente-catalogo-produtos/
 │   │   ├── README.md
@@ -297,6 +354,9 @@ workflows/
 │   │   ├── README.md
 │   │   └── workflow.json
 │   └── 03-agente-whatsapp-agendamento/
+│       ├── README.md
+│       └── workflow.json
+│   └── 04-teste-whatsapp-p1/
 │       ├── README.md
 │       └── workflow.json
 ├── marketing/

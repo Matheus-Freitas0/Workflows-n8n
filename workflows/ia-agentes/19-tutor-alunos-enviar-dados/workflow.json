@@ -1,0 +1,199 @@
+[
+  {
+    "createdAt": "2025-04-30T20:08:43.594Z",
+    "updatedAt": "2025-05-27T11:34:50.000Z",
+    "id": "bhrM14wkeMqsxNXL",
+    "name": "[FA] Tutor Alunos - Enviar dados",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "e548f50f-0e19-4e2e-84cb-dedc84887ddd",
+        "name": "When clicking ‘Test workflow’"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "1zASKlNC33TBpVDJKdXgxSndjqZQ1XvEM",
+            "mode": "list",
+            "cachedResultName": "exercicios_python_com_respostas.pdf",
+            "cachedResultUrl": "https://drive.google.com/file/d/1zASKlNC33TBpVDJKdXgxSndjqZQ1XvEM/view?usp=drivesdk"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          240,
+          0
+        ],
+        "id": "1c316b85-ab55-4338-9b4b-fbfaa917844d",
+        "name": "Google Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "pineconeIndex": {
+            "__rl": true,
+            "value": "teste-n8n",
+            "mode": "list",
+            "cachedResultName": "teste-n8n"
+          },
+          "options": {
+            "pineconeNamespace": "exerciciospython"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+        "typeVersion": 1.1,
+        "position": [
+          460,
+          0
+        ],
+        "id": "2cb2cf7c-2251-4780-b9df-9799249ff1fb",
+        "name": "Pinecone Vector Store",
+        "credentials": {
+          "pineconeApi": {
+            "id": "U8Qa6YI91EYXKjl3",
+            "name": "PineconeApi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          380,
+          260
+        ],
+        "id": "6025d7fa-dab2-4a92-8fa3-3c696e6994b5",
+        "name": "Embeddings OpenAI",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "dataType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1,
+        "position": [
+          600,
+          220
+        ],
+        "id": "1b7d1e70-a903-4a45-805c-28c5246cf364",
+        "name": "Default Data Loader"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+        "typeVersion": 1,
+        "position": [
+          700,
+          440
+        ],
+        "id": "575816bb-159e-4f36-a177-cf71bbb46b56",
+        "name": "Recursive Character Text Splitter"
+      }
+    ],
+    "connections": {
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Google Drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive": {
+        "main": [
+          [
+            {
+              "node": "Pinecone Vector Store",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings OpenAI": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Pinecone Vector Store",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Default Data Loader": {
+        "ai_document": [
+          [
+            {
+              "node": "Pinecone Vector Store",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recursive Character Text Splitter": {
+        "ai_textSplitter": [
+          [
+            {
+              "node": "Default Data Loader",
+              "type": "ai_textSplitter",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "8e0e974b-17ed-4632-b79f-12029fbe5e9c",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

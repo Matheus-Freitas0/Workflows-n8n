@@ -1,0 +1,215 @@
+[
+  {
+    "createdAt": "2025-05-09T13:59:23.845Z",
+    "updatedAt": "2025-05-27T11:34:12.000Z",
+    "id": "WuK16pklrUUAZt4A",
+    "name": "[FA] Multiagent para post de Blog",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "abc9a552-c08a-4aae-bd92-12a2f384d406",
+        "name": "When chat message received",
+        "webhookId": "e2d5a4e5-e324-4789-a69d-a073a5aae237"
+      },
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "=Você é um agente que recebe uma ideia de postagem, e depois faz os seguintes processos NESTA EXATA ORDEM:\n\n1 - Envie a ideia para o TitleAgent, e receba sugestões de títulos para a postagem\n2 - Envie a ideia para o PostBodyAgent, e receba o texto do artigo\n\nLEMBRE-SE: Você NÃO PODE executar os subworkflows em conjunto, primeiro o de título e após finalizar, o de corpo de postagem\n\n\n\nPor fim, condense as informações de forma organizada e completa, e envie para o usuário o resultado final da postagem de blog"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "5e589136-431a-4103-841a-ab16e1afc8e1",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          60,
+          260
+        ],
+        "id": "7c6acd80-40ab-4ee1-b6f0-656d73e1aa4c",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "name": "TitleAgent",
+          "description": "Tool que cria sugestoes de titulos para um post",
+          "workflowId": {
+            "__rl": true,
+            "value": "V6WzIA50l0YrGkhL",
+            "mode": "list",
+            "cachedResultName": "[FA] Multiagent para post de Blog - Titulos"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "topic": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('topic', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "topic"
+            ],
+            "schema": [
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.1,
+        "position": [
+          320,
+          300
+        ],
+        "id": "cd733632-3393-4782-8f7e-06b3cb7c5e8b",
+        "name": "Agente de Titulos"
+      },
+      {
+        "parameters": {
+          "name": "PostBodyAgent",
+          "description": "Esta tool gera o corpo do post, baseado na ideia do usuário",
+          "workflowId": {
+            "__rl": true,
+            "value": "OtudrNK03MU0mzti",
+            "mode": "list",
+            "cachedResultName": "[FA] Multiagent para post de Blog - Corpo do Post"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "topic": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('topic', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "topic"
+            ],
+            "schema": [
+              {
+                "id": "topic",
+                "displayName": "topic",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.1,
+        "position": [
+          500,
+          300
+        ],
+        "id": "2bc020fa-afbe-4bc5-93ac-9250cbc1ca2a",
+        "name": "Agente de Corpo de Post"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Titulos": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Corpo de Post": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "377e3e4b-b3a7-47a2-a0f1-b6317423a793",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]
