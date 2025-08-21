@@ -1,0 +1,101 @@
+[
+  {
+    "createdAt": "2025-07-17T12:15:05.525Z",
+    "updatedAt": "2025-07-17T12:18:35.000Z",
+    "id": "irbKWy3wAg7g2paD",
+    "name": "[FA] Agente com Grok 4",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -176,
+          -32
+        ],
+        "id": "60271afc-e65c-47fb-ab8e-77ecb05c6e96",
+        "name": "When chat message received",
+        "webhookId": "b5f36eab-acaa-4887-a7af-158ed0193f17"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          176,
+          -48
+        ],
+        "id": "5e0af07e-f7b8-4a30-a409-5c3485f79c08",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": "grok-4-0709",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatXAiGrok",
+        "typeVersion": 1,
+        "position": [
+          96,
+          208
+        ],
+        "id": "16214326-96a2-443e-9a2c-f5d485c0bd59",
+        "name": "xAI Grok Chat Model",
+        "credentials": {
+          "xAiApi": {
+            "id": "yf3nbmHHVd9JQF03",
+            "name": "xAi account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "xAI Grok Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "8df0499c-9952-4f3f-82a8-0cd0d78f02a2",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

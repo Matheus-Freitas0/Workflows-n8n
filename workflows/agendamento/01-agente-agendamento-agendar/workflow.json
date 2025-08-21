@@ -1,0 +1,157 @@
+[
+  {
+    "createdAt": "2025-05-13T20:45:43.407Z",
+    "updatedAt": "2025-05-27T11:34:10.000Z",
+    "id": "sHWwWYRbDqgVJY9T",
+    "name": "[FA] Agente de Agendamento - Agendar",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "name"
+              },
+              {
+                "name": "email"
+              },
+              {
+                "name": "eventTypeId",
+                "type": "number"
+              },
+              {
+                "name": "dateTime"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "2bf03375-8774-4660-bd26-6ba21075390a",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "8ced3e45-f856-46d8-bfe4-f86891550ecb",
+                "name": "dateTime",
+                "value": "={{ $json.dateTime }}",
+                "type": "string"
+              },
+              {
+                "id": "fcedc034-39fe-4231-86fd-3d1cf1c04134",
+                "name": "=eventTypeId",
+                "value": "={{ $json.eventTypeId }}",
+                "type": "number"
+              },
+              {
+                "id": "2530243b-eb15-430c-9eda-249eec2a6cb1",
+                "name": "attendee.name",
+                "value": "={{ $json.name }}",
+                "type": "string"
+              },
+              {
+                "id": "23142ef4-f612-45e5-9b8b-586735bbf732",
+                "name": "attendee.email",
+                "value": "={{ $json.email }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          220,
+          0
+        ],
+        "id": "db64b0db-7e16-4b94-ba3a-43e41e2822f7",
+        "name": "Ajuste de JSON"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.cal.com/v2/bookings",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "cal-api-version",
+                "value": "2024-08-13"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"start\": \"{{ $json.dateTime }}\",\n  \"attendee\": {\n    \"name\": \"{{ $json.attendee.name }}\",\n    \"email\": \"{{ $json.attendee.email }}\",\n    \"timeZone\": \"America/Sao_Paulo\"\n  },\n  \"eventTypeId\": {{ $json.eventTypeId }}\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          440,
+          0
+        ],
+        "id": "d560679e-c9c9-4a63-80a2-1c53fec7a36f",
+        "name": "Request de Agendar",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "WEyM3Tk5faRx2BkK",
+            "name": "Cal.com"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Ajuste de JSON",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ajuste de JSON": {
+        "main": [
+          [
+            {
+              "node": "Request de Agendar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "d454defe-bedb-48f7-b9ea-cbfa6bd9c115",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

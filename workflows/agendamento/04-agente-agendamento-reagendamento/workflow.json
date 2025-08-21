@@ -1,0 +1,111 @@
+[
+  {
+    "createdAt": "2025-05-14T11:46:01.855Z",
+    "updatedAt": "2025-05-27T11:34:03.000Z",
+    "id": "AaokCs28xagfQ6sc",
+    "name": "[FA] Agente de Agendamento - Reagendamento",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "start"
+              },
+              {
+                "name": "reason"
+              },
+              {
+                "name": "bookingUid"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "b6e4de97-36d8-4e60-afe6-572b3eb8bd3a",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://api.cal.com/v2/bookings/{{ $json.bookingUid }}/reschedule",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "cal-api-version",
+                "value": "2024-08-13"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "start",
+                "value": "={{ $json.start }}"
+              },
+              {
+                "name": "reschedulingReason",
+                "value": "={{ $json.reason }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          340,
+          0
+        ],
+        "id": "a5cd69b0-b554-43d7-8235-9a702e4ee91a",
+        "name": "Request de Reagendar",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "WEyM3Tk5faRx2BkK",
+            "name": "Cal.com"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Request de Reagendar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "07e34034-8330-4362-809f-ea290a5c9438",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

@@ -1,0 +1,224 @@
+[
+  {
+    "createdAt": "2025-05-06T17:52:36.876Z",
+    "updatedAt": "2025-05-27T11:34:31.000Z",
+    "id": "n5JM6vI2EDrkN2cE",
+    "name": "[FA] Agent Tracker",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "passthrough"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "031134d5-55ad-4e0c-b476-6aaabd649ed2",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e2329bea-4ec5-4dce-83f4-0cf58b425808",
+                "name": "timestamp",
+                "value": "={{ $now.format('dd/MM/yyyy HH:mm:ss') }}",
+                "type": "string"
+              },
+              {
+                "id": "9dd30a3c-e6fc-4bda-99f5-d26487af3fa7",
+                "name": "workflow",
+                "value": "={{ $json.workflow }}",
+                "type": "string"
+              },
+              {
+                "id": "6b6b0a53-de0d-4a2c-92a7-b4e055336ae9",
+                "name": "input",
+                "value": "={{ $json.intermediateSteps[0].action.toolInput.searchTopic }}",
+                "type": "string"
+              },
+              {
+                "id": "ebf98843-32e0-494e-9154-f0ab1dc55152",
+                "name": "output",
+                "value": "={{ $json.output }}",
+                "type": "string"
+              },
+              {
+                "id": "79699baf-38aa-4a06-8e37-7d50422b8948",
+                "name": "tokens",
+                "value": "={{ $json.intermediateSteps[0].action.messageLog[0].kwargs.response_metadata.usage.total_tokens }}",
+                "type": "number"
+              },
+              {
+                "id": "68433330-08ed-4f35-974b-b08500daf42f",
+                "name": "cost",
+                "value": "={{ $json.intermediateSteps[0].action.messageLog[0].kwargs.response_metadata.usage.cost }}",
+                "type": "number"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          220,
+          0
+        ],
+        "id": "bf565592-0a33-4e94-9a35-f98900cad405",
+        "name": "Mapear Campos"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1g1mDNMnNd1qturYZpYQolS1AxJgIxdOM2QW34VXMvnM",
+            "mode": "list",
+            "cachedResultName": "Track de Agente",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1g1mDNMnNd1qturYZpYQolS1AxJgIxdOM2QW34VXMvnM/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1g1mDNMnNd1qturYZpYQolS1AxJgIxdOM2QW34VXMvnM/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Horário": "={{ $json.timestamp }}",
+              "Workflow": "={{ $json.workflow }}",
+              "Entrada": "={{ $json.input }}",
+              "Saída": "={{ $json.output }}",
+              "Tokens": "={{ $json.tokens }}",
+              "Custo Total": "={{ $json.cost }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Horário",
+                "displayName": "Horário",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Workflow",
+                "displayName": "Workflow",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Entrada",
+                "displayName": "Entrada",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Saída",
+                "displayName": "Saída",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Tokens",
+                "displayName": "Tokens",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Custo Total",
+                "displayName": "Custo Total",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          440,
+          0
+        ],
+        "id": "4d3a5c24-a3ce-46e7-be10-5cb0b6a18ce4",
+        "name": "Enviar Log Para Planilha",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Mapear Campos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mapear Campos": {
+        "main": [
+          [
+            {
+              "node": "Enviar Log Para Planilha",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "1c0a3fdd-a8e1-4c1f-98cb-c64662104adf",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

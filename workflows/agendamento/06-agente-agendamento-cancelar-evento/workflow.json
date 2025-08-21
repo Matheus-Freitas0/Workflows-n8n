@@ -1,0 +1,104 @@
+[
+  {
+    "createdAt": "2025-05-14T11:17:29.229Z",
+    "updatedAt": "2025-05-27T11:34:07.000Z",
+    "id": "74RFbyQrpsvH3PTq",
+    "name": "[FA] Agente de Agendamento - Cancelar Evento",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "bookingUid"
+              },
+              {
+                "name": "reason"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "9fc4009c-3a50-4b0d-970a-43e228baf5f9",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://api.cal.com/v2/bookings/{{ $json.bookingUid }}/cancel",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "cal-api-version",
+                "value": "2024-08-13"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "cancellationReason",
+                "value": "={{ $json.reason }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "d819a905-0a3b-45e0-9b7a-1d08604e43a6",
+        "name": "HTTP Request",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "WEyM3Tk5faRx2BkK",
+            "name": "Cal.com"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "46ad9258-736d-4d28-a475-c0df56ddf5eb",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

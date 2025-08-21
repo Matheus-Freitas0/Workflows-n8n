@@ -1,0 +1,386 @@
+[
+  {
+    "createdAt": "2025-05-01T19:22:24.592Z",
+    "updatedAt": "2025-05-27T11:34:43.000Z",
+    "id": "u1c2Ih6REOx47e5o",
+    "name": "[FA] Agente de Selecao de Modelos",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "6a4c0e3d-09d8-4105-9beb-211d651dd212",
+        "name": "When chat message received",
+        "webhookId": "0dd0c722-fd16-48b0-b500-8270953961d6"
+      },
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "=Voce e um agente que precisa selecionar o melhor modelo para uma determinada tarefa que foi enviada pelo usuario no prompt: {{ $json.chatInput }}\n\nPrimeiramente selecione o modelo nas suas tools, você SEMPRE deve selecionar o modelo, esta é a sua única função\n\nDepois forneça a saida, que deve ser apenas o nome do modelo, da seguinte forma:\n\nqwen/qwen3-235b-a22b:free\n\n(se este fosse o escolhido)\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "9b22db90-2fe0-423f-86d2-302891fb7eb6",
+        "name": "Agente Seletor"
+      },
+      {
+        "parameters": {
+          "model": "google/gemini-2.0-flash-001",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          220,
+          220
+        ],
+        "id": "64e64576-f823-422a-a87a-37f19b1adb4f",
+        "name": "OpenRouter Chat Model",
+        "credentials": {
+          "openRouterApi": {
+            "id": "wHE2wqHyz8adm9VC",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Selecione um dos modelos listados na planilha para realizar a tarefa qu e o usuario pediu",
+          "documentId": {
+            "__rl": true,
+            "value": "1toBxA_8Cq59amJji_rwN32mV5yLaR0MBd8JTM3wTTJ8",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 324777403,
+            "mode": "list",
+            "cachedResultName": "Modelos_de_Destaque",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1toBxA_8Cq59amJji_rwN32mV5yLaR0MBd8JTM3wTTJ8/edit#gid=324777403"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.5,
+        "position": [
+          380,
+          220
+        ],
+        "id": "17659a6d-b6c3-4865-8f62-c3e8862b90f6",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "={{ $json.output.trim() }}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          580,
+          220
+        ],
+        "id": "1008ebd2-0786-4c83-93e5-3af4e43a09ea",
+        "name": "OpenRouter",
+        "credentials": {
+          "openRouterApi": {
+            "id": "wHE2wqHyz8adm9VC",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1X1GOpPx-R6FChOSNMzmUGzysrftKjmM9vJ8a9fMeK0k",
+            "mode": "id"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1X1GOpPx-R6FChOSNMzmUGzysrftKjmM9vJ8a9fMeK0k/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Data": "={{ $now.format(\"dd/MM/yyyy HH:mm:ss\") }}",
+              "Prompt": "={{ $('When chat message received').item.json.chatInput }}",
+              "Resposta": "={{ $json.output }}",
+              "Modelo": "={{ $('Agente Seletor').item.json.output.trim() }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Prompt",
+                "displayName": "Prompt",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Resposta",
+                "displayName": "Resposta",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Modelo",
+                "displayName": "Modelo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          940,
+          0
+        ],
+        "id": "1dec118a-8413-4db2-80c1-6af22b39ce6a",
+        "name": "Google Sheets1",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $('When chat message received').item.json.chatInput }}",
+          "options": {
+            "systemMessage": "Responda a dúvida do usuário com o maior número de detalhes possível\n\nUse a tool de Wikipedia para aprofundar em alguma informação se necessário\n\nE use a tool de Clima para resgatar a temperatura/clima de cidades que o usuario solicitar"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          580,
+          0
+        ],
+        "id": "cf971011-ab30-477a-b861-adc1a0395a89",
+        "name": "Agente Executor"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+        "typeVersion": 1,
+        "position": [
+          700,
+          220
+        ],
+        "id": "56a28c6f-2bb7-4588-b97c-466908322b19",
+        "name": "Wikipedia"
+      },
+      {
+        "parameters": {
+          "name": "GetWeather",
+          "description": "Chame esta ferramenta quando o usuario pedir clima/temperatura de uma cidade",
+          "workflowId": {
+            "__rl": true,
+            "value": "lgO8jE8SSeSINJPZ",
+            "mode": "list",
+            "cachedResultName": "Weather Agent - Get Weather"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "city": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('city', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "city"
+            ],
+            "schema": [
+              {
+                "id": "city",
+                "displayName": "city",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.1,
+        "position": [
+          840,
+          220
+        ],
+        "id": "8fe008d3-6f11-4116-8140-f7da60fe4196",
+        "name": "Info de Clima"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "Agente Seletor",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente Seletor",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente Seletor",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente Seletor": {
+        "main": [
+          [
+            {
+              "node": "Agente Executor",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente Executor",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente Executor": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wikipedia": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente Executor",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Info de Clima": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente Executor",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "ee9c9bb6-397b-4fba-84de-a490995801d3",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

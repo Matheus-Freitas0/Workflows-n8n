@@ -1,0 +1,1144 @@
+[
+  {
+    "createdAt": "2025-07-09T22:36:59.825Z",
+    "updatedAt": "2025-07-10T12:12:54.000Z",
+    "id": "DL294uiC5au95ebg",
+    "name": "[FA] Agente Catálogo de Produtos WhatsApp",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "0e2af9f0-2509-4d72-9d15-c353d89423db",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "d5a64008-4ae8-400d-a40c-d28cdd749d29",
+        "name": "Webhook",
+        "webhookId": "0e2af9f0-2509-4d72-9d15-c353d89423db"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "93f9e0fc-3b4e-455b-a570-3075fb77f0a3",
+                "name": "From",
+                "value": "={{ $json.body.data.key.remoteJid }}",
+                "type": "string"
+              },
+              {
+                "id": "5d438126-fbbd-47e1-80a2-5beb6635b890",
+                "name": "Instance",
+                "value": "={{ $json.body.instance }}",
+                "type": "string"
+              },
+              {
+                "id": "b9556714-6286-4ab8-a502-646aa5e16aec",
+                "name": "Message",
+                "value": "={{ $json.body.data.message.conversation }}",
+                "type": "string"
+              },
+              {
+                "id": "707e89a2-e3b3-4b1a-8f17-939b146d66dc",
+                "name": "MessageId",
+                "value": "={{ $json.body.data.key.id }}",
+                "type": "string"
+              },
+              {
+                "id": "46164398-7eb8-4bc9-a41e-1815d790e829",
+                "name": "Name",
+                "value": "={{ $json.body.data.pushName }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          256,
+          0
+        ],
+        "id": "12771406-257d-4c08-8ebc-1bbc7c894c90",
+        "name": "Extraindo Dados"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "6b76d564-d9d8-41b3-a14b-589c057d4440",
+                "leftValue": "={{ $json.From }}",
+                "rightValue": "0404",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          528,
+          0
+        ],
+        "id": "17342522-32b5-4faa-8426-efac21cc6f32",
+        "name": "Verifica Numero"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Extraindo Dados').item.json.Message }}",
+                      "rightValue": "DB:",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notStartsWith"
+                      },
+                      "id": "57520d00-4d66-4421-8ebf-af1944d94820"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "mensagem"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "bf413a27-422e-4217-8e99-c2c5758f80ff",
+                      "leftValue": "={{ $('Extraindo Dados').item.json.Message }}",
+                      "rightValue": "DB:",
+                      "operator": {
+                        "type": "string",
+                        "operation": "startsWith"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "inserir"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          848,
+          -16
+        ],
+        "id": "e388331e-4d98-4e4a-96dc-167d75a2dbd8",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Extrai o corpo da mensagem do primeiro item de entrada\nconst message = $input.first().json.Message;\n\n// Procura por uma URL (com ou sem http/https) usando regex\nconst urlMatch = message.match(/(?:https?:\\/\\/)?[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}(?:\\/\\S*)?/);\n\n// Se encontrar uma URL válida\nif (urlMatch) {\n  let url = urlMatch[0];\n\n  // Caso a URL não comece com http ou https, adiciona https://\n  if (!url.startsWith(\"http\")) {\n    url = \"https://\" + url; // Garante protocolo seguro\n  }\n\n  // Retorna a URL encontrada num objeto\n  return [{ product_url: url }];\n} else {\n  // Caso não encontre URL, devolve mensagem de erro\n  return [{ product_url: \"URL inválida\" }];\n}"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1184,
+          144
+        ],
+        "id": "92b7ada9-96f8-423e-ad6e-bfb068cfeec8",
+        "name": "Extrair URL"
+      },
+      {
+        "parameters": {
+          "url": "={{ $json.product_url }}",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "teste",
+                "value": "a"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1392,
+          144
+        ],
+        "id": "a8487857-c075-4214-a074-830caf60ff6f",
+        "name": "Web Scraping"
+      },
+      {
+        "parameters": {
+          "jsCode": "/*\n * Espera o HTML bruto em items[0].json.data\n * Retorna a URL da imagem principal do produto\n */\n\nconst html = $input.first().json.data;\n\n// 1) Captura a ***tag completa*** que tem id=\"landingImage\"\n//    [\\s\\S]*?   → pega qualquer coisa (inclusive quebras de linha) de forma não-gulosa\nconst tagMatch = html.match(/<img[^>]*\\bid\\s*=\\s*[\"']landingImage[\"'][\\s\\S]*?>/i);\n\nlet productImage = null;\n\nif (tagMatch) {\n  const tag = tagMatch[0];\n\n  // 2) Tenta primeiro o atributo data-a-dynamic-image (normalmente tem a melhor resolução)\n  const dynMatch = tag.match(/\\bdata-a-dynamic-image\\s*=\\s*[\"']([^\"']+)[\"']/i);\n  if (dynMatch) {\n    // data-a-dynamic-image vem cheio de &quot;…&quot;\n    const dynVal = dynMatch[1].replace(/&quot;/g, '\"');\n    const urlInDyn = dynVal.match(/https[^\"]+/);\n    if (urlInDyn) productImage = urlInDyn[0];\n  }\n\n  // 3) Fallback → data-old-hires (em algumas páginas da Amazon)\n  if (!productImage) {\n    const hiresMatch = tag.match(/\\bdata-old-hires\\s*=\\s*[\"']([^\"']+)[\"']/i);\n    if (hiresMatch) productImage = hiresMatch[1];\n  }\n\n  // 4) Fallback → src\n  if (!productImage) {\n    const srcMatch = tag.match(/\\bsrc\\s*=\\s*[\"']([^\"']+)[\"']/i);\n    if (srcMatch) productImage = srcMatch[1];\n  }\n}\n\nreturn [\n  {\n    json: {\n      productImage,     // URL final ou null\n      found: !!productImage\n    }\n  }\n];\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1600,
+          144
+        ],
+        "id": "ea07971b-2dce-4c67-b11a-4fd79b049b82",
+        "name": "Encontar URL da imagem"
+      },
+      {
+        "parameters": {
+          "jsCode": "const data = $('Web Scraping').first().json.data\n\nconst textData = stripHtml(data).slice(0, 40000);\n\nreturn [{textData: textData}];\n\nfunction stripHtml(htmlString) {\n  if (typeof htmlString !== \"string\") return \"\";\n\n  // 1) Remove scripts e estilos por segurança e para não poluir o texto\n  const withoutScripts = htmlString\n    .replace(/<script\\b[^<]*(?:(?!<\\/script>)<[^<]*)*<\\/script>/gi, \"\")\n    .replace(/<style\\b[^<]*(?:(?!<\\/style>)<[^<]*)*<\\/style>/gi, \"\");\n\n  // 2) Remove todas as tags HTML restantes\n  let text = withoutScripts.replace(/<\\/?[^>]+(>|$)/g, \" \");\n\n  // 3) Converte entidades HTML básicas em caracteres\n  const entities = {\n    \"&nbsp;\": \" \",\n    \"&amp;\": \"&\",\n    \"&quot;\": '\"',\n    \"&lt;\": \"<\",\n    \"&gt;\": \">\"\n  };\n  text = text.replace(/&[a-z]+;/gi, (match) => entities[match] || match);\n\n  // 4) Remove espaços múltiplos e normaliza quebras de linha\n  return text.replace(/\\s{2,}/g, \" \").replace(/\\n+/g, \" \").trim();\n}\n"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1808,
+          144
+        ],
+        "id": "f6c06777-9cf5-414c-a2e1-2f4cec209b23",
+        "name": "Remocao das Tags"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI",
+            "mode": "list",
+            "cachedResultName": "Produtos WhatsApp",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Link": "={{ $('Extrair URL').item.json.product_url }}",
+              "Texto": "={{ $json.textData }}",
+              "Imagem": "={{ $('Encontar URL da imagem').item.json.productImage }}"
+            },
+            "matchingColumns": [
+              "Link"
+            ],
+            "schema": [
+              {
+                "id": "Link",
+                "displayName": "Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Preço",
+                "displayName": "Preço",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Descrição",
+                "displayName": "Descrição",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Categoria",
+                "displayName": "Categoria",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Texto",
+                "displayName": "Texto",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Imagem",
+                "displayName": "Imagem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          2016,
+          144
+        ],
+        "id": "f0880f3a-d6f8-48a7-8ca1-387635714c57",
+        "name": "Atualiza ou insere Produto",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          2128,
+          512
+        ],
+        "id": "57accff9-ef0a-46b7-8fec-100a181723c8",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=URL do produto:  {{ $('Extrair URL').item.json.product_url }}\n\nTexto da página do produto: {{ $('Remocao das Tags').item.json.textData }}",
+          "options": {
+            "systemMessage": "=Você receberá o texto de uma página de produto. Sua tarefa é extrair o nome do produto e o preço.\n\nVocê tem acesso à ferramenta do Google Sheets, que permite atualizar colunas e células dentro de uma planilha.\n\nSua missão é sempre adicionar o nome do produto, o preço e o tipo do produto (ex: curso, software, serviço, etc.) na mesma linha da planilha onde está o link do produto recebido.\n\nAo inserir o preço, certifique-se de identificar claramente, com base na descrição do produto, se o valor é referente a uma assinatura ou a um pagamento único.\n\nO Preço deve conter apenas a moeda e o valor, nada mais.\n\nEste preço geralmente fica perto de textos como: \"Preço digital sugerido: R$7,90\", \"Quantidade: 1 R$ R$ 49,66\"\n\nNão invente preço, este dado é de vital importancia.\n\nApós a atualização OU adição de produto na planilha, envie um email com a tool de E-mails para notificar essa nova operação"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          2224,
+          144
+        ],
+        "id": "77657934-a789-4439-94c6-e3a6be40eadf",
+        "name": "Agente de Produto"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI",
+            "mode": "list",
+            "cachedResultName": "Produtos WhatsApp",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Link": "={{ $('Extrair URL').item.json.product_url }}",
+              "Nome": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nome', ``, 'string') }}",
+              "Preço": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Pre_o', ``, 'string') }}",
+              "Descrição": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Descri__o', ``, 'string') }}",
+              "Categoria": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Categoria', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "Link"
+            ],
+            "schema": [
+              {
+                "id": "Link",
+                "displayName": "Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Preço",
+                "displayName": "Preço",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Descrição",
+                "displayName": "Descrição",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Categoria",
+                "displayName": "Categoria",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Texto",
+                "displayName": "Texto",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Imagem",
+                "displayName": "Imagem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.6,
+        "position": [
+          2368,
+          496
+        ],
+        "id": "94f0a702-e532-417c-9aff-4d90ffab6784",
+        "name": "Atualizacao dos Dados do Produto",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sendTo": "suporte@horadecodar.com.br",
+          "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+          "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          2544,
+          496
+        ],
+        "id": "c7298f5b-ae7f-4b3e-baef-7a84cfe35021",
+        "name": "Send a message in Gmail",
+        "webhookId": "4f524d16-19df-42d5-9597-74fb3f392e73",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "n2OP0HoEkh2BoEis",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "={{ $('Extraindo Dados').item.json.Instance }}",
+          "remoteJid": "={{ $('Extraindo Dados').item.json.From }}",
+          "messageText": "={{ $json.output }}",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          2912,
+          48
+        ],
+        "id": "bef348e2-4c34-4779-bcf2-4c9b2b8d1934",
+        "name": "Resposta Sistema",
+        "credentials": {
+          "evolutionApi": {
+            "id": "CQVEFNu2NaPW1rYu",
+            "name": "Evolution account Curso"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Mensagem do Usuário:  {{ $('Extraindo Dados').item.json.Message }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "=Se o usuário não solicitar um produto em específico, não envie imagens\n\nE se o usuário pedir um produto específico, garanta que a imagem seja do mesmo produto que ele solicitou, utilize a tool Pegar Produto Individual para resgatar essas informações do produto, você pode consultar antes em Consulta Produto para saber o nome exato do produto e passar para Pegar Produto Individual\n\nNa planilha o produto está cadastrado todo na mesma linha, ou seja, as suas informações e imagens estão em colunas lado a lado"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          1360,
+          -368
+        ],
+        "id": "780a502b-1b48-4d41-9437-d48e4dc347fb",
+        "name": "Agente de Consulta"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1216,
+          -48
+        ],
+        "id": "f77a1ffd-1543-4dad-abef-3c1aa5349877",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('Verifica Numero').item.json.From }}",
+          "contextWindowLength": 10
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          1408,
+          -48
+        ],
+        "id": "876df829-28ed-49e8-b110-5832ef23cc83",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI",
+            "mode": "list",
+            "cachedResultName": "Produtos WhatsApp",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI/edit#gid=0"
+          },
+          "options": {
+            "dataLocationOnSheet": {
+              "values": {
+                "rangeDefinition": "detectAutomatically",
+                "readRowsUntil": "firstEmptyRow"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.6,
+        "position": [
+          1760,
+          -64
+        ],
+        "id": "99a464aa-278e-4130-9102-699a34a67c3e",
+        "name": "Consulta Produto",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\t\"image\": \"Link da imagem do produto que o usuário solicitou, se não solicitou envie este campo como null\",\n    \"output\": \"Mensagem gerada pelo Agente de IA para responder o usuário\"\n}",
+          "autoFix": true
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          1872,
+          -160
+        ],
+        "id": "f9f9d745-03b4-4798-b99d-57e1eb6f427f",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1984,
+          0
+        ],
+        "id": "73697193-593b-45ec-8795-558a0201ed0b",
+        "name": "OpenAI Chat Model2",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "d82217e6-2387-42e3-93a7-1fd79467d068",
+                "name": "image",
+                "value": "={{ $json.output.image }}",
+                "type": "string"
+              },
+              {
+                "id": "bcb21539-eabf-48ab-ac2d-80d9610d2b08",
+                "name": "output",
+                "value": "={{ $json.output.output }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2000,
+          -368
+        ],
+        "id": "dd48c08f-50ab-451b-ae20-f13c2613277e",
+        "name": "Resposta do Agente"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c1702cac-89fb-43e9-a563-8343c86db151",
+                "leftValue": "={{ $json.image }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2208,
+          -368
+        ],
+        "id": "440508fc-bfd6-4f97-9fdb-665a847513f3",
+        "name": "Verifica se veio Imagem"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "={{ $('Extraindo Dados').item.json.Instance }}",
+          "remoteJid": "={{ $('Extraindo Dados').item.json.From }}",
+          "messageText": "={{ $('Resposta do Agente').item.json.output }}",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          2912,
+          -272
+        ],
+        "id": "38656858-44fa-4991-83d1-ca65d7332343",
+        "name": "Resposta para Usuario",
+        "credentials": {
+          "evolutionApi": {
+            "id": "CQVEFNu2NaPW1rYu",
+            "name": "Evolution account Curso"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "operation": "send-image",
+          "instanceName": "={{ $('Extraindo Dados').item.json.Instance }}",
+          "remoteJid": "={{ $('Extraindo Dados').item.json.From }}",
+          "media": "={{ $('Resposta do Agente').item.json.image }}",
+          "caption": "Foto real do produto",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          2512,
+          -496
+        ],
+        "id": "87574d8d-8450-4528-aa61-7c16f83050c7",
+        "name": "Enviar imagem",
+        "credentials": {
+          "evolutionApi": {
+            "id": "CQVEFNu2NaPW1rYu",
+            "name": "Evolution account Curso"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI",
+            "mode": "list",
+            "cachedResultName": "Produtos WhatsApp",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MrMPDg8ohEbkrI_5hnT41f2ua_pZxhG1a0RVeoJLdwI/edit#gid=0"
+          },
+          "filtersUI": {
+            "values": [
+              {
+                "lookupColumn": "Nome",
+                "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', ``, 'string') }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.6,
+        "position": [
+          1568,
+          -48
+        ],
+        "id": "66e4cfb6-3902-4c5d-b43d-3e412aa5564e",
+        "name": "Pegar Produto Individual",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Extraindo Dados",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraindo Dados": {
+        "main": [
+          [
+            {
+              "node": "Verifica Numero",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verifica Numero": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Agente de Consulta",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extrair URL",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extrair URL": {
+        "main": [
+          [
+            {
+              "node": "Web Scraping",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Web Scraping": {
+        "main": [
+          [
+            {
+              "node": "Encontar URL da imagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Encontar URL da imagem": {
+        "main": [
+          [
+            {
+              "node": "Remocao das Tags",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Remocao das Tags": {
+        "main": [
+          [
+            {
+              "node": "Atualiza ou insere Produto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualiza ou insere Produto": {
+        "main": [
+          [
+            {
+              "node": "Agente de Produto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente de Produto",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualizacao dos Dados do Produto": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Produto",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message in Gmail": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Produto",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Produto": {
+        "main": [
+          [
+            {
+              "node": "Resposta Sistema",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente de Consulta",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Agente de Consulta",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Consulta Produto": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Consulta",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Agente de Consulta",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model2": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Structured Output Parser",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Consulta": {
+        "main": [
+          [
+            {
+              "node": "Resposta do Agente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Resposta do Agente": {
+        "main": [
+          [
+            {
+              "node": "Verifica se veio Imagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verifica se veio Imagem": {
+        "main": [
+          [
+            {
+              "node": "Enviar imagem",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Resposta para Usuario",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar imagem": {
+        "main": [
+          [
+            {
+              "node": "Resposta para Usuario",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pegar Produto Individual": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Consulta",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "8e8d66b7-8cc3-41e5-83f8-c9eab4eac1c4",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

@@ -1,0 +1,340 @@
+[
+  {
+    "createdAt": "2025-07-09T11:31:57.845Z",
+    "updatedAt": "2025-07-09T12:19:56.000Z",
+    "id": "Aa2vDh0WUUi4BZ0q",
+    "name": "[FA] Agente de IA com WhatsApp",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "6efe9d7d-9144-4cfe-ba55-42c3dbaf185a",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -140,
+          60
+        ],
+        "id": "ff1f0a22-22a7-460c-937d-fad4ac62bf62",
+        "name": "Webhook",
+        "webhookId": "6efe9d7d-9144-4cfe-ba55-42c3dbaf185a"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "93f9e0fc-3b4e-455b-a570-3075fb77f0a3",
+                "name": "From",
+                "value": "={{ $json.body.data.key.remoteJid }}",
+                "type": "string"
+              },
+              {
+                "id": "5d438126-fbbd-47e1-80a2-5beb6635b890",
+                "name": "Instance",
+                "value": "={{ $json.body.instance }}",
+                "type": "string"
+              },
+              {
+                "id": "b9556714-6286-4ab8-a502-646aa5e16aec",
+                "name": "Message",
+                "value": "={{ $json.body.data.message.conversation }}",
+                "type": "string"
+              },
+              {
+                "id": "707e89a2-e3b3-4b1a-8f17-939b146d66dc",
+                "name": "MessageId",
+                "value": "={{ $json.body.data.key.id }}",
+                "type": "string"
+              },
+              {
+                "id": "46164398-7eb8-4bc9-a41e-1815d790e829",
+                "name": "Name",
+                "value": "={{ $json.body.data.pushName }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          80,
+          60
+        ],
+        "id": "d2f83bfb-95a5-47cc-acf4-a1cb1ea0f3d9",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "6b76d564-d9d8-41b3-a14b-589c057d4440",
+                "leftValue": "={{ $json.From }}",
+                "rightValue": "0404",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          300,
+          60
+        ],
+        "id": "6e7324ce-4ee6-4da1-ab80-6d7732c69cea",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Mensagem do usuário:  {{ $json.Message }}",
+          "options": {
+            "systemMessage": "=Você é um Agente que auxilia o usuário e pode enviar e-mails\n\nSe o usuário quiser enviar emails, solicite:\n\nEmail para enviar, assunto e corpo da mensagem\n\nO dado obrigatório é o email para enviar, o restante você pode tentar completar baseado no que o usuario enviou para você\n\nSe algo não ficar claro, pergunte ao usuário\n\nNome do cliente: {{ $('Edit Fields').item.json.Name }}\n\nData atual: {{ $now }}"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          520,
+          -40
+        ],
+        "id": "e99a954a-8590-4101-8016-164342dc7c60",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          420,
+          300
+        ],
+        "id": "20669dd3-1e05-4c7e-a848-413414b5c065",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "chat-api",
+          "operation": "read-messages",
+          "instanceName": "={{ $('Edit Fields').item.json.Instance }}",
+          "remoteJid": "={{ $('Edit Fields').item.json.From }}",
+          "messageId": "={{ $('Edit Fields').item.json.MessageId }}"
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          880,
+          -40
+        ],
+        "id": "3c361540-8839-4b98-b105-650b45edff38",
+        "name": "Marcar mensagens como lidas",
+        "credentials": {
+          "evolutionApi": {
+            "id": "CQVEFNu2NaPW1rYu",
+            "name": "Evolution account Curso"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "={{ $('Edit Fields').item.json.Instance }}",
+          "remoteJid": "={{ $('Edit Fields').item.json.From }}",
+          "messageText": "={{ $('AI Agent').item.json.output }}",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          1100,
+          -40
+        ],
+        "id": "4853bf6a-eeec-496c-9d1c-ef3ef077efc3",
+        "name": "Enviar texto",
+        "credentials": {
+          "evolutionApi": {
+            "id": "CQVEFNu2NaPW1rYu",
+            "name": "Evolution account Curso"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('Edit Fields').item.json.From }}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          580,
+          300
+        ],
+        "id": "2feb2468-d122-44b7-b786-4996bee7da77",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+          "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+          "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          820,
+          320
+        ],
+        "id": "80110128-7393-4529-9a35-923b43c059bc",
+        "name": "Send a message in Gmail",
+        "webhookId": "afeacb93-2dd5-4c91-a35a-bb0b8abe9f33",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "n2OP0HoEkh2BoEis",
+            "name": "Gmail account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Marcar mensagens como lidas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Marcar mensagens como lidas": {
+        "main": [
+          [
+            {
+              "node": "Enviar texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message in Gmail": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "7736c358-b572-4fae-ba78-04800b30a2e6",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

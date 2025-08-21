@@ -1,0 +1,91 @@
+[
+  {
+    "createdAt": "2025-05-14T11:53:42.913Z",
+    "updatedAt": "2025-05-27T11:34:05.000Z",
+    "id": "49xmAJG7txURIxrp",
+    "name": "[FA] Agente de Agendamento - Detalhes do Evento",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "bookingUid"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "6984d2fa-b74f-4184-b52a-97eb6a600b34",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "url": "=https://api.cal.com/v2/bookings/{{ $json.bookingUid }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "cal-api-version",
+                "value": "2024-08-13"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "b027c4a8-114d-47f1-8a5c-bb1ec14a5a65",
+        "name": "Request de Evento",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "WEyM3Tk5faRx2BkK",
+            "name": "Cal.com"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Request de Evento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "0a770568-9c66-4f9c-a3d1-3ced965dc988",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]
