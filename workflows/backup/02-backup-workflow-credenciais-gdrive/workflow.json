@@ -1,0 +1,455 @@
+[
+  {
+    "createdAt": "2025-06-07T17:19:08.589Z",
+    "updatedAt": "2025-06-14T20:12:59.000Z",
+    "id": "re2KPaGwrI9K4CWU",
+    "name": "[FA] Backup Workflow e Credenciais GDrive",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "a15b32cf-2ecd-44ac-8b54-5865654a1b79",
+        "name": "When clicking ‘Test workflow’"
+      },
+      {
+        "parameters": {
+          "resource": "folder",
+          "name": "=Backup dia {{ $now.format('dd/MM/yyyy') }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1FRWVYwNokneCROOOK7BYp33NTZgBOeu5",
+            "mode": "list",
+            "cachedResultName": "Backups Workflows",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1FRWVYwNokneCROOOK7BYp33NTZgBOeu5"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          220,
+          0
+        ],
+        "id": "213f0500-d79e-4c5e-852e-45cfb087602b",
+        "name": "Cria a pasta",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "filters": {},
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.n8n",
+        "typeVersion": 1,
+        "position": [
+          440,
+          0
+        ],
+        "id": "55fc04e7-efb0-4684-921f-ea833666e7a8",
+        "name": "Pega Todos Workflows",
+        "credentials": {
+          "n8nApi": {
+            "id": "iDgc7S7rPpl4W7OR",
+            "name": "n8n account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          680,
+          -20
+        ],
+        "id": "6bca649a-bfe4-4648-baf6-7124bb18c0d4",
+        "name": "Percorrer cada Workflow",
+        "executeOnce": false
+      },
+      {
+        "parameters": {
+          "operation": "toJson",
+          "options": {
+            "fileName": "={{ $json.name + \".json\" }}"
+          }
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          880,
+          200
+        ],
+        "id": "aa1f1744-bc59-407b-899b-5d4d1ccdb59d",
+        "name": "Convert to File"
+      },
+      {
+        "parameters": {
+          "content": "## Fluxo de Exclusão\n\nRemove as pastas antigas, verificando a pasta nova e deletando todas as pastas que não são esta nova criada",
+          "height": 300,
+          "width": 860
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          840,
+          -200
+        ],
+        "typeVersion": 1,
+        "id": "f4336137-cbc8-46fb-b800-e5df8ab68a1a",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          920,
+          -60
+        ],
+        "id": "5ef50e20-5a36-4359-bff0-f4160e9bf7c3",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "1FRWVYwNokneCROOOK7BYp33NTZgBOeu5",
+              "mode": "list",
+              "cachedResultName": "Backups Workflows",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/1FRWVYwNokneCROOOK7BYp33NTZgBOeu5"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1140,
+          -60
+        ],
+        "id": "d34de895-164f-4fd3-8036-5bfc6cf0e4f8",
+        "name": "Pega pastas de backup",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "87e46127-3e6e-4566-a49c-276d2b7cb27c",
+                "leftValue": "={{ $json.id }}",
+                "rightValue": "={{ $('Cria a pasta').item.json.id }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1360,
+          -60
+        ],
+        "id": "951e2df6-f170-4d4e-996c-40ceb85401bf",
+        "name": "Filtra pastas antigas"
+      },
+      {
+        "parameters": {
+          "resource": "folder",
+          "operation": "deleteFolder",
+          "folderNoRootId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1580,
+          -60
+        ],
+        "id": "cfdbe7c9-ce66-4071-9afb-79d0e68ec134",
+        "name": "Excluir pastas",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "name": "={{ $('Percorrer cada Workflow').item.json.name + \".json\" }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Cria a pasta').item.json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1180,
+          200
+        ],
+        "id": "423c134e-a728-4e4f-824b-695bc6070745",
+        "name": "Enviar workflow",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 12
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          300
+        ],
+        "id": "3cb9e1d4-1217-4690-9144-f6d82cde28d3",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "1WfwJvW2D1cw7mds",
+            "mode": "list"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "id": "={{ $json.id }}"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          680,
+          -400
+        ],
+        "name": "Call Backup Credenciais",
+        "id": "198011fe-b557-4420-b28a-96d84574a965"
+      }
+    ],
+    "connections": {
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Cria a pasta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cria a pasta": {
+        "main": [
+          [
+            {
+              "node": "Pega Todos Workflows",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Call Backup Credenciais",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pega Todos Workflows": {
+        "main": [
+          [
+            {
+              "node": "Percorrer cada Workflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Percorrer cada Workflow": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convert to File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File": {
+        "main": [
+          [
+            {
+              "node": "Enviar workflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "Pega pastas de backup",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pega pastas de backup": {
+        "main": [
+          [
+            {
+              "node": "Filtra pastas antigas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filtra pastas antigas": {
+        "main": [
+          [
+            {
+              "node": "Excluir pastas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar workflow": {
+        "main": [
+          [
+            {
+              "node": "Percorrer cada Workflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Cria a pasta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": {
+      "node:Schedule Trigger": {
+        "recurrenceRules": []
+      }
+    },
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "5f73544f-d85d-4294-b30a-bb93ee75fc09",
+    "triggerCount": 1,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

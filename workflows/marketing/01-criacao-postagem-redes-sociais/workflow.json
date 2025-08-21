@@ -1,0 +1,485 @@
+[
+  {
+    "createdAt": "2025-04-29T11:38:10.349Z",
+    "updatedAt": "2025-05-27T11:34:38.000Z",
+    "id": "e1UfFqujyOzT2RkV",
+    "name": "[FA] Criacao de postagem redes sociais",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "formTitle": "Gerador de Posts de Redes Sociais",
+          "formDescription": "Preencha os dados para criar o texto e a imagem do post",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Assunto do Post",
+                "placeholder": "O que deseja abordar?",
+                "requiredField": true
+              },
+              {
+                "fieldLabel": "Orientações adicionais",
+                "fieldType": "textarea",
+                "placeholder": "Detalhe como deve ser a postagem...",
+                "requiredField": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "e2053dc7-e94d-4508-a8f1-a6fbc596d329",
+        "name": "On form submission",
+        "webhookId": "c9e950cb-813c-490a-b66b-965cbd895608"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          200,
+          260
+        ],
+        "id": "04d7c9da-a962-492c-8c87-c2851efe5b3b",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "toolDescription": "Use esta tool para pesquisar informações atualizadas do assunto do post na internet.",
+          "method": "POST",
+          "url": "https://api.tavily.com/search",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"query\": \"{searchTopic}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"advanced\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+          "placeholderDefinitions": {
+            "values": [
+              {
+                "name": "searchTopic",
+                "description": "O que estamos buscando no Tavily"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+        "typeVersion": 1.1,
+        "position": [
+          380,
+          260
+        ],
+        "id": "5feed515-5fc4-4cba-a336-4ac9f1081950",
+        "name": "Buscar informacoes recentes",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "4GjNnwXRen3P5YU5",
+            "name": "Header Auth account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Geração do Post",
+          "height": 520,
+          "width": 400
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          140,
+          -80
+        ],
+        "typeVersion": 1,
+        "id": "ed28ea0a-004d-4b64-a2cb-9f539ddea312",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Texto do Post que você deve gerar a imagem:\n\n{{ $json.output }}",
+          "options": {
+            "systemMessage": "=Você é um agente de IA que transforma posts do LinkedIn em descriçoes para imagens. A imagem será enviada junto com a postagem, então ela precisa agregar ao post.\n\n\n# Objetivo:\n- Leia e analise o post fornecido do LinkedIn\n- Identifique a principal mensagem, insight ou conclusão do post\n- Crie uma descrição de imagem clara que será usada para criar a imagem\n\nA imagem gerada deve:\n\n1. Ser um gráfico com estilo de marketing – não uma cena ou foto\n2. Representar visualmente ou ilustrar a ideia central do post\n3. Ter aparência profissional para ser publicada no LinkedIn\n4. Moderna e que chame a atenção\n\n# Instruções de Saída:\n- Forneça apenas a descrição final da imagem. Não inclua aspas\n- Não repita ou reformule o post do LinkedIn\n- Não adicione explicações ou qualquer conteúdo extra – apenas a descrição visual\n- Nunca use frases genéricas\n- Inclua estatísticas numéricas quando disponíveis no post original\n- A imagem precisa ter um fundo, que pode ser uma cor chapada ou degrade\n- Os textos da imagem precisam estar em portugues\n\n\n# Diretrizes para estilo\n- Pense como um designer\n- As imagens podem incluir: texto, gráficos, ícones, formas abstratas, sobreposições, ilustrações modernas, efeitos visuais, elementos de tipografia ousada (descritos, não renderizados)\n- Pode incluir sugestões de layout (ex: “design dividido”, “título em negrito com ilustração de fundo sutil”)\n- A imagem será gerada por IA – sua tarefa é usar a descrição para guiar a geração de forma eficaz\n- Tente não deixar os textos muito proximos das bordas\n\n\n# Exemplo de Formato de Saída:\n\n- Gráfico moderno mostrando um foguete decolando de uma plataforma de lançamento com gráficos financeiros ascendentes ao fundo, simbolizando crescimento acelerado de startups. Fundo azul escuro com detalhes em neon.\n\n- Ilustração abstrata de várias engrenagens interconectadas com ícones de nuvem, IA e segurança digital, representando a integração de tecnologia nas empresas. Estilo flat com tons pastel e tipografia minimalista."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          620,
+          0
+        ],
+        "id": "07f71dfa-1888-489a-a7b5-eeea2ea05c45",
+        "name": "Agente Prompt para Imagem"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/images/generations",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{ $env.OPENAI_API_KEY }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "model",
+                "value": "gpt-image-1"
+              },
+              {
+                "name": "prompt",
+                "value": "={{ $('Agente Prompt para Imagem').item.json.output }}"
+              },
+              {
+                "name": "size",
+                "value": "1024x1024"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1200,
+          0
+        ],
+        "id": "09ab62cb-ce97-4e10-89e7-dfe83a9ab1b2",
+        "name": "Gerando base64 da imagem"
+      },
+      {
+        "parameters": {
+          "operation": "toBinary",
+          "sourceProperty": "data[0].b64_json",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          1420,
+          0
+        ],
+        "id": "e878a087-f46f-49ed-a6f8-ef856e235d80",
+        "name": "Convert to File"
+      },
+      {
+        "parameters": {
+          "content": "## Geração da Imagem",
+          "height": 520,
+          "width": 1020,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          560,
+          -80
+        ],
+        "typeVersion": 1,
+        "id": "a4015392-d2a6-43d1-b20d-aa0fa406d787",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "resource": "folder",
+          "name": "=Criativo de {{ $now.format('dd-MM-yyyy') }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1qCW_yYS2fJQ2fd0ddYDXaz-ch0a_j7bo",
+            "mode": "list",
+            "cachedResultName": "Artes Auto",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1qCW_yYS2fJQ2fd0ddYDXaz-ch0a_j7bo"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          980,
+          0
+        ],
+        "id": "05b65ac5-7328-46d1-8ffc-928fcd21d7c5",
+        "name": "Criar a Pasta no Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "name": "Imagem",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Criar a Pasta no Drive').item.json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1640,
+          0
+        ],
+        "id": "9956fe85-d074-4f90-87bb-9ad0c9f25504",
+        "name": "Enviar imagem para o Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "folderId": "={{ $('Criar a Pasta no Drive').item.json.id }}",
+          "title": "Texto"
+        },
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          1860,
+          0
+        ],
+        "id": "e4ad167d-2d55-413f-9a54-5fd1baacfd0f",
+        "name": "Cria arquivo de Texto",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "98LaqRb26p1zwBpD",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentURL": "={{ $json.id }}",
+          "actionsUi": {
+            "actionFields": [
+              {
+                "action": "insert",
+                "text": "={{ $('Agente de Texto do Post').item.json.output }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          2080,
+          0
+        ],
+        "id": "9bf113b8-fd1b-4097-8ad2-eea5164461b5",
+        "name": "Google Docs",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "98LaqRb26p1zwBpD",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Assunto do Post: {{ $json['Assunto do Post'] }}\n\nOutras orientações para a postagem: {{ $json['Orientações adicionais'] }}",
+          "options": {
+            "systemMessage": "=Você é um agente de IA especializado em criar posts profissionais e educativos para o LinkedIn, a partir de um tópico fornecido pelo usuário.\n\n# Objetivos:\n- Pesquise informações atualizadas usando a ferramenta Tavily.\n- Crie um post com:\n  - Introdução envolvente\n  - Tom profissional e educativo\n  - Texto claro e fácil de ler\n  - Uso mínimo de emojis (apenas se altamente relevante)\n  - Citação de fontes (ex: \"segundo [fonte]\")\n  - Hashtags relevantes\n  - Chamada para ação ao final (como pedir opinião ou compartilhamento)\n\n# Instruções de Saída:\n- Sua ÚNICA saída deve ser o texto final do post para o LinkedIn.\n- Não inclua explicações, comentários ou notas extras.\n\n\n# Exemplo do Fluxo:\n1. Receba o tópico.\n2. Pesquise usando Tavily.\n3. Crie o post baseado nas informações encontradas.\n4. Estruture o texto com fonte citada, clareza, hashtags e chamada para ação."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "5354333f-3328-4b1b-bd85-835c9e608127",
+        "name": "Agente de Texto do Post"
+      },
+      {
+        "parameters": {
+          "content": "## Envio de arquivos para o Drive",
+          "height": 520,
+          "width": 620
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1600,
+          -80
+        ],
+        "typeVersion": 1,
+        "id": "5b3f0f35-e1e8-4768-b88a-5b83999b5a89",
+        "name": "Sticky Note2"
+      }
+    ],
+    "connections": {
+      "On form submission": {
+        "main": [
+          [
+            {
+              "node": "Agente de Texto do Post",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente Prompt para Imagem",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Agente de Texto do Post",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar informacoes recentes": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Texto do Post",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente Prompt para Imagem": {
+        "main": [
+          [
+            {
+              "node": "Criar a Pasta no Drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gerando base64 da imagem": {
+        "main": [
+          [
+            {
+              "node": "Convert to File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File": {
+        "main": [
+          [
+            {
+              "node": "Enviar imagem para o Drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Criar a Pasta no Drive": {
+        "main": [
+          [
+            {
+              "node": "Gerando base64 da imagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar imagem para o Drive": {
+        "main": [
+          [
+            {
+              "node": "Cria arquivo de Texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cria arquivo de Texto": {
+        "main": [
+          [
+            {
+              "node": "Google Docs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Texto do Post": {
+        "main": [
+          [
+            {
+              "node": "Agente Prompt para Imagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "callerPolicy": "workflowsFromSameOwner",
+      "errorWorkflow": "m6Z0YEdWjp0gNZAp"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "5115e83f-4f1d-419c-81ff-f1ed1026149c",
+    "triggerCount": 1,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

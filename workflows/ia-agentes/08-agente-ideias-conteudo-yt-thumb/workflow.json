@@ -1,0 +1,242 @@
+[
+  {
+    "createdAt": "2025-05-07T18:57:07.216Z",
+    "updatedAt": "2025-05-27T11:34:25.000Z",
+    "id": "oyNFhoBgH29BlOVl",
+    "name": "[FA] Agente Ideias de Conteúdo YT - Thumb",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "idea"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "095ce233-296d-4b13-8d03-d8ddb1c162ff",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.idea }}",
+          "options": {
+            "systemMessage": "=## Thumbnail Agent\n\nVocê é o **Thumbnail Agent**, um assistente focado em transformar uma ideia de vídeo em um prompt preciso para geração de imagem, com o objetivo de criar uma thumbnail para YouTube.\n\n---\n\n### Entrada\n- Uma descrição curta da ideia ou tema do vídeo (incluindo o ângulo ou palavras-chave, se houver).\n\n---\n\n### Saída\n- Um único prompt detalhado, otimizado para geradores de imagem por texto.\n- Retorne **apenas** o prompt — sem explicações ou texto adicional.\n\n---\n\n### Requisitos do Prompt\n\n**Assunto e Foco:**  \nNomeie claramente o elemento visual principal (exemplo: pessoa, objeto, cena).\n\n**Ação e Emoção:**  \nDescreva o que está acontecendo e qual é o sentimento ou energia desejada.\n\n**Texto na Imagem:**  \nInclua qualquer texto ou chamada para ação que deve aparecer na thumbnail, com sugestão de posicionamento (topo, centro ou base).\n\n**Estilo e Estética:**  \nDefina o estilo da arte (realista, cartoon, render 3D), a paleta de cores (contrastes fortes, cores vibrantes) e a iluminação (alto contraste, brilho suave).\n\n**Legibilidade e Impacto:**  \nGaranta que o elemento visual e o texto sejam claros mesmo em tamanhos pequenos.\n\n---\n\n### Formatação e Tom\n- Escreva em português claro, descritivo e direto, em um único parágrafo.\n- Use verbos imperativos e linguagem visual forte (“Mostre”, “Destaque”, “Ilustre”).\n- Evite jargões técnicos — foque em detalhes visuais.\n\n---\n\n### Exemplo de Prompt\n\nMostre uma visão dinâmica em close-up de um robô humanoide segurando um circuito em forma de cérebro brilhante, com fundo de uma cidade futurista e escura. Posicione o texto em caixa alta “CONSTRUA AGENTES DE IA” no topo em azul neon com uma sombra suave, e “Guia passo a passo” menor na parte inferior. Use uma paleta de cores cyberpunk com alto contraste, realces luminosos e iluminação dramática para destacar o robô e o texto em telas pequenas.\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "150c2ee6-e73c-46f0-87c8-48e49fef3cb8",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          120,
+          280
+        ],
+        "id": "93a7ff63-f53c-4208-b8d9-0aaee08e63f7",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/images/generations",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "Bearer {{ $env.OPENAI_API_KEY }}"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "model",
+                "value": "gpt-image-1"
+              },
+              {
+                "name": "prompt",
+                "value": "={{ $json.output }}"
+              },
+              {
+                "name": "size",
+                "value": "1536x1024"
+              },
+              {
+                "name": "quality",
+                "value": "medium"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          580,
+          0
+        ],
+        "id": "0d716758-d5d5-4666-a01d-c9a9eec2c448",
+        "name": "Gerando base64 da imagem"
+      },
+      {
+        "parameters": {
+          "operation": "toBinary",
+          "sourceProperty": "data[0].b64_json",
+          "binaryPropertyName": "thumbnail",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          800,
+          0
+        ],
+        "id": "71962c9b-9e76-4495-940b-0d8091292882",
+        "name": "Converter para imagem"
+      },
+      {
+        "parameters": {
+          "inputDataFieldName": "thumbnail",
+          "name": "={{ $('When Executed by Another Workflow').item.json.idea }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1tCXOOOvj4c23txnd0D53nhtz8AbqWXzG",
+            "mode": "list",
+            "cachedResultName": "Thumbs YT",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1tCXOOOvj4c23txnd0D53nhtz8AbqWXzG"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1020,
+          0
+        ],
+        "id": "45ba648a-7b01-400d-9aa5-ef5f655b00a3",
+        "name": "Subir imagem para o Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Gerando base64 da imagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Gerando base64 da imagem": {
+        "main": [
+          [
+            {
+              "node": "Converter para imagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Converter para imagem": {
+        "main": [
+          [
+            {
+              "node": "Subir imagem para o Drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "f6aaa0a7-832b-4646-a205-b0673ef1ec7a",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

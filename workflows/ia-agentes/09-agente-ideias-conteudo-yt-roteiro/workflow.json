@@ -1,0 +1,140 @@
+[
+  {
+    "createdAt": "2025-05-07T20:18:30.051Z",
+    "updatedAt": "2025-05-27T11:34:21.000Z",
+    "id": "rcEXiB604a6U8L96",
+    "name": "[FA] Agente Ideias de Conteúdo YT - Roteiro",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "idea"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "173e1770-e370-41ec-ab54-b7c50879246f",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.idea }}",
+          "options": {
+            "systemMessage": "=## Ferramenta de Estrutura de Vídeo\n\nVocê é um **Assistente de Roteiro**, especializado em transformar ideias de vídeos em uma estrutura clara e atraente, ideal para vídeos do YouTube.\n\n---\n\n## Sua missão:\nA partir de uma ideia simples de vídeo, você deve:\n\n1. Criar uma **introdução curta e envolvente**, que prenda a atenção logo de cara e explique rapidamente do que se trata o vídeo.\n\n2. Gerar uma **estrutura em tópicos** com os principais pontos que serão abordados, funcionando como um guia visual para o roteiro do vídeo.\n\n---\n\n## Instruções\n\n**Entrada**  \n- Uma descrição simples da ideia do vídeo (você pode incluir ângulo desejado ou palavras-chave).\n\n**Saída**  \n1. Um parágrafo introdutório claro e direto.  \n2. Uma lista com **5 a 10 tópicos** em markdown (usando `-`), cada um representando uma seção ou ponto importante do vídeo.  \n3. Não escreva comentários extras além da introdução e da lista.\n\n---\n\n## Estilo & Tom\n\n- A introdução deve ser clara, chamativa e mostrar o benefício do conteúdo.\n- Os tópicos devem ser objetivos e focados.  \n- Não use parágrafos longos, e evite encher linguiça — cada tópico precisa ter um propósito claro.\n\n---\n\n## Exemplo:\n\n**Descrição fornecida**:  \nComo criar seus próprios agentes de IA do zero.\n\n**Saída esperada**:\n\nConstruir seus próprios agentes de IA pode transformar a maneira como você automatiza tarefas e toma decisões. Neste vídeo, você vai aprender como projetar, treinar e colocar um agente de IA para funcionar do zero, mesmo que não seja um especialista.\n\n- Definir o objetivo e o escopo do agente de IA  \n- Escolher frameworks e bibliotecas (ex: OpenAI, TensorFlow)  \n- Desenhar a arquitetura e o fluxo de decisões do agente  \n- Preparar e tratar os dados de treino  \n- Implementar métodos de aprendizado (supervisionado, reforço)  \n- Avaliar o desempenho e refinar o comportamento  \n- Fazer o deploy do agente em um ambiente real  \n- Monitorar e manter o agente em produção  \n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "5aaf524b-17cf-438e-84d1-c744a0e77ef6",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          160,
+          280
+        ],
+        "id": "92c6ceb4-acbc-4a1f-a4da-12af2d70f5a5",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          580,
+          0
+        ],
+        "id": "55e2e061-7be6-4f79-a20e-a6890499f35b",
+        "name": "Envio de Dados"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Envio de Dados",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "be7f0c1a-5c13-494d-bcf8-167823502e95",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

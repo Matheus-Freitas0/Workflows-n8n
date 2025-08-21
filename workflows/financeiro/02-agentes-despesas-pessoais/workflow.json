@@ -1,0 +1,330 @@
+[
+  {
+    "createdAt": "2025-05-16T11:31:09.629Z",
+    "updatedAt": "2025-05-27T11:33:55.000Z",
+    "id": "Q7FRY2jbb4Bj57gf",
+    "name": "[FA] Agentes de Despesas Pessoais",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $json.message.chat.id }}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          340,
+          300
+        ],
+        "id": "3e40cf5a-9ca9-444a-a7bf-833bad8fa0a4",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "17d21e47-c854-4022-95ed-7b0f69555d39",
+        "name": "Recebe a mensagem",
+        "webhookId": "b5263a47-ab00-4cf2-bf2e-70f5a6b1ca0f",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          140,
+          300
+        ],
+        "id": "a674b267-4e39-4213-9491-cbc1d7bb870b",
+        "name": "GPT 4.1 mini",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.message.text }}",
+          "options": {
+            "systemMessage": "=# Papel:\n\nVocê é um assistente que ajuda no controle de despesas pessoais\n\n\n# Tarefa:\n\nInterpretar a mensagem do usuário e atualizar a planilha de despesas com as informações corretas\n\n\n# Instruções:\n\nData atual:\n\n- A data de hoje é: {{ $now.toFormat('dd/MM/yyyy') }}\n\n\n# Compreendendo a despesa do usuário:\n\nSua missão é entender a mensagem e identificar as seguintes informações para preencher na planilha:\n\n- Data\n- Tipo de Despesa\n- Descrição\n- Valor\n- Sugestão de IA (você sugere se o gasto é útil ou não, e se seria interessante poupar o dinheiro em vez de gastar, como se fosse um consultor financeiro do usuario)\n\nIMPORTANTE: se o usuario detalhar mais de um gasto, cadastre separadamento na planilha\n\n# Atualizando a planilha:\n\nUtilize a ferramenta Google Sheets para realizar as atualizações necessárias (na tool Insere registros Financeiros)\n\n\n# Regras importantes:\n\nSe alguma informação estiver incompleta ou confusa, peça esclarecimentos ao usuário antes de continuar\n\n\n# Como confirmar a atualização para o usuário:\n\nAo atualizar a planilha, informe ao usuário o registro que você acabou de inserir de forma detalhada\n\n# Balanço de Gastos\n\nSe o usuário solicitar use a tool Verificacao de Gastos para resgatar informacoes da planilha"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          280,
+          0
+        ],
+        "id": "c1738c00-6302-42fa-922f-5b42bc51c01b",
+        "name": "AI Financeiro"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Recebe a mensagem').item.json.message.chat.id }}",
+          "text": "={{ $json.output }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          640,
+          0
+        ],
+        "id": "777e038c-b871-4080-957a-750d5d14aa2b",
+        "name": "Envia Relatorio",
+        "webhookId": "1b6aa0a9-4d21-48a8-a527-a8d9892745f3",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1tBfT9bi6jnNJYNF7P1TFZwTre4d15ra0lnTspJCusJo",
+            "mode": "list",
+            "cachedResultName": "Agente Contador",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tBfT9bi6jnNJYNF7P1TFZwTre4d15ra0lnTspJCusJo/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tBfT9bi6jnNJYNF7P1TFZwTre4d15ra0lnTspJCusJo/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Data": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Data', ``, 'string') }}",
+              "Tipo de Despesa": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tipo_de_Despesa', ``, 'string') }}",
+              "Descrição": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Descri__o', ``, 'string') }}",
+              "Valor": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Valor', ``, 'string') }}",
+              "Sugestão da IA": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sugest_o_da_IA', ``, 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Tipo de Despesa",
+                "displayName": "Tipo de Despesa",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Descrição",
+                "displayName": "Descrição",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Valor",
+                "displayName": "Valor",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Sugestão da IA",
+                "displayName": "Sugestão da IA",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "useAppend": true
+          }
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.5,
+        "position": [
+          720,
+          360
+        ],
+        "id": "5186d3c1-7668-4a3a-b143-6adf44275a3c",
+        "name": "Insere registros Financeiros",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1tBfT9bi6jnNJYNF7P1TFZwTre4d15ra0lnTspJCusJo",
+            "mode": "list",
+            "cachedResultName": "Agente Contador",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tBfT9bi6jnNJYNF7P1TFZwTre4d15ra0lnTspJCusJo/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tBfT9bi6jnNJYNF7P1TFZwTre4d15ra0lnTspJCusJo/edit#gid=0"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.5,
+        "position": [
+          540,
+          360
+        ],
+        "id": "bfa08880-a500-469d-bb6f-f715eaa6a538",
+        "name": "Verificacao de Gastos",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Financeiro",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recebe a mensagem": {
+        "main": [
+          [
+            {
+              "node": "AI Financeiro",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "GPT 4.1 mini": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Financeiro",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Financeiro": {
+        "main": [
+          [
+            {
+              "node": "Envia Relatorio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Insere registros Financeiros": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Financeiro",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificacao de Gastos": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Financeiro",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "91c37a84-117a-47a0-8e28-516a6eab736d",
+    "triggerCount": 1,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

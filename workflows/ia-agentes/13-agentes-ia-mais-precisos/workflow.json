@@ -1,0 +1,220 @@
+[
+  {
+    "createdAt": "2025-07-25T12:07:07.960Z",
+    "updatedAt": "2025-07-25T12:14:22.000Z",
+    "id": "uOu79yjYYb4DdPna",
+    "name": "[FA] Agentes de IA mais Precisos",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "7335cc4b-27ea-455a-9c27-585590216081",
+        "name": "When chat message received",
+        "webhookId": "3ae4e2aa-0800-436e-b189-6c5d72ca2f56"
+      },
+      {
+        "parameters": {
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "=Você um agente que escreve posts de blog, baseado em um tema que o usuário envia\n\nForneça:\n\n- título\n- conteúdo\n- slug\n- palavra-chave"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          208,
+          0
+        ],
+        "id": "e56ff3ae-3c3a-4ac5-8e15-ec4936576e39",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          96,
+          304
+        ],
+        "id": "0f11389d-0dbd-4a0f-b1cd-beecfa8a281e",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\t\"title\": \"O titulo do post\",\n  \"content\": \"O conteúdo do post\",\n  \"slug\": \"O slug do post\",\n  \"keyword\": \"A palavra-chave do post\"\n}",
+          "autoFix": true
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          432,
+          288
+        ],
+        "id": "051c1622-634a-415b-9ce9-8f374022a826",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "a89d7809-4bf4-48be-a76d-036b739b577e",
+                "name": "title",
+                "value": "={{ $json.output.title }}",
+                "type": "string"
+              },
+              {
+                "id": "eb1e5fa9-1d61-4a69-a210-19656b355de9",
+                "name": "content",
+                "value": "={{ $json.output.content }}",
+                "type": "string"
+              },
+              {
+                "id": "05a967d1-4a79-418a-bcde-766e9c0b6796",
+                "name": "slug",
+                "value": "={{ $json.output.slug }}",
+                "type": "string"
+              },
+              {
+                "id": "f6e25dd3-9ceb-48e6-b605-f59e1914b83c",
+                "name": "keyword",
+                "value": "={{ $json.output.keyword }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          672,
+          0
+        ],
+        "id": "78ff1f83-9b7b-4070-ab55-b200a3c0f86e",
+        "name": "Dados do post"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          368,
+          496
+        ],
+        "id": "55f0455b-bedb-409f-8eaa-93ab92ff083c",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Dados do post",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Structured Output Parser",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "e95d2939-dd8e-411e-b632-9f6827cfa97d",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

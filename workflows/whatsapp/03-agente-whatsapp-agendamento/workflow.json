@@ -1,0 +1,751 @@
+[
+  {
+    "createdAt": "2025-07-11T11:42:49.691Z",
+    "updatedAt": "2025-07-14T22:45:01.000Z",
+    "id": "mIlcF3F3vANXOUMy",
+    "name": "[FA] Agente WhatsApp Agendamento",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "3ec579ac-f686-4536-8615-efffad6517d5",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "d20f4b79-c20b-45fe-b48d-be5c36d4ce94",
+        "name": "Recebe Msg Whats",
+        "webhookId": "3ec579ac-f686-4536-8615-efffad6517d5"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "73301c9d-c3ba-414f-90ee-70e71d29610e",
+                "name": "From",
+                "value": "={{ $json.body.data.key.remoteJid }}",
+                "type": "string"
+              },
+              {
+                "id": "cabdd7ac-acde-4aa2-8e72-9f6eb18c62df",
+                "name": "Instance",
+                "value": "={{ $json.body.instance }}",
+                "type": "string"
+              },
+              {
+                "id": "122ace5a-feb4-4152-ba27-7f5b07cbc7b4",
+                "name": "Message",
+                "value": "={{ $json.body.data.message.conversation }}",
+                "type": "string"
+              },
+              {
+                "id": "8a1943cf-b154-44f6-a6f6-059fb1296e5c",
+                "name": "MessageId",
+                "value": "={{ $json.body.data.key.id }}",
+                "type": "string"
+              },
+              {
+                "id": "5de51e70-85b6-4aed-8611-e4818d249f0e",
+                "name": "Name",
+                "value": "={{ $json.body.data.pushName }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          240,
+          0
+        ],
+        "id": "d7357838-1618-4b98-b014-319dcabedb08",
+        "name": "Extraindo Dados"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "f30e6975-5e69-4653-9ba8-0c3f34e563ee",
+                "leftValue": "={{ $json.From }}",
+                "rightValue": "0404",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          464,
+          0
+        ],
+        "id": "b53894c3-39da-4b7f-bbb2-704b1bee8314",
+        "name": "Filtro número"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Mensagem do usuário:  {{ $('Extraindo Dados').item.json.Message }}",
+          "needsFallback": true,
+          "options": {
+            "systemMessage": "=# Papel\n\nVocê é o assistente de agendamentos da Barbearia Dom Barber no WhatsApp.\n\nAgendamentos só podem ser feitos após coletar nome do cliente, e-mail e serviço desejado.\n\nA barbearia não abre sábado e nem domingo, se for solicitado algum horário nestes dias você pode informar isso e sugerir informar os horários da próxima segunda-feira.\n\nA data de hoje é {{ $now }}\n\n\n# Contexto\n\n- A Barbearia Dom Barber é uma barbearia premium especializada em cortes, barbas e tratamentos masculinos.\n- Funcionamos de segunda a sexta, das 9h às 19h.\n- Localizada na Av. Brasil, 1500 - São Paulo, SP.\n- Todos os barbeiros têm mais de 5 anos de experiência profissional.\n\n# Serviços Disponíveis:\n\nUse a ferramenta Ver Eventos para saber quais são os serviços oferecidos\n\nAssocie o ID do evento corretamente na planilha ao salvar os dados\n\n# Função\n\nCumprimente o cliente com cordialidade e conduza o agendamento. Faça perguntas rápidas para entender a necessidade, colete nome e e-mail, e siga com o agendamento.\n\n#Fluxo de Conversa\n\n## Primeira resposta\n\nOlá! Bem-vindo à Barbearia Dom Barber! Estou aqui para te ajudar a agendar seu atendimento.\nPosso te fazer algumas perguntas rápidas para encontrar o melhor horário pra você?\n\na) Qual serviço você deseja hoje?\n\nSe responder \"não sei\" ou \"o que vocês oferecem\":\n\nBusque na Tool Ver Eventos, e mostre os serviços em lista, exemplo:\n\n1 - Serviço A - ID\n2 - Serviço B - ID\n3 - Serviço C - ID\n\nObs: Somente retorne serviços que tenham relação com corte de cabelo e barba, pois há vários serviços cadastrados no sistema, você deve filtrar antes de exibir!\n\n## Coleta de Contato:\n\n> Para garantir seu horário de [NOME DO SERVIÇO ESCOLHIDO], preciso do seu nome completo e e-mail.\n\nDepois de coletar os dados, salve na planilha através da Tool Criacao do Cliente\n\n> Somente envie após coletar nome e e-mail.\n\nEm seguida, pergunte:\n\nGostaria de agendar seu atendimento agora?\n\n# Fluxo de Agendamento\n\nSe disser sim:\n\n1. Use a ferramenta Ver Horarios com:\n\n- Event ID correto\n- startTime = {{ $now }} em formato UTC, ex: 2025-06-27T18:34:25Z\n- endTime = {{ $now }} +24h em formato UTC: ex 2025-06-27T18:34:25Z\n- Retorne no máximo 5 horários\n\n2. Converta UTC para horário de Brasília (UTC-3)\n\nEx: 2025-06-03T14:00:00Z → 11:00\n\n- Pergunte qual horário ele prefere.\n- Peça para confirmar digitando “sim”.\n- Após confirmação, salve os dados com a ferramenta \"Update_Leads\".\n- Mostre o horário final e peça para digitar “confirmar”.\n\n3. Escolha do Profissional\n\nUse a tool Consulta Profissionais para buscar todos os profissionais e exibir para o usuário\n\n4. Cadastre o Usuário\n\nUse a tool Criacao do Clientes para inserir nome e e-mail do usuário, após ele fornecer\n\ne também o profissional escolhido por ele\n\n5. Agendar o Evento\n\nIMPORTANTE: Antes de Agendar use a tool Ver Eventos para obter o id do evento, isso vai ajudar na etapa de agendamento\n\nUse a tool Agendar Evento \n\nVocê precisa passar o eventTypeId que corresponde ao id do serviço que o usuário escolheu\n\nem slotStart passe a data escolhida pelo usuário, seguindo o formato UTC, ex: 2024-09-04T09:00:00Z\n\nParâmetros:\n\n- eventTypeId: número​\n- slotStart: formato UTC, ex: 2025-06-27T18:34:25Z\n\n\n\n# Regras de Ferramentas\n\nVer Horarios:\n- Use Event ID correto\n- startTime = {{ $now }} em formato UTC, ex: 2025-06-27T18:34:25Z\n- endTime = {{ $now }} +24h em formato UTC: ex 2025-06-27T18:34:25Z\n- Sem listas, bullets ou negrito\n\nCriacao do Clientes:\n- Salvar Nome e E-mail quando o usuário fornecer\n\nAtualizacao do Cliente:\n- Atualizar o usuário com o restante das informações do evento marcado, inclusive profissonal escolhido"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          784,
+          -96
+        ],
+        "id": "4663e4c4-6b8c-458a-8c63-5c88b3c6a937",
+        "name": "Agente de Agendamento"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          560,
+          256
+        ],
+        "id": "2b28330c-c32b-4990-80a7-5693573be6a2",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatDeepSeek",
+        "typeVersion": 1,
+        "position": [
+          720,
+          256
+        ],
+        "id": "9c2cd4bc-980a-4af7-a607-9bfff634a921",
+        "name": "DeepSeek Chat Model",
+        "credentials": {
+          "deepSeekApi": {
+            "id": "BSZobEqtfEcgWSjL",
+            "name": "DeepSeek account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('Extraindo Dados').item.json.From }}",
+          "contextWindowLength": 15
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          880,
+          256
+        ],
+        "id": "6859d235-9e4f-4e09-a49a-83ae2118328a",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "={{ $('Extraindo Dados').item.json.Instance }}",
+          "remoteJid": "={{ $('Extraindo Dados').item.json.From }}",
+          "messageText": "={{ $('Agente de Agendamento').item.json.output }}",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          1568,
+          -96
+        ],
+        "id": "419c55ed-6223-4a9f-bd81-ebeaab1e6b62",
+        "name": "Enviar texto",
+        "credentials": {
+          "evolutionApi": {
+            "id": "CQVEFNu2NaPW1rYu",
+            "name": "Evolution account Curso"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "chat-api",
+          "operation": "read-messages",
+          "instanceName": "={{ $('Extraindo Dados').item.json.Instance }}",
+          "remoteJid": "={{ $('Extraindo Dados').item.json.From }}",
+          "messageId": "={{ $('Extraindo Dados').item.json.MessageId }}"
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          1264,
+          -96
+        ],
+        "id": "060ab678-0497-4d3d-a9f8-2e96f00fa2ce",
+        "name": "Marcar mensagens como lidas",
+        "credentials": {
+          "evolutionApi": {
+            "id": "CQVEFNu2NaPW1rYu",
+            "name": "Evolution account Curso"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Consulta de Eventos",
+          "height": 256,
+          "width": 576
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1520,
+          160
+        ],
+        "typeVersion": 1,
+        "id": "3ee83325-09bb-49b0-84b8-9d1acae1584e",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "toolDescription": "Verifica quais eventos tem disponível para o usuário",
+          "url": "https://api.cal.com/v2/event-types",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.2,
+        "position": [
+          1600,
+          272
+        ],
+        "id": "68f37e1b-babc-4899-92d8-30092a9d1eff",
+        "name": "Ver Eventos",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "WEyM3Tk5faRx2BkK",
+            "name": "Cal.com"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "toolDescription": "=Use esta ferramenta para obter a disponibilidade de horários para agendamentos.\n\nÉ obrigatório utilizar o fuso horário de America/Sao_Paulo (Horário de Brasília).  \n\nAs datas devem estar estritamente no formato ISO, por exemplo:  \n\"2025-01-01T09:00:00-03:00\".  ",
+          "url": "https://api.cal.com/v2/slots",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "eventTypeId",
+                "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `O ID do evento que o usuário selecionou`, 'string') }}"
+              },
+              {
+                "name": "start",
+                "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Data início da pesquisa de horários disponíveis para o evento`, 'string') }}"
+              },
+              {
+                "name": "end",
+                "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Data fim da pesquisa de horários disponíveis para o evento`, 'string') }}"
+              }
+            ]
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "cal-api-version",
+                "value": "2024-09-04"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.2,
+        "position": [
+          1888,
+          256
+        ],
+        "id": "b6d60301-251e-4a86-ad18-22a93d54bcab",
+        "name": "Ver Horarios",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "WEyM3Tk5faRx2BkK",
+            "name": "Cal.com"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Consulta Profissionais\n",
+          "height": 256,
+          "width": 576,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1232,
+          464
+        ],
+        "typeVersion": 1,
+        "id": "407145bb-2ad3-4a31-8d25-d776c3d506a6",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1bQ9TuGvTWHfWVbVyBXb6khqsXmr_a_IEFPm56wFFvgw",
+            "mode": "list",
+            "cachedResultName": "Lista Barbeiros",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bQ9TuGvTWHfWVbVyBXb6khqsXmr_a_IEFPm56wFFvgw/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bQ9TuGvTWHfWVbVyBXb6khqsXmr_a_IEFPm56wFFvgw/edit#gid=0"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.6,
+        "position": [
+          1312,
+          560
+        ],
+        "id": "388cac44-4f9a-4362-86e9-843291ad0a19",
+        "name": "Consulta Profissionais",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Agendar Evento\n",
+          "height": 256,
+          "width": 576,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          880,
+          784
+        ],
+        "typeVersion": 1,
+        "id": "0d3ee528-e0fa-4888-b158-d2b71b91d872",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1-UQZp-JK9BwaqanFGVsq8fjFGywa7VInPI4fFVE0v6k",
+            "mode": "list",
+            "cachedResultName": "Contatos para Agendamento WhatsApp p3",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-UQZp-JK9BwaqanFGVsq8fjFGywa7VInPI4fFVE0v6k/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-UQZp-JK9BwaqanFGVsq8fjFGywa7VInPI4fFVE0v6k/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Nome": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nome', ``, 'string') }}",
+              "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', ``, 'string') }}",
+              "Número": "={{ $('Extraindo Dados').item.json.From.split('@')[0] }}",
+              "UserID": "={{ $('Extraindo Dados').item.json.From }}",
+              "Resumo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Resumo', `Resumo do evento/serviço do usuário que marcou`, 'string') }}",
+              "Evento": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Evento', ``, 'string') }}",
+              "EventID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('EventID', `ID do evento escolhido pelo usuário`, 'string') }}",
+              "Data": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Data', `Data em formato dia/mês/ano horário (fuso américa são paulo)`, 'string') }}",
+              "Profissional": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Profissional', `Barbeiro escolhido pelo usuário`, 'string') }}"
+            },
+            "matchingColumns": [
+              "Email"
+            ],
+            "schema": [
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Número",
+                "displayName": "Número",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "UserID",
+                "displayName": "UserID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Resumo",
+                "displayName": "Resumo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Evento",
+                "displayName": "Evento",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "EventID",
+                "displayName": "EventID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Profissional",
+                "displayName": "Profissional",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.6,
+        "position": [
+          960,
+          880
+        ],
+        "id": "bfb5ea50-a63a-40de-86a0-d85a5f713aba",
+        "name": "Criacao do Cliente",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "description": "=recebe os dados do agendamento do evento\n\n- nome\n- email\n- id do evento\n- hora que o usuário quer marcar o evento",
+          "workflowId": {
+            "__rl": true,
+            "value": "lLT7g3rAj49buayU",
+            "mode": "list",
+            "cachedResultName": "[FA] Agendar Evento WhatsApp"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name', `Nome do usuario`, 'string') }}",
+              "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', `Email do usuario`, 'string') }}",
+              "eventTypeId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('eventTypeId', `ID do evento escolhido pelo usuario`, 'number') }}",
+              "dateTime": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('dateTime', `Data de início do evento, ou seja, horario escolhido de agendamento`, 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "name",
+                "displayName": "name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              },
+              {
+                "id": "eventTypeId",
+                "displayName": "eventTypeId",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "number"
+              },
+              {
+                "id": "dateTime",
+                "displayName": "dateTime",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string"
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          1184,
+          880
+        ],
+        "id": "a8401e04-b163-442d-a807-368fb1716469",
+        "name": "Agendar Evento"
+      }
+    ],
+    "connections": {
+      "Extraindo Dados": {
+        "main": [
+          [
+            {
+              "node": "Filtro número",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recebe Msg Whats": {
+        "main": [
+          [
+            {
+              "node": "Extraindo Dados",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filtro número": {
+        "main": [
+          [
+            {
+              "node": "Agente de Agendamento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente de Agendamento",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "DeepSeek Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente de Agendamento",
+              "type": "ai_languageModel",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Agente de Agendamento",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Agendamento": {
+        "main": [
+          [
+            {
+              "node": "Marcar mensagens como lidas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Marcar mensagens como lidas": {
+        "main": [
+          [
+            {
+              "node": "Enviar texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ver Eventos": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Agendamento",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ver Horarios": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Agendamento",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Consulta Profissionais": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Agendamento",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Criacao do Cliente": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Agendamento",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agendar Evento": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de Agendamento",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "e0674231-43d0-4228-b652-0bbdd85f91f8",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

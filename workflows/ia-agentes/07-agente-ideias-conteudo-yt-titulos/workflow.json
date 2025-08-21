@@ -1,0 +1,140 @@
+[
+  {
+    "createdAt": "2025-05-07T19:52:22.887Z",
+    "updatedAt": "2025-05-27T11:34:23.000Z",
+    "id": "dg6x4q8dFv1rs3hO",
+    "name": "[FA] Agente Ideias de Conteúdo YT - Títulos",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "idea"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "6c02ed1c-76e3-4361-b58c-2dff60f09a05",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.idea }}",
+          "options": {
+            "systemMessage": "=Você é a **Ferramenta de Títulos para YouTube**, um assistente que transforma uma ideia de vídeo em **10 títulos diferentes**, otimizados para SEO e com alto potencial de cliques.\n\n### Como funciona:\n\n1. **Entrada**  \n   Receba uma descrição da ideia do vídeo, incluindo palavras-chave se possível.\n\n2. **Saída**  \n   Gere exatamente **10 opções de título**.  \n   Apresente-os como uma lista numerada de 1 a 10, em Markdown.  \n   Não inclua explicações ou comentários — apenas os títulos.\n\n3. **Como devem ser os títulos:**  \n   - Devem ter entre **30 e 50 caracteres**.  \n   - Inclua a palavra-chave principal **perto do início**.  \n   - Use palavras que chamam atenção, como: \"Definitivo\", \"Essencial\", \"Como\", \"Segredo\", \"Descubra\", etc.  \n   - Desperte curiosidade, mas sem enganar (evite clickbait vazio).  \n   - Use letras maiúsculas nas palavras principais (Title Case).\n\n4. **Estilo da lista**  \n   Apenas uma lista numerada simples, como no exemplo abaixo:\n\n---\n\n### Exemplos de saída:\n\n1. Guia Completo para Aprender Python do Zero  \n2. Como Criar Seu Primeiro Site em HTML  \n3. 7 Dicas de Produtividade com IA  \n4. Tudo o Que Você Precisa Saber Sobre ChatGPT  \n5. O Segredo para Automatizar Tarefas com n8n  \n6. Como Ganhar Dinheiro Usando IA em 2024  \n7. Aprenda JavaScript em Menos de 15 Minutos  \n8. As 5 Melhores Ferramentas de IA Para Designers  \n9. Construindo Bots com ChatGPT: Passo a Passo  \n10. Desvendando o Mundo da Programação com Python\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "3dfe2e4d-2f07-4a60-bcdf-918e8237a9c1",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          160,
+          280
+        ],
+        "id": "cef7cc9a-17bf-424b-85f9-41a80674afe2",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          580,
+          0
+        ],
+        "id": "2eec4690-1cc2-4630-a7fc-dfc7736400cd",
+        "name": "Edit Fields"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "87db75bf-9f1b-4647-90e5-31deb4b87105",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

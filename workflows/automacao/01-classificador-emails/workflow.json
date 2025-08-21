@@ -1,0 +1,188 @@
+[
+  {
+    "createdAt": "2025-05-16T14:05:51.687Z",
+    "updatedAt": "2025-05-27T11:33:53.000Z",
+    "id": "hTjoYItHqnorJP1S",
+    "name": "[FA] Classificador de e-mails",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "filters": {}
+        },
+        "type": "n8n-nodes-base.gmailTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "f8607bf8-86be-4231-9a32-38dc5f9a603c",
+        "name": "Checa email recebido",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "n2OP0HoEkh2BoEis",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=ID do e-mail: {{ $json.id }}\n\nAssunto do e-mail: {{ $json.Subject }}\n\nSnippet: {{ $json.snippet }}",
+          "options": {
+            "systemMessage": "=## Objetivo\n\nGerenciar e organizar e-mails recebidos, identificando automaticamente quais são importantes e quais podem ser ignorados. Os e-mails não importantes devem ser marcados como lidos para não causar distrações futuras.\n\n\n## Tarefas do Agente\n\n1. Verificar cada novo e-mail recebido.\n2. Determinar se o conteúdo do e-mail é **importante** com base no meu contexto pessoal (ex: remetente conhecido, palavras-chave, assuntos recorrentes, urgência, etc.).\n3. Classificar o e-mail de forma adequada:\n   - Se for **importante**, deixar **não lido** e destacá-lo com uma etiqueta “Importante”.\n   - Se **não for importante**, marcar como **lido** e aplicar a etiqueta “Não relevante”. (label:não-relevante )\n\n\n## Instruções Adicionais\n\n- Leve em conta o conteúdo, remetente, título e histórico de conversas para entender a relevância do e-mail.\n- Caso tenha dúvida sobre a importância, classifique como **“Revisar manualmente”** e deixe como **não lido**.\n- Evite mover ou excluir e-mails automaticamente."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "775cc05c-cfef-47c8-bccb-041139dc3313",
+        "name": "Agente de E-mail"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          140,
+          260
+        ],
+        "id": "6b96d383-8f68-4398-a185-948dc3b77072",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "markAsRead",
+          "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}"
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          580,
+          320
+        ],
+        "id": "bde66257-7023-4bdc-a23b-d01e122cab46",
+        "name": "Marcar email como Lido",
+        "webhookId": "6fba672a-1b83-43fb-9ec8-c8a489c494ef",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "n2OP0HoEkh2BoEis",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "addLabels",
+          "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+          "labelIds": [
+            "Label_7045448618085553775"
+          ]
+        },
+        "type": "n8n-nodes-base.gmailTool",
+        "typeVersion": 2.1,
+        "position": [
+          360,
+          320
+        ],
+        "id": "0ac3be9b-9f63-4035-8761-ae8bc44baec8",
+        "name": "Marcar como Nao Relevante",
+        "webhookId": "c81c2d14-527d-4f4a-9505-443dbb482ac3",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "n2OP0HoEkh2BoEis",
+            "name": "Gmail account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Checa email recebido": {
+        "main": [
+          [
+            {
+              "node": "Agente de E-mail",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente de E-mail",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Marcar email como Lido": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de E-mail",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Marcar como Nao Relevante": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente de E-mail",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "fb6079d9-88ed-4f11-8d60-4d25799595da",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

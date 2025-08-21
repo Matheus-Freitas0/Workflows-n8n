@@ -1,0 +1,383 @@
+[
+  {
+    "createdAt": "2025-05-07T12:05:05.082Z",
+    "updatedAt": "2025-05-27T11:34:19.000Z",
+    "id": "KYC8R5yHb9pl7nEq",
+    "name": "[FA] Agente Ideias de Conteúdo YT",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "50f62c90-476e-406e-8ecb-b82103b4736d",
+        "name": "Recebe Solicitacao do Usuario",
+        "webhookId": "82966919-90b0-4ea3-bd5b-2c1bec135472",
+        "credentials": {
+          "telegramApi": {
+            "id": "lhQN46NxESTZgKrG",
+            "name": "Bot YT Conteudo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.message.text }}",
+          "options": {
+            "systemMessage": "=Você um Agente de IA que ajuda o usuário a criar um pré-conteúdo para um vídeo de YouTube, com o assunto determinado pelo usuário\n\nSEMPRE SIGA ESTES PASSOS, NESTA ORDEM:\n\n1 - Chame o ResearchAgent (deve ser executado primeiro, pois dependemos destas informações para as próximas etapas)\n2 - Chame o ThumbnailAgent\n3 - Chame o TitleAgent\n4 - Chame o ScriptAgent\n\nE APÓS ESTES PASSOS:\n\nEntre todas as informações geradas para o usuário de maneira detalhada, para que ele possa começar a criação de conteúdo para o YouTube."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "17f45aeb-12f0-45a9-bae1-3aa992a2b128",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          120,
+          260
+        ],
+        "id": "a5f95183-264a-4e06-be15-5c64b0f3dbde",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Recebe Solicitacao do Usuario').item.json.message.chat.id }}",
+          "text": "={{ $json.output }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          580,
+          0
+        ],
+        "id": "a9e2e8a3-2b27-46ec-8ec1-a834df49db0a",
+        "name": "Retorna Conteúdo",
+        "webhookId": "f99697e1-83a6-4132-acd4-a3dbdb4fe9ed",
+        "credentials": {
+          "telegramApi": {
+            "id": "lhQN46NxESTZgKrG",
+            "name": "Bot YT Conteudo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "name": "ResearchAgent",
+          "description": "Esta tool chama um Agente de IA que faz uma pesquisa na internet sobre o tema do vídeo",
+          "workflowId": {
+            "__rl": true,
+            "value": "xjPWaeXrexyV9NND",
+            "mode": "list",
+            "cachedResultName": "[FA] Agente Ideias de Conteúdo YT - Pesquisa"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "search": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('search', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "search"
+            ],
+            "schema": [
+              {
+                "id": "search",
+                "displayName": "search",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.1,
+        "position": [
+          320,
+          400
+        ],
+        "id": "f2c49948-7067-4e95-b9d7-fc0ae46d31c1",
+        "name": "Agente de Pesquisa"
+      },
+      {
+        "parameters": {
+          "content": "## Sub Agentes de IA",
+          "height": 260,
+          "width": 640
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          260,
+          280
+        ],
+        "typeVersion": 1,
+        "id": "ff888ef8-d153-46c1-af39-1a10c358f722",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "name": "ThumbAgent",
+          "description": "Esta tool serve para gerar uma thumbnail para o vídeo que o usuário está criando",
+          "workflowId": {
+            "__rl": true,
+            "value": "oyNFhoBgH29BlOVl",
+            "mode": "list",
+            "cachedResultName": "[FA] Agente Ideias de Conteúdo YT - Thumb"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "idea": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('idea', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "idea"
+            ],
+            "schema": [
+              {
+                "id": "idea",
+                "displayName": "idea",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.1,
+        "position": [
+          460,
+          400
+        ],
+        "id": "49b803ff-bbf2-40ff-9d1f-5abe67d04e53",
+        "name": "Agente de Thumbnail"
+      },
+      {
+        "parameters": {
+          "name": "TitleWorkflow",
+          "description": "Esta tool cria versões de títulos para o vídeo de YouTube que o usuário está querendo criar",
+          "workflowId": {
+            "__rl": true,
+            "value": "dg6x4q8dFv1rs3hO",
+            "mode": "list",
+            "cachedResultName": "[FA] Agente Ideias de Conteúdo YT - Títulos"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "idea": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('idea', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "idea"
+            ],
+            "schema": [
+              {
+                "id": "idea",
+                "displayName": "idea",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.1,
+        "position": [
+          600,
+          400
+        ],
+        "id": "4c5cdc58-9192-4f96-9363-26b9feab7255",
+        "name": "Agente de Titulos"
+      },
+      {
+        "parameters": {
+          "name": "ScriptAgent",
+          "description": "Esta tool serve para gerar um roteiro, baseado na ideia que o usuário tem para o seu vídeo de YouTube",
+          "workflowId": {
+            "__rl": true,
+            "value": "rcEXiB604a6U8L96",
+            "mode": "list",
+            "cachedResultName": "[FA] Agente Ideias de Conteúdo YT - Roteiro"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [
+              "idea"
+            ],
+            "schema": [
+              {
+                "id": "idea",
+                "displayName": "idea",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.1,
+        "position": [
+          760,
+          400
+        ],
+        "id": "2c4c42c8-6bf2-4293-8e98-f47298296101",
+        "name": "Agente de Roteiro"
+      }
+    ],
+    "connections": {
+      "Recebe Solicitacao do Usuario": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Retorna Conteúdo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Pesquisa": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Thumbnail": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Titulos": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Roteiro": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "0437e2f5-8050-43f7-ae48-e669ea16c3b5",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

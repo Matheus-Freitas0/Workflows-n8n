@@ -1,0 +1,662 @@
+[
+  {
+    "createdAt": "2025-07-03T20:12:51.834Z",
+    "updatedAt": "2025-07-03T21:43:33.000Z",
+    "id": "k5SGSlJXGXAbVtFi",
+    "name": "[FA] AI Nodes",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -340,
+          140
+        ],
+        "id": "c7659cf8-b0dc-4ea7-a0c9-6fe77144f81e",
+        "name": "When chat message received",
+        "webhookId": "e688a07f-88d0-4a6b-af6f-4db7ef2620d7"
+      },
+      {
+        "parameters": {
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "Você é um agente com informações de Geografia"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "54a9c962-3bee-4b79-b125-d2ff43a076e8",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          160,
+          280
+        ],
+        "id": "912dd783-ef2f-4feb-bcef-7a90f20623de",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          320,
+          280
+        ],
+        "id": "39a24d8f-4119-4c96-8f22-3d89ed55748d",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\t\"state\": \"Sao Paulo\",\n\t\"cities\": [\"Cidade 1\", \"Cidade 3\", \"Cidade 2\"]\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          480,
+          280
+        ],
+        "id": "be5d4a23-0ff7-4813-9b1f-ff3d3a8b45b1",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "content": "## Agente de IA",
+          "height": 560,
+          "width": 560
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          100,
+          -120
+        ],
+        "typeVersion": 1,
+        "id": "b1c0b77f-cda9-4f6c-804a-f387c6266c5c",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=País: {{ $json.pais }}",
+          "messages": {
+            "messageValues": [
+              {
+                "message": "Você precisa comentar sobre o país que te passam, cite cidades boas para turismo"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.7,
+        "position": [
+          1080,
+          0
+        ],
+        "id": "f04ecc2a-3281-4a3c-88ab-ea9ac04a91d4",
+        "name": "Basic LLM Chain"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "22ac3326-bbef-49aa-b701-c8690090a304",
+                "name": "pais",
+                "value": "Japão",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          800,
+          0
+        ],
+        "id": "aea3901e-c3f0-4d64-bf7a-0375e55df374",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -540,
+          -260
+        ],
+        "id": "60734889-fb1f-452d-bed0-528f9b3b5181",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          1040,
+          280
+        ],
+        "id": "aa9f04e3-d47c-4578-9057-d44e62b0b7d8",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## LLM Chain",
+          "height": 560,
+          "width": 760
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          720,
+          -120
+        ],
+        "typeVersion": 1,
+        "id": "8c39c4b7-2695-4b8b-a038-5803bff0f1e4",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "text": "=Conteúdo:  {{ $json.text }}",
+          "attributes": {
+            "attributes": [
+              {
+                "name": "cidade_1",
+                "description": "Identifique uma cidade do texto",
+                "required": true
+              },
+              {
+                "name": "cidade_2",
+                "description": "Identifique uma cidade do texto"
+              },
+              {
+                "name": "cidade_3",
+                "description": "Identifique uma cidade do texto"
+              },
+              {
+                "name": "pais",
+                "description": "Identifique sobre qual país o texto é",
+                "required": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+        "typeVersion": 1.2,
+        "position": [
+          1680,
+          0
+        ],
+        "id": "278789d1-2626-45ae-b1c8-2dbb3124abfe",
+        "name": "Information Extractor"
+      },
+      {
+        "parameters": {
+          "content": "## Information Extractor",
+          "height": 560,
+          "width": 760
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1540,
+          -120
+        ],
+        "typeVersion": 1,
+        "id": "770181e7-07a8-404e-8e10-5ca58373e433",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "inputText": "=Feedback do usuário:  {{ $json.texto }}",
+          "options": {
+            "categories": "Insatisfeito, Neutro, Satisfeito, Com Raiva",
+            "systemPromptTemplate": "Identifique como o usuário está se sentindo após a compra no nosso site, você receberá a avaliação do comprador"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.sentimentAnalysis",
+        "typeVersion": 1.1,
+        "position": [
+          400,
+          660
+        ],
+        "id": "a8e9a001-acc0-4773-9a47-abad65b7fb16",
+        "name": "Sentiment Analysis"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "7b500664-3fa7-4a69-b0cf-45030de20eeb",
+                "name": "texto",
+                "value": "A compra foi terrível e o produto é ruim, nao estou nada satisfeito..",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          120,
+          540
+        ],
+        "id": "b0a8266c-ddfb-4174-81d1-e40b97ec59c2",
+        "name": "Edit Fields1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          960,
+          680
+        ],
+        "id": "882fa72c-ad11-4a5a-a560-eb929ea725ce",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "7b500664-3fa7-4a69-b0cf-45030de20eeb",
+                "name": "texto",
+                "value": "Amei o produto de vocês, a melhor coisa que já comprei na minha vida, muito obrigado!!!",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          120,
+          760
+        ],
+        "id": "4a4cfeff-6580-441d-8973-dd924f48fb91",
+        "name": "Edit Fields2"
+      },
+      {
+        "parameters": {
+          "content": "## Sentiment Analysis",
+          "height": 560,
+          "width": 1080
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          100,
+          480
+        ],
+        "typeVersion": 1,
+        "id": "c8f8af5d-6596-4094-a85c-051de68dcf28",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "operationMode": "nodeInputBinary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+        "typeVersion": 2.1,
+        "position": [
+          1500,
+          660
+        ],
+        "id": "258514e6-a2f6-4ea5-b1e1-31c3b7f675c9",
+        "name": "Summarization Chain"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "1yO4QNM3PuPcNP9hQFvGhItJLHk5ju2Bt",
+            "mode": "list",
+            "cachedResultName": "curriculo - dev.pdf",
+            "cachedResultUrl": "https://drive.google.com/file/d/1yO4QNM3PuPcNP9hQFvGhItJLHk5ju2Bt/view?usp=drivesdk"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1300,
+          660
+        ],
+        "id": "d0ec79ac-5c65-4102-ab37-e66993037945",
+        "name": "Download file",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Summarization Chain",
+          "height": 560,
+          "width": 1080
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1220,
+          480
+        ],
+        "typeVersion": 1,
+        "id": "589359fe-44a2-4e83-adb2-e2aec2199e2a",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          280,
+          1240
+        ],
+        "id": "457a4f36-b1b9-4e4a-9dc0-b5d6768bb44c",
+        "name": "AI Agent1"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "1"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          640,
+          1480
+        ],
+        "id": "bf75d551-4fbf-4261-99e0-b3224397a6f9",
+        "name": "Simple Memory1"
+      },
+      {
+        "parameters": {
+          "mode": "delete",
+          "lastMessagesCount": 5
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryManager",
+        "typeVersion": 1.1,
+        "position": [
+          880,
+          1240
+        ],
+        "id": "43b7f03c-f11e-4111-a60e-2658e5cbfefe",
+        "name": "Chat Memory Manager"
+      },
+      {
+        "parameters": {
+          "content": "## Memory Manager",
+          "height": 560,
+          "width": 1080
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          100,
+          1060
+        ],
+        "typeVersion": 1,
+        "id": "18974e4a-bfab-49bd-af3e-f87b019a546b",
+        "name": "Sticky Note5"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Sentiment Analysis",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "AI Agent1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Chat Memory Manager",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Information Extractor",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Summarization Chain",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain": {
+        "main": [
+          [
+            {
+              "node": "Information Extractor",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields1": {
+        "main": [
+          [
+            {
+              "node": "Sentiment Analysis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sentiment Analysis": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Edit Fields2": {
+        "main": [
+          [
+            {
+              "node": "Sentiment Analysis",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download file": {
+        "main": [
+          [
+            {
+              "node": "Summarization Chain",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory1": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_memory",
+              "index": 0
+            },
+            {
+              "node": "Chat Memory Manager",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "234e31fd-8312-4bf8-a1e8-b10b45695959",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

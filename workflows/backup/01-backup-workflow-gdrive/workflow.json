@@ -1,0 +1,410 @@
+[
+  {
+    "createdAt": "2025-05-26T20:53:16.052Z",
+    "updatedAt": "2025-05-27T11:19:05.000Z",
+    "id": "KOpCHkaFKIjANFPe",
+    "name": "[FA] Backup Workflow GDrive",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "3a218a9e-f311-49fe-a132-7e897f6ba550",
+        "name": "When clicking ‘Test workflow’"
+      },
+      {
+        "parameters": {
+          "resource": "folder",
+          "name": "=Backup dia {{ $now.format('dd/MM/yyyy') }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1FRWVYwNokneCROOOK7BYp33NTZgBOeu5",
+            "mode": "list",
+            "cachedResultName": "Backups Workflows",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1FRWVYwNokneCROOOK7BYp33NTZgBOeu5"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          220,
+          0
+        ],
+        "id": "78f8ae94-b41d-450e-b9f1-0085ddd4413b",
+        "name": "Cria a pasta",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "filters": {},
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.n8n",
+        "typeVersion": 1,
+        "position": [
+          440,
+          0
+        ],
+        "id": "26a8db2e-f8b7-4fe3-9ed9-c273d38e42c9",
+        "name": "Pega Todos Workflows",
+        "credentials": {
+          "n8nApi": {
+            "id": "iDgc7S7rPpl4W7OR",
+            "name": "n8n account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          680,
+          -20
+        ],
+        "id": "f8f3c377-5a9d-4027-8152-41aa10c7ac5e",
+        "name": "Percorrer cada Workflow",
+        "executeOnce": false
+      },
+      {
+        "parameters": {
+          "operation": "toJson",
+          "options": {
+            "fileName": "={{ $json.name + \".json\" }}"
+          }
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          880,
+          200
+        ],
+        "id": "926b6c57-cad7-4c1b-872b-8487eb1771a1",
+        "name": "Convert to File"
+      },
+      {
+        "parameters": {
+          "content": "## Fluxo de Exclusão\n\nRemove as pastas antigas, verificando a pasta nova e deletando todas as pastas que não são esta nova criada",
+          "height": 300,
+          "width": 860
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          840,
+          -200
+        ],
+        "typeVersion": 1,
+        "id": "0f47e294-0dd2-40f3-b6d4-a29e2362557c",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          920,
+          -60
+        ],
+        "id": "4afd1e22-a5ec-4c12-ad7d-e13a27928244",
+        "name": "Limit"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "1FRWVYwNokneCROOOK7BYp33NTZgBOeu5",
+              "mode": "list",
+              "cachedResultName": "Backups Workflows",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/1FRWVYwNokneCROOOK7BYp33NTZgBOeu5"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1140,
+          -60
+        ],
+        "id": "0403b9c4-d362-40ed-81cc-325bd84b718d",
+        "name": "Pega pastas de backup",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "87e46127-3e6e-4566-a49c-276d2b7cb27c",
+                "leftValue": "={{ $json.id }}",
+                "rightValue": "={{ $('Cria a pasta').item.json.id }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1360,
+          -60
+        ],
+        "id": "b6fbd8c8-1ccd-4369-ade1-481de86132cb",
+        "name": "Filtra pastas antigas"
+      },
+      {
+        "parameters": {
+          "resource": "folder",
+          "operation": "deleteFolder",
+          "folderNoRootId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1580,
+          -60
+        ],
+        "id": "8d1cb99e-d697-4b45-b963-30ab5814478e",
+        "name": "Excluir pastas",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "name": "={{ $('Percorrer cada Workflow').item.json.name + \".json\" }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('Cria a pasta').item.json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1180,
+          200
+        ],
+        "id": "187643ff-0357-4cf0-9239-ca9130e3baf2",
+        "name": "Enviar workflow",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 12
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          300
+        ],
+        "id": "73d52c46-f12a-4499-a2d4-d9118afd1aa5",
+        "name": "Schedule Trigger"
+      }
+    ],
+    "connections": {
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Cria a pasta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cria a pasta": {
+        "main": [
+          [
+            {
+              "node": "Pega Todos Workflows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pega Todos Workflows": {
+        "main": [
+          [
+            {
+              "node": "Percorrer cada Workflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Percorrer cada Workflow": {
+        "main": [
+          [
+            {
+              "node": "Limit",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convert to File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convert to File": {
+        "main": [
+          [
+            {
+              "node": "Enviar workflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Limit": {
+        "main": [
+          [
+            {
+              "node": "Pega pastas de backup",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pega pastas de backup": {
+        "main": [
+          [
+            {
+              "node": "Filtra pastas antigas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filtra pastas antigas": {
+        "main": [
+          [
+            {
+              "node": "Excluir pastas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar workflow": {
+        "main": [
+          [
+            {
+              "node": "Percorrer cada Workflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Cria a pasta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": {
+      "node:Schedule Trigger": {
+        "recurrenceRules": []
+      }
+    },
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "edc8320d-fe58-462b-a6b9-0c3170e00e85",
+    "triggerCount": 1,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

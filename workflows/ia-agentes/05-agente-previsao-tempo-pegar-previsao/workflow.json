@@ -1,0 +1,227 @@
+[
+  {
+    "createdAt": "2025-04-24T21:48:29.750Z",
+    "updatedAt": "2025-05-27T11:34:56.000Z",
+    "id": "M3jcuHvbDT2IOkgm",
+    "name": "[FA] Agente Previsao do Tempo - Pegar Previsao",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "7e7b759f-06bd-4786-8e74-53099325df86",
+        "name": "When clicking ‘Test workflow’"
+      },
+      {
+        "parameters": {
+          "cityName": "={{ $json.city }}"
+        },
+        "type": "n8n-nodes-base.openWeatherMap",
+        "typeVersion": 1,
+        "position": [
+          220,
+          0
+        ],
+        "id": "eb3652bd-25fe-4a1e-af77-e9bb5b159f20",
+        "name": "Pega Previsao do Tempo",
+        "credentials": {
+          "openWeatherMapApi": {
+            "id": "8eFFYZFdwcLixfct",
+            "name": "OpenWeatherMap account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-4.1-mini",
+            "mode": "list",
+            "cachedResultName": "GPT-4.1-MINI"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=Coloque os parametros que eu te enviar em um campo chamado query\n\nGaranta que seja uma string\n\nweather_description: {{ $json.weather[0].description }}\ntemp: {{ $json.main.temp }}\nhumidity: {{ $json.main.humidity }}\nwind_speed: {{ $json.wind.speed }}\ncity: {{ $json.name }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          440,
+          0
+        ],
+        "id": "05928873-77d7-4591-ac6c-0798d567eb12",
+        "name": "Extrai e transforma os dados",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-4.1-mini",
+            "mode": "list",
+            "cachedResultName": "GPT-4.1-MINI"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "={{ $json.message.content }}"
+              },
+              {
+                "content": "=Converta o content para Portugues/BR, usando um tom amigavel\n\nInsira emojis para descrever a previsao do tempo\n\nE no fim coloque uma piada",
+                "role": "system"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          800,
+          0
+        ],
+        "id": "6744859e-3bd5-470e-95e8-39f6eccad628",
+        "name": "Ajuste final de Output",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "7752b978-5e3c-40e0-9988-da121765c42e",
+                "name": "response",
+                "value": "={{ $json.message.content }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1160,
+          0
+        ],
+        "id": "5f125335-f3b2-473f-9670-0362b8754c51",
+        "name": "Simplificando resposta"
+      },
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "city"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          240
+        ],
+        "id": "b8d0c138-5f94-4920-92ca-41c6bd76b9d6",
+        "name": "When Executed by Another Workflow"
+      }
+    ],
+    "connections": {
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Pega Previsao do Tempo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pega Previsao do Tempo": {
+        "main": [
+          [
+            {
+              "node": "Extrai e transforma os dados",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extrai e transforma os dados": {
+        "main": [
+          [
+            {
+              "node": "Ajuste final de Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ajuste final de Output": {
+        "main": [
+          [
+            {
+              "node": "Simplificando resposta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Pega Previsao do Tempo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "3b3b805b-8b1d-484b-8c57-152d8bb55980",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

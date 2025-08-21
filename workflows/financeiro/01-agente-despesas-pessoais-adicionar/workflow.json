@@ -1,0 +1,238 @@
+[
+  {
+    "createdAt": "2025-05-16T12:07:30.417Z",
+    "updatedAt": "2025-05-27T11:33:58.000Z",
+    "id": "mUR45Iccj5azJcgC",
+    "name": "[FA] Agentes de Despesas Pessoais - Adicionar",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "data"
+              },
+              {
+                "name": "tipo"
+              },
+              {
+                "name": "valor"
+              },
+              {
+                "name": "sugestao"
+              },
+              {
+                "name": "descricao"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "a3d6855b-3ccd-47a3-9e71-5f93ab3c4335",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1tBfT9bi6jnNJYNF7P1TFZwTre4d15ra0lnTspJCusJo",
+            "mode": "list",
+            "cachedResultName": "Agente Contador",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tBfT9bi6jnNJYNF7P1TFZwTre4d15ra0lnTspJCusJo/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tBfT9bi6jnNJYNF7P1TFZwTre4d15ra0lnTspJCusJo/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Descrição": "={{ $json.descricao }}",
+              "Sugestão da IA": "={{ $json.sugestao }}",
+              "Valor": "={{ $json.valor }}",
+              "Tipo de Despesa": "={{ $json.tipo }}",
+              "Data": "={{ $json.data }}"
+            },
+            "matchingColumns": [
+              "Descrição"
+            ],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Tipo de Despesa",
+                "displayName": "Tipo de Despesa",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Descrição",
+                "displayName": "Descrição",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Valor",
+                "displayName": "Valor",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Sugestão da IA",
+                "displayName": "Sugestão da IA",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "useAppend": true
+          }
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          440,
+          0
+        ],
+        "id": "bf98d915-4091-4efb-82d9-f61b624d2e8d",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "dc8172a6-121f-4b54-a0b5-8b0e45a2d019",
+                "name": "msg",
+                "value": "Adicionado!",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          720,
+          0
+        ],
+        "id": "c5e6ab47-aa48-4676-bab1-6b485d0c8ab1",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          200,
+          0
+        ],
+        "id": "fee0ebf8-6262-4c51-b1f7-a62ed3908879",
+        "name": "Wait",
+        "webhookId": "4e4a8085-5e80-467f-9a4d-f7f7a40d8d7d"
+      }
+    ],
+    "connections": {
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Sheets": {
+        "main": [
+          []
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "7549913d-1011-4ca0-a23c-0061571c705e",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

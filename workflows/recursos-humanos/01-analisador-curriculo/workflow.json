@@ -1,0 +1,929 @@
+[
+  {
+    "createdAt": "2025-07-03T23:20:28.719Z",
+    "updatedAt": "2025-07-04T00:34:58.000Z",
+    "id": "ARz0AiMxDkaZ4j4S",
+    "name": "[FA] Analisador Curriculo",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "simple": false,
+          "filters": {},
+          "options": {
+            "downloadAttachments": true
+          }
+        },
+        "type": "n8n-nodes-base.gmailTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "e2e002ab-7ea4-4f21-b2e3-7df9bd8509d9",
+        "name": "Gmail Trigger",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "n2OP0HoEkh2BoEis",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5e627e93-0e6e-4739-8824-25f54ebe34f1",
+                "leftValue": "={{ $json.subject }}",
+                "rightValue": "CV",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "c4510690-7217-45fd-8732-10a8a436fc59",
+        "name": "Filtro Assunto CV"
+      },
+      {
+        "parameters": {
+          "content": "## Filtra CV no título\n",
+          "height": 100
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          160,
+          -120
+        ],
+        "typeVersion": 1,
+        "id": "be7c37a2-6bb8-4f31-b79d-3cecbf66613a",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "## Checar se tem anexo\n",
+          "height": 100
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          460,
+          -120
+        ],
+        "typeVersion": 1,
+        "id": "0d2a073b-a602-447c-91a8-4ed081ec6924",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c7218282-9c2b-40fa-8683-b1c7cbdbbeb9",
+                "leftValue": "={{ $json.headers['content-type'] }}",
+                "rightValue": "mixed",
+                "operator": {
+                  "type": "string",
+                  "operation": "contains"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          520,
+          0
+        ],
+        "id": "496ee127-c9fa-4d39-b908-546a07e8fedc",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "inputDataFieldName": "attachment_0",
+          "name": "={{ $json.subject + \" \" + $now.format('dd-MM-yyyy hh:mm:ss') }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1j0qpYVqru2WgXdemleWybDirPl4sL2HN",
+            "mode": "list",
+            "cachedResultName": "Curriculos",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1j0qpYVqru2WgXdemleWybDirPl4sL2HN"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          960,
+          -20
+        ],
+        "id": "a691d3a4-aa68-41da-a161-c82d6d649b1c",
+        "name": "Enviar CV para Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.mimeType }}",
+                      "rightValue": "application/pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "aa8c74a2-57bd-4b25-a157-79fa92e482e4"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PDF"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "07fce163-81c8-4833-8b57-192a63226a6a",
+                      "leftValue": "={{ $json.mimeType }}",
+                      "rightValue": "wordprocessingml",
+                      "operator": {
+                        "type": "string",
+                        "operation": "contains"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Word"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "fa56b999-63c5-463a-a8db-9036010073d3",
+                      "leftValue": "={{ $json.mimeType }}",
+                      "rightValue": "png",
+                      "operator": {
+                        "type": "string",
+                        "operation": "contains"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Tipo não aceito"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": 1
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          1180,
+          -20
+        ],
+        "id": "6b0a3d60-7384-4f0a-b020-87c7a066a336",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $json.from.value[0].address }}",
+          "subject": "Sobre a sua candidatura",
+          "message": "=Olá,\n\nHá um problema com sua candidatura:\n\n- Arquivo não enviado\n- Arquivo em formato diferente de .docx ou .pdf\n\nCheque e envie novamente",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          1500,
+          340
+        ],
+        "id": "1390800c-6754-42c7-9e65-f287f0fc7eb8",
+        "name": "Email de Erro na Candidatura",
+        "webhookId": "bb4cbe71-2d08-4452-b6bd-f8a419e7338b",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "n2OP0HoEkh2BoEis",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Enviar CV para Drive').item.json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1580,
+          -200
+        ],
+        "id": "c4825c6d-2c65-4a2d-adb8-6fe1ecb7414b",
+        "name": "Baixar CV",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "pdf",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          2020,
+          -120
+        ],
+        "id": "c81f4857-3fbe-436e-a559-a3eb813f2497",
+        "name": "Dados do Curriculo"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "fee3bc58-5f9b-4629-9394-06ac53dcc8c0",
+                "name": "text",
+                "value": "={{ $json.text }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2280,
+          -120
+        ],
+        "id": "aa7cb837-be33-4f1c-ae6f-2f28a8d652cc",
+        "name": "Padronizacao"
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "1lVh1nR3TzZkBrYuWX3yU9ae0oATKxaKl",
+            "mode": "list",
+            "cachedResultName": "job_description_programador.pdf",
+            "cachedResultUrl": "https://drive.google.com/file/d/1lVh1nR3TzZkBrYuWX3yU9ae0oATKxaKl/view?usp=drivesdk"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          2500,
+          -120
+        ],
+        "id": "6900afaf-98d6-4fbe-b266-111333fa20b9",
+        "name": "Configurar Job Description",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "pdf",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          2740,
+          -120
+        ],
+        "id": "c1e35cb0-2556-41dc-9fbe-3bf37ba1f4a3",
+        "name": "Dados da Job Description"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "fee3bc58-5f9b-4629-9394-06ac53dcc8c0",
+                "name": "text",
+                "value": "={{ $json.text }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2960,
+          -120
+        ],
+        "id": "7c93b3e8-b0f2-4031-89f4-1f2ba47e5e34",
+        "name": "Padronizacao JD"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Curriculo do Candidato:\n\n {{ $('Padronizacao').item.json.text }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "=# Visão Geral\n\nVocê é um recrutador técnico especializado em vagas de IA, automação e desenvolvimento de software. Sua tarefa é analisar uma descrição de vaga e o currículo de um candidato, avaliando como o perfil do candidato se encaixa nos requisitos e no perfil ideal definidos para a posição. Seu objetivo é fornecer um relatório de triagem detalhado e fundamentado.\n\nDê ênfase especial à correspondência entre as habilidades técnicas, experiências e perfil desejado destacados na descrição da vaga. Avalie tanto o alinhamento técnico quanto o entendimento do contexto de negócio do candidato. Baseie sua análise apenas nas informações presentes no currículo e na vaga, evitando suposições.\n\n## Saída Esperada\n\nSeu relatório deve seguir exatamente este formato:\n\n**Pontos Fortes do Candidato:**  \nListe as principais habilidades, experiências ou qualificações relevantes que o candidato traz, com base nos requisitos da vaga. Seja específico.\n\n**Pontos de Atenção do Candidato:**  \nListe aspectos em que o candidato apresenta lacunas ou desalinhamento com os requisitos da vaga.\n\n**Fator de Risco:**  \n- Atribua um nível de risco (Baixo / Médio / Alto)  \n- Explique qual seria o pior cenário caso o candidato fosse contratado.\n\n**Fator de Recompensa:**  \n- Atribua um nível de potencial (Baixo / Médio / Alto)  \n- Descreva o melhor cenário: quais resultados ou valores o candidato pode entregar para a empresa?  \n- O candidato parece se encaixar melhor para curto ou longo prazo?\n\n**Nota de Compatibilidade Geral (0-10):**  \nAtribua uma nota de 0 (pouca compatibilidade) a 10 (compatibilidade total) com base no encaixe do candidato à vaga. Não utilize números decimais.\n\n**Justificativa da Nota:**  \nExplique claramente por que o candidato recebeu essa nota. Utilize exemplos e menções diretas ao currículo e à vaga para fundamentar sua análise.\n\n## Descrição da Vaga\n\n{{ $json.text }}\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          3180,
+          -120
+        ],
+        "id": "5db9d212-e034-4368-9e76-c92f9aac7bce",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          3100,
+          180
+        ],
+        "id": "4365f392-1f7b-4045-a11a-e775cff52149",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "schemaType": "manual",
+          "inputSchema": "{\n  \"name\": \"resume_screening_evaluation\",\n  \"description\": \"Analisa um currículo em relação à vaga e retorna pontos fortes, pontos fracos, fator de risco, fit da vaga e uma explicação.\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"strengths\": {\n      \"type\": \"array\",\n      \"description\": \"Lista dos principais pontos fortes ou qualificações do candidato alinhados à vaga.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"weaknesses\": {\n      \"type\": \"array\",\n      \"description\": \"Lista dos principais pontos fracos ou aspectos onde o candidato não atende totalmente aos requisitos da vaga.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"risk_factor\": {\n      \"type\": \"string\",\n      \"enum\": [\"Baixo\", \"Médio\", \"Alto\"],\n      \"description\": \"O nível de risco percebido em contratar este candidato.\"\n    },\n    \"job_fit\": {\n      \"type\": \"integer\",\n      \"description\": \"Nota de adequação à vaga, de 0 (sem fit) a 10 (fit perfeito).\",\n      \"minimum\": 0,\n      \"maximum\": 10\n    },\n    \"explanation\": {\n      \"type\": \"string\",\n      \"description\": \"Explicação detalhada do motivo da avaliação, referenciando pontos do currículo e da vaga.\"\n    }\n  },\n  \"required\": [\n    \"strengths\",\n    \"weaknesses\",\n    \"risk_factor\",\n    \"job_fit\",\n    \"explanation\"\n  ]\n}\n"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          3360,
+          240
+        ],
+        "id": "51013af3-9c04-4ea5-9ba7-c51611524640",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "text": "={{ $('Padronizacao').item.json.text }}",
+          "attributes": {
+            "attributes": [
+              {
+                "name": "first name",
+                "description": "Nome do usuário",
+                "required": true
+              },
+              {
+                "name": "last name",
+                "description": "Sobrenome do usuário",
+                "required": true
+              },
+              {
+                "name": "email",
+                "description": "Email do usuário",
+                "required": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+        "typeVersion": 1.2,
+        "position": [
+          3540,
+          -120
+        ],
+        "id": "a6508826-fd18-4c5f-931e-a191c53316e2",
+        "name": "Information Extractor"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1yGq1PKYjB7A1WkcJKezi02kSon6Pzk8nXyqR4gpKCc8",
+            "mode": "list",
+            "cachedResultName": "Planilha de Candidatos",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yGq1PKYjB7A1WkcJKezi02kSon6Pzk8nXyqR4gpKCc8/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yGq1PKYjB7A1WkcJKezi02kSon6Pzk8nXyqR4gpKCc8/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Data": "={{ $now.format('dd/MM/yyyy h:mm a') }}",
+              "Curriculo": "={{ $('Enviar CV para Drive').item.json.webViewLink }}",
+              "Nome": "={{ $json.output['first name'] }}",
+              "Sobrenome": "={{ $json.output['last name'] }}",
+              "Email": "={{ $json.output.email }}",
+              "Pontos Fortes": "={{ $('AI Agent').item.json.output.strengths.join(\"\\n\\n\") }}",
+              "Pontos Fracos": "={{ $('AI Agent').item.json.output.weaknesses.join(\"\\n\\n\") }}",
+              "Fator de Risco": "={{ $('AI Agent').item.json.output.risk_factor }}",
+              "Fit da Vaga (0 a 10)": "={{ $('AI Agent').item.json.output.job_fit }}",
+              "Explicação": "={{ $('AI Agent').item.json.output.explanation }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Data",
+                "displayName": "Data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Curriculo",
+                "displayName": "Curriculo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Nome",
+                "displayName": "Nome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Sobrenome",
+                "displayName": "Sobrenome",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Pontos Fortes",
+                "displayName": "Pontos Fortes",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Pontos Fracos",
+                "displayName": "Pontos Fracos",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Fator de Risco",
+                "displayName": "Fator de Risco",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Fit da Vaga (0 a 10)",
+                "displayName": "Fit da Vaga (0 a 10)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Explicação",
+                "displayName": "Explicação",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          3900,
+          -120
+        ],
+        "id": "637b5e5a-93eb-419a-9538-77b53d618e14",
+        "name": "Append row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://www.googleapis.com/drive/v2/files/{{ $json.id }}/copy?convert=true",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleDriveOAuth2Api",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1520,
+          20
+        ],
+        "id": "ea61d1b6-fe76-4aa6-8d9b-cda069560990",
+        "name": "Convertendo no Google Drive",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "options": {
+            "googleFileConversion": {
+              "conversion": {
+                "docsToFormat": "application/pdf"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1740,
+          20
+        ],
+        "id": "c167bb89-00f3-4523-a9a9-a70d115c65fc",
+        "name": "Download file",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "RNlEpng0bC5qyVSS",
+            "name": "Google Drive account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Gmail Trigger": {
+        "main": [
+          [
+            {
+              "node": "Filtro Assunto CV",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filtro Assunto CV": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Enviar CV para Drive",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Email de Erro na Candidatura",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar CV para Drive": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Baixar CV",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convertendo no Google Drive",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Email de Erro na Candidatura",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Baixar CV": {
+        "main": [
+          [
+            {
+              "node": "Dados do Curriculo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Dados do Curriculo": {
+        "main": [
+          [
+            {
+              "node": "Padronizacao",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Padronizacao": {
+        "main": [
+          [
+            {
+              "node": "Configurar Job Description",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Configurar Job Description": {
+        "main": [
+          [
+            {
+              "node": "Dados da Job Description",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Dados da Job Description": {
+        "main": [
+          [
+            {
+              "node": "Padronizacao JD",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Padronizacao JD": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Information Extractor",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Information Extractor",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Information Extractor": {
+        "main": [
+          [
+            {
+              "node": "Append row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convertendo no Google Drive": {
+        "main": [
+          [
+            {
+              "node": "Download file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download file": {
+        "main": [
+          [
+            {
+              "node": "Dados do Curriculo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "3f67ddc4-055a-43a0-8790-e78d1c811845",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]
