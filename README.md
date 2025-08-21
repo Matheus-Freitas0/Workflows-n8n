@@ -2,9 +2,8 @@
 
 > **Uma coleção organizada e documentada de workflows do n8n para automação de processos empresariais**
 
-[![n8n](https://img.shields.io/badge/n8n-Workflows-blue?style=for-the-badge&logo=n8n)](https://n8n.io/)
-[![Status](https://img.shields.io/badge/Status-Ativo-brightgreen?style=for-the-badge)](https://github.com/your-username/workflows-n8n)
-[![Licença](https://img.shields.io/badge/Licença-MIT-yellow?style=for-the-badge)](LICENSE)
+[![n8n](https://img.shields.io/badge/n8n-Workflows-blue?style=for-the-badge&logo=n8n)]
+[![Status](https://img.shields.io/badge/Status-Ativo-brightgreen?style=for-the-badge)]
 
 ---
 
@@ -177,7 +176,7 @@ Cada workflow segue um padrão de documentação consistente e profissional:
 
 ### 🆘 **Precisa de Ajuda?**
 
-- 📧 **Email**: [seu-email@exemplo.com](mailto:moncaomatheus@gmail.com)
+- 📧 **Email**: [seu-email@moncaomatheus@gmail.com](mailto:moncaomatheus@gmail.com)
 - 📚 **Documentação**: [Wiki do Projeto](https://github.com/Matheus-Freitas0/Workflows-n8n/blob/main/workflows/README.md)
 
 ### 🔗 **Links Úteis**
