@@ -1,0 +1,355 @@
+[
+  {
+    "createdAt": "2025-06-19T23:55:02.287Z",
+    "updatedAt": "2025-06-20T18:41:15.000Z",
+    "id": "lornRAWORbtsYvLO",
+    "name": "[FA] Funcionalidades novas 1.98",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -60,
+          60
+        ],
+        "id": "1a863885-7bb2-4d71-9abe-963963683bce",
+        "name": "When chat message received",
+        "webhookId": "ea557f15-afa1-4ea5-8cf1-ed3e37b6578f"
+      },
+      {
+        "parameters": {
+          "hasOutputParser": true,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "6b141377-0076-4fa9-9dc4-cd7a4a57e7c5",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          80,
+          380
+        ],
+        "id": "674dcc45-bdc0-4335-aec8-76f8d091f18a",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -60,
+          -220
+        ],
+        "id": "51b2cb26-aba4-4511-9f16-7bc71f497576",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "formTitle": "Preencha seu nome",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Nome",
+                "placeholder": "Digite seu nome"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.2,
+        "position": [
+          -60,
+          -400
+        ],
+        "id": "3d41d60e-a10d-4bb8-bf0c-bcbdc32b5d37",
+        "name": "On form submission",
+        "webhookId": "ec6a74a2-6a12-48d3-9cb5-d9f6701703f2"
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "gpt-4.1-mini",
+            "mode": "list",
+            "cachedResultName": "GPT-4.1-MINI"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=Forneça uma saudação dependendo se o usuário é homem ou mulher \n\nNome: {{ ([$json.nome || $json.Nome]) }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          300,
+          -320
+        ],
+        "id": "ceeebbcb-60d9-4416-ac71-c584eb74c8f5",
+        "name": "OpenAI",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
+        "typeVersion": 1,
+        "position": [
+          540,
+          580
+        ],
+        "id": "5a6c7df3-5148-46c6-8b2d-11fef4fd87b5",
+        "name": "Reranker Cohere",
+        "credentials": {
+          "cohereApi": {
+            "id": "9J6nKjl3oidZhwzw",
+            "name": "CohereApi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Múltiplos triggers\n\nAntes, cada workflow do agente precisava de apenas um gatilho. Agora, você pode usar vários, como “On Form Submission” e “Execute Workflow” no mesmo fluxo. Isso permite acionar o mesmo agente a partir de diferentes interações, sem duplicar lógica. Se você precisa que um agente responda tanto a mensagens de chat quanto a preenchimento de formulários, basta conectar ambos os triggers ao mesmo nó do agente. E com expressões em JavaScript ([$json.text || $json.chatInput]) você consegue unificar as variáveis de entrada para considerar qualquer trigger",
+          "height": 220,
+          "width": 600
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -740,
+          -340
+        ],
+        "typeVersion": 1,
+        "id": "1446084c-13c1-4b3d-a6b4-71471b0e8b72",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "## Auto fixing\n\nO Output Parser agora pode “corrigir” automaticamente a estrutura de saída do agente se ela não seguir o formato esperado. Imagine que você pediu JSON com campos específicos, mas recebeu dados mal formatados. O parser detecta o erro e ajusta o output conforme o padrão definido para o seu agente. Isso reduz falhas de integração e garante que sua automação mantenha a consistência mesmo com respostas inesperadas.",
+          "height": 200,
+          "width": 560,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          920,
+          260
+        ],
+        "typeVersion": 1,
+        "id": "556cd349-ad19-4d12-a58f-d162abfc74de",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "content": "## Reranking\n\nEssa funcionalidade aprimora a forma como o n8n seleciona respostas relevantes de bases vetoriais (como Supabase, Pinecone). Ela usa um re-ranker da Cohere para ordenar as respostas antes de retornar ao usuário. Com isso, os resultados ficam de forma mais inteligente, evitando respostas fora de contexto e destacando as melhores opções sem precisar construir lógica manualmente no workflow.",
+          "height": 200,
+          "width": 620,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          680,
+          580
+        ],
+        "typeVersion": 1,
+        "id": "546fc86e-e04c-474f-9b68-71bae64db934",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "content": "## Atenção: Versão 1.98+",
+          "height": 80,
+          "width": 280,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -740,
+          -520
+        ],
+        "typeVersion": 1,
+        "id": "e238c9a6-1f2f-4878-8828-ba9bc6a2c527",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "tableName": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          },
+          "useReranker": true,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          320,
+          360
+        ],
+        "id": "374ecc21-94f9-4811-9034-28d1b0b936d5",
+        "name": "Supabase Vector Store",
+        "credentials": {
+          "supabaseApi": {
+            "id": "Gw4xu06J8EQySvmQ",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\t\"nome\": \"Nome do usuário\",\n    \"idade\": 50,\n    \"opiniao_da_ia\": \"O que achou da pessoa\"\n}",
+          "autoFix": true
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          620,
+          260
+        ],
+        "id": "532156f8-f216-4ad3-91c3-e2dd6e1bddec",
+        "name": "Structured Output Parser"
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "On form submission": {
+        "main": [
+          [
+            {
+              "node": "OpenAI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "OpenAI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reranker Cohere": {
+        "ai_reranker": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "ai_reranker",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase Vector Store": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {
+      "When clicking ‘Execute workflow’": [
+        {
+          "json": {
+            "nome": "Matheus"
+          }
+        }
+      ]
+    },
+    "versionId": "f12ac49f-ede1-4853-95f5-895f9e530511",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

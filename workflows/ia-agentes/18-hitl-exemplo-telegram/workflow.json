@@ -1,0 +1,335 @@
+[
+  {
+    "createdAt": "2025-05-16T19:43:34.290Z",
+    "updatedAt": "2025-05-27T11:33:36.000Z",
+    "id": "oBkhn2RlKDcxvAAA",
+    "name": "[FA] HITL Exemplo",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## Human In The Loop = HITL",
+          "height": 80,
+          "width": 440
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -160,
+          -240
+        ],
+        "typeVersion": 1,
+        "id": "5a5e6ceb-885f-4a51-9603-56b801471ff9",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          780,
+          280
+        ],
+        "id": "4bc5a8c9-3b60-4c9d-8b49-cee100e21193",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "65cf2065-c8f1-4463-b051-53264caf17cf",
+        "name": "Recebe Mensagem",
+        "webhookId": "d8778fb7-673d-44a5-aade-abde128ad995",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.message.text }}",
+          "options": {
+            "systemMessage": "Você gera 5 ideias de postagens para LinkedIn baseado no assunto que o usuário está solicitando.\n\nResponda somente com a lista de ideias."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          220,
+          0
+        ],
+        "id": "ac9a4ec7-30d7-47c6-b6f6-9ef9cec0e640",
+        "name": "Agente gerador de Ideias"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "8babb2bd-854e-47fb-9fcb-2a25a1cfe4bf",
+                "name": "ideas",
+                "value": "={{ $json.output }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          580,
+          0
+        ],
+        "id": "6453bda2-c239-40c0-a576-77f6b3939008",
+        "name": "Recebe Ideias"
+      },
+      {
+        "parameters": {
+          "operation": "sendAndWait",
+          "chatId": "={{ $('Recebe Mensagem').item.json.message.chat.id }}",
+          "message": "=Podemos seguir?\n\n{{ $json.ideas }}",
+          "responseType": "freeText",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          800,
+          0
+        ],
+        "id": "70d6caf8-194c-4fbf-b9cd-5136284320a6",
+        "name": "Feedback",
+        "webhookId": "d70eaf15-e28d-4184-87b2-0519cc88c73f",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "inputText": "={{ $json.data.text }}",
+          "categories": {
+            "categories": [
+              {
+                "category": "aprovado",
+                "description": "=O usuário digitou uma mensagem positiva ou que dê a entender que ele quer seguir com as ideias sugeridas"
+              },
+              {
+                "category": "negado",
+                "description": "=O usuário digitou uma mensagem negativa, não quer seguir com as ideias enviadas\n\nRespostas neutras tambem devem ser identificadas como negado"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.textClassifier",
+        "typeVersion": 1,
+        "position": [
+          1020,
+          0
+        ],
+        "id": "9b39acf5-8896-45fc-924c-fced6d5fc851",
+        "name": "Verificando resposta"
+      },
+      {
+        "parameters": {
+          "content": "## Aprovação da ideia",
+          "height": 340,
+          "width": 740,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          740,
+          -140
+        ],
+        "typeVersion": 1,
+        "id": "cc19f515-cc22-4586-ab8d-c4db01f5afe8",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Recebe Mensagem').item.json.message.chat.id }}",
+          "text": "Pronto! A tarefa foi concluída, e as ideias geradas foram salvas na planilha.",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1540,
+          -20
+        ],
+        "id": "e6c6fd67-732c-4717-95b9-44ae0b94fa11",
+        "name": "Resposta final",
+        "webhookId": "1e333dfc-8366-43d0-9453-7baaf75c80e1",
+        "credentials": {
+          "telegramApi": {
+            "id": "UuIHTdbuFajCOwkQ",
+            "name": "Telegram account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Baseado no feedback do usuário, modifique as ideias geradas para que se adeque com o que o usuário precisa.\n\nResponda somente com as ideias modificadas\n\n\nFeedback do usuario: {{ $('Feedback').item.json.data.text }}\n\nIdeias originais: {{ $('Recebe Ideias').item.json.ideas }}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.8,
+        "position": [
+          1360,
+          340
+        ],
+        "id": "37794772-f763-4262-9d10-91e0613939bc",
+        "name": "Agente de Revisao"
+      }
+    ],
+    "connections": {
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente gerador de Ideias",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Verificando resposta",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Agente de Revisao",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recebe Mensagem": {
+        "main": [
+          [
+            {
+              "node": "Agente gerador de Ideias",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente gerador de Ideias": {
+        "main": [
+          [
+            {
+              "node": "Recebe Ideias",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recebe Ideias": {
+        "main": [
+          [
+            {
+              "node": "Feedback",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Feedback": {
+        "main": [
+          [
+            {
+              "node": "Verificando resposta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Verificando resposta": {
+        "main": [
+          [
+            {
+              "node": "Resposta final",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Agente de Revisao",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente de Revisao": {
+        "main": [
+          [
+            {
+              "node": "Recebe Ideias",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "10ab6a5e-6600-434a-9574-c872fcef53b7",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

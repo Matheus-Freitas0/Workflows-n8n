@@ -85,13 +85,21 @@ Ative o workflow e monitore sua execução através dos logs e métricas dispon�
 ### 🤖 **Automação & IA**
 
 - [Classificador de Emails](./workflows/automacao/) - Categorização automática de emails
+- [Funcionalidades Novas](./workflows/automacao/) - Demonstração de recursos das versões 1.98-1.102+
 - [Agentes de IA](./workflows/ia-agentes/) - Soluções inteligentes com machine learning
-- [Previsão do Tempo](./workflows/ia-agentes/) - Agente meteorológico inteligente
+- [Multiagent para Blog](./workflows/ia-agentes/) - Geração de conteúdo para blog
+- [Integrações IA](./workflows/ia-agentes/) - Perplexity, DeepSeek, Gemini Flash
+- [HITL com Telegram](./workflows/ia-agentes/) - Human-in-the-Loop automatizado
 
 ### 💰 **Financeiro**
 
 - [Gestão de Despesas](./workflows/financeiro/) - Controle de despesas pessoais
 - [Agentes Financeiros](./workflows/financeiro/) - Automações para gestão financeira
+
+### 📊 **Monitoramento & Logs**
+
+- [Agent Tracker](./workflows/monitoramento/) - Tracking de execuções de agentes
+- [Error Logger](./workflows/monitoramento/) - Sistema automatizado de log de erros
 
 ### 📢 **Marketing & Redes Sociais**
 

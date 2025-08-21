@@ -1,0 +1,215 @@
+[
+  {
+    "createdAt": "2025-05-06T12:16:23.034Z",
+    "updatedAt": "2025-05-27T11:34:41.000Z",
+    "id": "m6Z0YEdWjp0gNZAp",
+    "name": "[FA] Error Logger",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "50b21ca6-f062-4ce1-a4f5-7f53f61983e3",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "sendTo": "suporte@horadecodar.com.br",
+          "subject": "=Erro no Workflow:  {{ $json.workflow.name }}",
+          "emailType": "text",
+          "message": "=Olá, essa mensagem é para informar de um erro no Workflow!\n\nAconteceu no Node {{ $json.execution.error.node.name }}, ele recebeu o erro: {{ $json.execution.error.message }}\n\nOcorrido em: {{ $now.format(\"dd/MM/yyyy HH:mm:ss\") }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          300,
+          -220
+        ],
+        "id": "544fca40-508e-49ef-98c4-27bcc8cea1da",
+        "name": "Gmail",
+        "webhookId": "14887a3a-32b5-4631-804f-ac60faafe0a5",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "n2OP0HoEkh2BoEis",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1yhvoIde4gpcT2wCwtXw4ZaoPfmNdV4yfVXGe3i4rG6w",
+            "mode": "list",
+            "cachedResultName": "Erros de Workflow",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yhvoIde4gpcT2wCwtXw4ZaoPfmNdV4yfVXGe3i4rG6w/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Página1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yhvoIde4gpcT2wCwtXw4ZaoPfmNdV4yfVXGe3i4rG6w/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "URL": "={{ $json.execution.url }}",
+              "Workflow": "={{ $json.workflow.name }}",
+              "Node": "={{ $json.execution.error.node.name }}",
+              "Mensagem": "={{ $json.execution.error.message }}",
+              "Horário": "={{ $now.format(\"dd/MM/yyyy HH:mm:ss\") }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Horário",
+                "displayName": "Horário",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "URL",
+                "displayName": "URL",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Workflow",
+                "displayName": "Workflow",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Node",
+                "displayName": "Node",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Mensagem",
+                "displayName": "Mensagem",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          380,
+          0
+        ],
+        "id": "0504ed00-9ff0-4ac9-ae46-550d336bbd19",
+        "name": "Google Sheets",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "sSkM5gMFzE9VxqsL",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "authentication": "oAuth2",
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C08PDBGU909",
+            "mode": "list",
+            "cachedResultName": "social"
+          },
+          "text": "=Olá, essa mensagem é para informar de um erro no Workflow!\n\nAconteceu no Node {{ $json.execution.error.node.name }}, ele recebeu o erro: {{ $json.execution.error.message }}\n\nOcorrido em: {{ $now.format(\"dd/MM/yyyy HH:mm:ss\") }}",
+          "otherOptions": {
+            "includeLinkToWorkflow": false
+          }
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          320,
+          240
+        ],
+        "id": "b2d0514b-2e4d-4396-8c67-8bca50921bb8",
+        "name": "Slack",
+        "webhookId": "f0f232cb-8903-4fcf-959d-c73a28eb3881",
+        "credentials": {
+          "slackOAuth2Api": {
+            "id": "hLcwQzNbPIW79HNF",
+            "name": "Slack account 4"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Gmail",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Google Sheets",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Slack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "872db43a-af35-49a4-befe-fff9b6a0d27d",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]

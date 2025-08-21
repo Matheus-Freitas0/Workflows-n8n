@@ -33,12 +33,18 @@ Workflows de inteligência artificial e agentes automatizados.
 - **11-ai-nodes/** - AI Nodes especializados
 - **12-ai-agent-configs/** - Configurações de agentes de IA
 - **13-agentes-ia-mais-precisos/** - Agentes de IA mais precisos
+- **14-multiagent-post-blog-corpo/** - Multiagent para post de blog
+- **15-integracao-perplexity/** - Integração com Perplexity
+- **16-integracao-deepseek/** - Integração com DeepSeek
+- **17-integracao-gemini-flash/** - Integração com Gemini Flash
+- **18-hitl-exemplo-telegram/** - HITL exemplo com Telegram
 
 ### 📊 [Monitoramento](./monitoramento/)
 
 Workflows de tracking, monitoramento e análise de dados.
 
 - **01-agent-tracker/** - Tracking de execuções de agentes
+- **02-error-logger/** - Sistema de log de erros automatizado
 
 ### 💰 [Financeiro](./financeiro/)
 
@@ -67,6 +73,10 @@ Workflows relacionados a marketing digital e redes sociais.
 Workflows de automação geral e processamento inteligente.
 
 - **01-classificador-emails/** - Classificador de e-mails
+- **02-funcionalidades-novas-198/** - Funcionalidades novas versão 1.98
+- **03-funcionalidades-novas-1102/** - Funcionalidades novas versão 1.102+
+- **04-funcionalidades-novas-1101/** - Funcionalidades novas versão 1.101
+- **05-funcionalidades-novas-1100/** - Funcionalidades novas versão 1.100
 
 ### 💾 [Backup](./backup/)
 
@@ -116,6 +126,16 @@ Workflows relacionados a gestão de recursos humanos.
 | IA e Agentes     | [11-ai-nodes](./ia-agentes/11-ai-nodes/)                                                              | AI Nodes especializados           |
 | IA e Agentes     | [12-ai-agent-configs](./ia-agentes/12-ai-agent-configs/)                                              | Configurações de agentes de IA    |
 | IA e Agentes     | [13-agentes-ia-mais-precisos](./ia-agentes/13-agentes-ia-mais-precisos/)                              | Agentes de IA mais precisos       |
+| IA e Agentes     | [14-multiagent-post-blog-corpo](./ia-agentes/14-multiagent-post-blog-corpo/)                          | Multiagent para post de blog     |
+| IA e Agentes     | [15-integracao-perplexity](./ia-agentes/15-integracao-perplexity/)                                    | Integração com Perplexity         |
+| IA e Agentes     | [16-integracao-deepseek](./ia-agentes/16-integracao-deepseek/)                                        | Integração com DeepSeek           |
+| IA e Agentes     | [17-integracao-gemini-flash](./ia-agentes/17-integracao-gemini-flash/)                                | Integração com Gemini Flash       |
+| IA e Agentes     | [18-hitl-exemplo-telegram](./ia-agentes/18-hitl-exemplo-telegram/)                                    | HITL exemplo com Telegram         |
+| Monitoramento    | [02-error-logger](./monitoramento/02-error-logger/)                                                   | Sistema de log de erros           |
+| Automação        | [02-funcionalidades-novas-198](./automacao/02-funcionalidades-novas-198/)                             | Funcionalidades novas 1.98       |
+| Automação        | [03-funcionalidades-novas-1102](./automacao/03-funcionalidades-novas-1102/)                           | Funcionalidades novas 1.102+     |
+| Automação        | [04-funcionalidades-novas-1101](./automacao/04-funcionalidades-novas-1101/)                           | Funcionalidades novas 1.101      |
+| Automação        | [05-funcionalidades-novas-1100](./automacao/05-funcionalidades-novas-1100/)                           | Funcionalidades novas 1.100      |
 | Financeiro       | [02-agentes-despesas-pessoais](./financeiro/02-agentes-despesas-pessoais/)                            | Agentes de despesas pessoais      |
 
 ## 📋 Convenções de Nomenclatura
@@ -237,7 +257,22 @@ workflows/
 │   ├── 12-ai-agent-configs/
 │   │   ├── README.md
 │   │   └── workflow.json
-│   └── 13-agentes-ia-mais-precisos/
+│   ├── 13-agentes-ia-mais-precisos/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 14-multiagent-post-blog-corpo/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 15-integracao-perplexity/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 16-integracao-deepseek/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 17-integracao-gemini-flash/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   └── 18-hitl-exemplo-telegram/
 │       ├── README.md
 │       └── workflow.json
 ├── financeiro/
@@ -248,7 +283,10 @@ workflows/
 │       ├── README.md
 │       └── workflow.json
 ├── monitoramento/
-│   └── 01-agent-tracker/
+│   ├── 01-agent-tracker/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   └── 02-error-logger/
 │       ├── README.md
 │       └── workflow.json
 ├── whatsapp/
@@ -269,7 +307,19 @@ workflows/
 │       ├── README.md
 │       └── workflow.json
 ├── automacao/
-│   └── 01-classificador-emails/
+│   ├── 01-classificador-emails/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 02-funcionalidades-novas-198/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 03-funcionalidades-novas-1102/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 04-funcionalidades-novas-1101/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   └── 05-funcionalidades-novas-1100/
 │       ├── README.md
 │       └── workflow.json
 ├── backup/

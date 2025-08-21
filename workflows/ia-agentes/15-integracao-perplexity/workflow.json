@@ -1,0 +1,199 @@
+[
+  {
+    "createdAt": "2025-06-14T13:52:56.635Z",
+    "updatedAt": "2025-06-14T19:09:51.000Z",
+    "id": "LSVTqTjLk8K2p39E",
+    "name": "[FA] Integração com Perplexity",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "7ba5d3a4-8a10-4f63-a9de-689a7352d58c",
+        "name": "When chat message received",
+        "webhookId": "4dd81087-83a1-4be8-b8ef-738a834511dc"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2,
+        "position": [
+          220,
+          0
+        ],
+        "id": "929f8492-a60e-4e89-9a25-bfad65a910d2",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          120,
+          280
+        ],
+        "id": "9dba74d0-9a8e-4bb0-b3a9-1fe0dc27afa9",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "H79y1c1UARm5hINL",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "sonar",
+          "messages": {
+            "message": [
+              {
+                "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message0_Text', ``, 'string') }}"
+              }
+            ]
+          },
+          "options": {},
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.perplexityTool",
+        "typeVersion": 1,
+        "position": [
+          380,
+          220
+        ],
+        "id": "93f3a391-5b7f-4913-85ee-35e6cc456189",
+        "name": "Perplexity",
+        "credentials": {
+          "perplexityApi": {
+            "id": "COtqivfmWqP14OeM",
+            "name": "Perplexity account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          80,
+          540
+        ],
+        "id": "9e4d777a-d1fa-47bf-9c37-d97caa2bf4f7",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "model": "sonar",
+          "messages": {
+            "message": [
+              {
+                "content": "Fale sobre a versão 1.98.1 do n8n"
+              }
+            ]
+          },
+          "options": {},
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.perplexity",
+        "typeVersion": 1,
+        "position": [
+          300,
+          540
+        ],
+        "id": "c441e781-780b-4c92-98da-19a4c6187cc0",
+        "name": "Perplexity1",
+        "credentials": {
+          "perplexityApi": {
+            "id": "COtqivfmWqP14OeM",
+            "name": "Perplexity account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Perplexity": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Perplexity1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Perplexity1": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "88cf3995-0cd5-473a-a188-206112643a5f",
+    "triggerCount": 0,
+    "tags": [
+      {
+        "createdAt": "2025-05-26T19:48:27.869Z",
+        "updatedAt": "2025-05-26T19:48:27.869Z",
+        "id": "hbBJw9VpX8CbCKpn",
+        "name": "FA"
+      }
+    ]
+  }
+]
