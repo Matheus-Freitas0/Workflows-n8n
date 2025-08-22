@@ -4,6 +4,8 @@
 
 ![n8n](https://img.shields.io/badge/n8n-Workflows-blue?style=for-the-badge&logo=n8n)
 ![Status](https://img.shields.io/badge/Status-Ativo-brightgreen?style=for-the-badge)
+![Workflows](https://img.shields.io/badge/Workflows-76+-orange?style=for-the-badge)
+![Categorias](https://img.shields.io/badge/Categorias-10+-purple?style=for-the-badge)
 
 ---
 
@@ -22,7 +24,7 @@
 
 ## 🎯 Sobre o Projeto
 
-Este repositório centraliza uma coleção organizada de workflows do n8n, cada um meticulosamente documentado com funcionalidades, configurações e casos de uso específicos. Nossa missão é facilitar a implementação de automações robustas e escaláveis para diferentes cenários empresariais.
+Este repositório centraliza uma coleção organizada de **76+ workflows** do n8n, cada um meticulosamente documentado com funcionalidades, configurações e casos de uso específicos. Nossa missão é facilitar a implementação de automações robustas e escaláveis para diferentes cenários empresariais.
 
 ### ✨ Características Principais
 
@@ -31,6 +33,9 @@ Este repositório centraliza uma coleção organizada de workflows do n8n, cada 
 - 🔧 **Configuração Simples**: Setup rápido e intuitivo
 - 📊 **Monitoramento**: Logs e métricas para acompanhamento
 - 🚀 **Pronto para Produção**: Testado e validado em ambientes reais
+- 🤖 **IA Integrada**: Múltiplos modelos de inteligência artificial
+- 📱 **Multimodal**: Suporte para texto, voz, imagem e PDF
+- 🔄 **Automação Inteligente**: Processos automatizados com aprovação humana
 
 ---
 
@@ -38,15 +43,16 @@ Este repositório centraliza uma coleção organizada de workflows do n8n, cada 
 
 ```
 workflows/
-├── 📅 agendamento/           # Gestão de calendários e eventos
-├── 🤖 automacao/             # Automações gerais e inteligentes
-├── 💾 backup/                # Soluções de backup e recuperação
-├── 💰 financeiro/            # Gestão financeira e contábil
-├── 🧠 ia-agentes/            # Agentes de IA e machine learning
-├── 📢 marketing/             # Marketing digital e CRM
-├── 📊 monitoramento/         # Monitoramento e alertas
-├── 👥 recursos-humanos/      # Gestão de RH e recrutamento
-└── 📱 whatsapp/              # Integrações com WhatsApp
+├── 📅 agendamento/           # Gestão de calendários e eventos (7 workflows)
+├── 🤖 automacao/             # Automações gerais e inteligentes (11 workflows)
+├── 💾 backup/                # Soluções de backup e recuperação (3 workflows)
+├── 💰 financeiro/            # Gestão financeira e contábil (2 workflows)
+├── 🧠 ia-agentes/            # Agentes de IA e machine learning (29 workflows)
+├── 🔗 integracao/            # Conectores e sincronização entre sistemas (1 workflow)
+├── 📢 marketing/             # Marketing digital e CRM (6 workflows)
+├── 📊 monitoramento/         # Monitoramento e alertas (4 workflows)
+├── 👥 recursos-humanos/      # Gestão de RH e recrutamento (1 workflow)
+└── 📱 whatsapp/              # Integrações com WhatsApp (7 workflows)
 ```
 
 ---
@@ -77,51 +83,100 @@ Ative o workflow e monitore sua execução através dos logs e métricas dispon�
 
 ## 📚 Workflows Disponíveis
 
-### 📅 **Agendamento & Calendário**
+### 📅 **Agendamento & Calendário** (7 workflows)
+
+Sistema inteligente de agendamento e gestão de calendários com integração WhatsApp.
 
 - [Agente de Agendamento](./workflows/agendamento/) - Sistema inteligente de agendamento
+- [Agendar Evento WhatsApp](./workflows/agendamento/) - Agendamento via WhatsApp
 - [Gestão de Calendário](./workflows/agendamento/) - Administração completa de calendários
+- [Reagendamento Automático](./workflows/agendamento/) - Sistema de reagendamento inteligente
+- [Detalhes de Eventos](./workflows/agendamento/) - Gestão detalhada de eventos
+- [Cancelamento de Eventos](./workflows/agendamento/) - Sistema de cancelamento automatizado
 
-### 🤖 **Automação & IA**
+### 🤖 **Automação & IA** (11 workflows)
+
+Automações inteligentes com IA para classificação, resposta e organização de emails.
 
 - [Classificador de Emails](./workflows/automacao/) - Categorização automática de emails
 - [Funcionalidades Novas](./workflows/automacao/) - Demonstração de recursos das versões 1.98-1.102+
-- [Agentes de IA](./workflows/ia-agentes/) - Soluções inteligentes com machine learning
-- [Multiagent para Blog](./workflows/ia-agentes/) - Geração de conteúdo para blog
+- [Assistente Email IA Outlook](./workflows/automacao/) - Assistente inteligente para Outlook
+- [Resposta Automática com Aprovação](./workflows/automacao/) - Sistema de aprovação humana
+- [Classificação e Resposta Automática](./workflows/automacao/) - Processamento completo de emails
+- [Autocategorização Outlook](./workflows/automacao/) - Categorização automática inteligente
+
+### 🧠 **IA & Agentes Inteligentes** (29 workflows)
+
+Soluções avançadas com múltiplos modelos de IA, multiagentes e sistemas RAG.
+
+- [Agente Grok 4](./workflows/ia-agentes/) - Chat com IA Grok
+- [Seleção de Modelos](./workflows/ia-agentes/) - Sistema inteligente de seleção
+- [Agente IA PostgreSQL](./workflows/ia-agentes/) - Integração IA com banco de dados
+- [Previsão do Tempo](./workflows/ia-agentes/) - Sistema meteorológico com IA
+- [Geração de Conteúdo YouTube](./workflows/ia-agentes/) - Criação automática de conteúdo
+- [Multiagent para Blog](./workflows/ia-agentes/) - Geração colaborativa de conteúdo
 - [Integrações IA](./workflows/ia-agentes/) - Perplexity, DeepSeek, Gemini Flash
 - [HITL com Telegram](./workflows/ia-agentes/) - Human-in-the-Loop automatizado
 - [Sistema Educacional](./workflows/ia-agentes/) - Tutoria e agentes educacionais
 - [Pipeline RAG Avançado](./workflows/ia-agentes/) - Chatbot com reranker e auto-aprendizado
 - [Orquestração de Agentes](./workflows/ia-agentes/) - Coordenação de múltiplos agentes
+- [Criação de Vídeos POV](./workflows/ia-agentes/) - Geração automática de vídeos
+- [Curadoria Automática](./workflows/ia-agentes/) - Seleção inteligente de conteúdo
 
-### 💰 **Financeiro**
+### 📢 **Marketing & Redes Sociais** (6 workflows)
 
-- [Gestão de Despesas](./workflows/financeiro/) - Controle de despesas pessoais
-- [Agentes Financeiros](./workflows/financeiro/) - Automações para gestão financeira
+Automação de marketing digital, redes sociais e otimização de conteúdo.
 
-### 📊 **Monitoramento & Logs**
+- [Criação de Postagens](./workflows/marketing/) - Automação de conteúdo para redes sociais
+- [Gestão de Campanhas](./workflows/marketing/) - Otimização de campanhas de marketing
+- [Publicador Automático WordPress](./workflows/marketing/) - Publicação automática no WordPress
+- [Respostas Automáticas Instagram](./workflows/marketing/) - Sistema de comentários inteligente
+- [Geração de Metadados YouTube](./workflows/marketing/) - Otimização automática de SEO
+
+### 📱 **WhatsApp & Comunicação** (7 workflows)
+
+Soluções completas para WhatsApp com IA multimodal e automação de vendas.
+
+- [Catálogo de Produtos](./workflows/whatsapp/) - Gestão de produtos via WhatsApp
+- [Agente IA WhatsApp](./workflows/whatsapp/) - Atendimento inteligente automatizado
+- [Agendamento WhatsApp](./workflows/whatsapp/) - Sistema de agendamento integrado
+- [Testes WhatsApp](./workflows/whatsapp/) - Validação e testes de integração
+- [Assistente Multimodal](./workflows/whatsapp/) - Suporte para múltiplos tipos de mídia
+- [Chatbot IA Multimodal](./workflows/whatsapp/) - Processamento de texto, voz, imagem e PDF
+
+### 📊 **Monitoramento & Logs** (4 workflows)
+
+Sistemas de monitoramento, tracking e segurança para workflows.
 
 - [Agent Tracker](./workflows/monitoramento/) - Tracking de execuções de agentes
 - [Error Logger](./workflows/monitoramento/) - Sistema automatizado de log de erros
 - [Segurança Webhook](./workflows/monitoramento/) - Sistema de segurança para webhooks
+- [Registro de Uso e Custo IA](./workflows/monitoramento/) - Controle de custos de IA por cliente
 
-### 📢 **Marketing & Redes Sociais**
+### 💰 **Financeiro** (2 workflows)
 
-- [Criação de Postagens](./workflows/marketing/) - Automação de conteúdo para redes sociais
-- [Gestão de Campanhas](./workflows/marketing/) - Otimização de campanhas de marketing
+Automações para gestão financeira e controle de despesas.
 
-### 📱 **WhatsApp & Comunicação**
+- [Gestão de Despesas](./workflows/financeiro/) - Controle de despesas pessoais
+- [Agentes Financeiros](./workflows/financeiro/) - Automações para gestão financeira
 
-- [Catálogo de Produtos](./workflows/whatsapp/) - Gestão de produtos via WhatsApp
-- [Agente IA WhatsApp](./workflows/whatsapp/) - Atendimento inteligente automatizado
-- [Testes WhatsApp](./workflows/whatsapp/) - Validação e testes de integração
+### 💾 **Backup & Segurança** (3 workflows)
 
-### 💾 **Backup & Segurança**
+Soluções de backup automatizado e gestão de credenciais.
 
 - [Backup para Google Drive](./workflows/backup/) - Soluções de backup automatizado
 - [Gestão de Credenciais](./workflows/backup/) - Segurança e backup de credenciais
+- [Backup Automático GitLab](./workflows/backup/) - Backup automático de repositórios
 
-### 👥 **Recursos Humanos**
+### 🔗 **Integração** (1 workflow)
+
+Conectores e sincronização entre sistemas.
+
+- [Sincronizador Playlist](./workflows/integracao/) - Sincronização Spotify-YouTube
+
+### 👥 **Recursos Humanos** (1 workflow)
+
+Processamento inteligente de candidatos e gestão de RH.
 
 - [Análise de Currículos](./workflows/recursos-humanos/) - Processamento inteligente de candidatos
 
@@ -129,12 +184,17 @@ Ative o workflow e monitore sua execução através dos logs e métricas dispon�
 
 ## 🔧 Tecnologias
 
-| Tecnologia                                 | Descrição                            | Versão |
-| ------------------------------------------ | ------------------------------------ | ------ |
-| [n8n](https://n8n.io/)                     | Plataforma de automação de workflows | Latest |
-| [Markdown](https://www.markdownguide.org/) | Documentação estruturada             | -      |
-| [JSON](https://www.json.org/)              | Arquivos de workflow exportáveis     | -      |
-| [Git](https://git-scm.com/)                | Controle de versão                   | -      |
+| Tecnologia                                  | Descrição                            | Versão     |
+| ------------------------------------------- | ------------------------------------ | ---------- |
+| [n8n](https://n8n.io/)                      | Plataforma de automação de workflows | Latest     |
+| [OpenAI GPT](https://openai.com/)           | Modelos de linguagem avançados       | GPT-4      |
+| [Claude AI](https://claude.ai/)             | Assistente IA conversacional         | Claude 3   |
+| [Google Gemini](https://gemini.google.com/) | Modelo multimodal do Google          | Gemini Pro |
+| [Perplexity AI](https://perplexity.ai/)     | IA para pesquisa e análise           | Latest     |
+| [DeepSeek](https://deepseek.com/)           | Modelo de linguagem especializado    | Latest     |
+| [Markdown](https://www.markdownguide.org/)  | Documentação estruturada             | -          |
+| [JSON](https://www.json.org/)               | Arquivos de workflow exportáveis     | -          |
+| [Git](https://git-scm.com/)                 | Controle de versão                   | -          |
 
 ---
 
@@ -185,12 +245,23 @@ Cada workflow segue um padrão de documentação consistente e profissional:
 
 ---
 
+## 📊 Estatísticas do Projeto
+
+- **Total de Workflows**: 76+
+- **Categorias**: 10
+- **Workflows com IA**: 29+
+- **Integrações**: 15+
+- **Documentação**: 100% coberta
+- **Status**: Ativo e em crescimento
+
+---
+
 ## 📞 Suporte
 
 ### 🆘 **Precisa de Ajuda?**
 
 - 📧 **Email**: [moncaomatheus@gmail.com](mailto:moncaomatheus@gmail.com)
-- 📚 **Documentação**: [Wiki do Projeto](https://github.com/Matheus-Freitas0/Workflows-n8n/blob/main/workflows/README.md)
+- 📚 **Documentação**: [Wiki do Projeto](./workflows/README.md)
 
 ### 🔗 **Links Úteis**
 
@@ -210,7 +281,7 @@ Cada workflow segue um padrão de documentação consistente e profissional:
 
 **⭐ Se este projeto te ajudou, considere dar uma estrela! ⭐**
 
-_Última atualização: 08/2025_  
-_Versão: 2.0.0_
+_Última atualização: Janeiro 2025_  
+_Versão: 3.0.0_
 
 </div>
