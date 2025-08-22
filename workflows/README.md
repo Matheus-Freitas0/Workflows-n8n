@@ -49,6 +49,7 @@ Workflows de inteligência artificial e agentes automatizados.
 - **27-multiagent-post-blog/** - Sistema multiagent para blog
 - **28-multiagent-post-blog-titulos/** - Multiagent para títulos de blog
 - **29-curadoria-automatica-github-hackernews/** - Curadoria automática de projetos GitHub do Hacker News
+- **30-buffer-consolidacao-mensagens/** - Sistema de buffer e consolidação inteligente de mensagens
 
 ### 📊 [Monitoramento](./monitoramento/)
 
@@ -57,6 +58,12 @@ Workflows de tracking, monitoramento e análise de dados.
 - **01-agent-tracker/** - Tracking de execuções de agentes
 - **02-error-logger/** - Sistema de log de erros automatizado
 - **03-seguranca-webhook/** - Sistema de segurança para webhooks
+
+### 🛒 [E-commerce](./ecommerce/)
+
+Workflows relacionados a vendas online e automação de e-commerce.
+
+- **01-enviar-template-email-paypal/** - Envio automático de templates após compra PayPal
 
 ### 💰 [Financeiro](./financeiro/)
 
@@ -133,6 +140,7 @@ Workflows relacionados a gestão de recursos humanos.
 | IA e Agentes     | [08-agente-ideias-conteudo-yt-thumb](./ia-agentes/08-agente-ideias-conteudo-yt-thumb/)                | Ideias de thumbnails YT            |
 | IA e Agentes     | [09-agente-ideias-conteudo-yt-roteiro](./ia-agentes/09-agente-ideias-conteudo-yt-roteiro/)            | Geração de roteiros YT             |
 | IA e Agentes     | [10-agente-ideias-conteudo-yt-pesquisa](./ia-agentes/10-agente-ideias-conteudo-yt-pesquisa/)          | Pesquisa para conteúdo YT          |
+| E-commerce       | [01-enviar-template-email-paypal](./ecommerce/01-enviar-template-email-paypal/)                       | Envio automático de templates      |
 | Monitoramento    | [01-agent-tracker](./monitoramento/01-agent-tracker/)                                                 | Tracking de execuções              |
 | WhatsApp         | [01-agente-catalogo-produtos](./whatsapp/01-agente-catalogo-produtos/)                                | Catálogo automático de produtos    |
 | Financeiro       | [01-agente-despesas-pessoais-adicionar](./financeiro/01-agente-despesas-pessoais-adicionar/)          | Adicionar despesas pessoais        |
@@ -145,7 +153,7 @@ Workflows relacionados a gestão de recursos humanos.
 | Automação        | [01-classificador-emails](./automacao/01-classificador-emails/)                                       | Classificador de e-mails           |
 | Backup           | [01-backup-workflow-gdrive](./backup/01-backup-workflow-gdrive/)                                      | Backup workflow Google Drive       |
 | Backup           | [02-backup-workflow-credenciais-gdrive](./backup/02-backup-workflow-credenciais-gdrive/)              | Backup workflow e credenciais      |
-| Backup           | [03-backup-automatico-gitlab](./backup/03-backup-automatico-gitlab/)                                | Backup automático para GitLab      |
+| Backup           | [03-backup-automatico-gitlab](./backup/03-backup-automatico-gitlab/)                                  | Backup automático para GitLab      |
 | Integração       | [01-sincronizador-playlist-spotify-youtube](./integracao/01-sincronizador-playlist-spotify-youtube/)  | Sincronização Spotify → YouTube    |
 | Recursos Humanos | [01-analisador-curriculo](./recursos-humanos/01-analisador-curriculo/)                                | Analisador de currículo            |
 | IA e Agentes     | [11-ai-nodes](./ia-agentes/11-ai-nodes/)                                                              | AI Nodes especializados            |
@@ -167,6 +175,7 @@ Workflows relacionados a gestão de recursos humanos.
 | IA e Agentes     | [27-multiagent-post-blog](./ia-agentes/27-multiagent-post-blog/)                                      | Sistema multiagent para blog       |
 | IA e Agentes     | [28-multiagent-post-blog-titulos](./ia-agentes/28-multiagent-post-blog-titulos/)                      | Multiagent para títulos            |
 | IA e Agentes     | [29-curadoria-automatica-github-hackernews](./ia-agentes/29-curadoria-automatica-github-hackernews/)  | Curadoria automática GitHub HN     |
+| IA e Agentes     | [30-buffer-consolidacao-mensagens](./ia-agentes/30-buffer-consolidacao-mensagens/)                    | Sistema de buffer e consolidação   |
 | Monitoramento    | [02-error-logger](./monitoramento/02-error-logger/)                                                   | Sistema de log de erros            |
 | Monitoramento    | [03-seguranca-webhook](./monitoramento/03-seguranca-webhook/)                                         | Sistema de segurança para webhooks |
 | Automação        | [02-funcionalidades-novas-198](./automacao/02-funcionalidades-novas-198/)                             | Funcionalidades novas 1.98         |
@@ -340,6 +349,10 @@ workflows/
 │   │   ├── README.md
 │   │   └── workflow.json
 │   └── 28-multiagent-post-blog-titulos/
+│       ├── README.md
+│       └── workflow.json
+├── ecommerce/
+│   └── 01-enviar-template-email-paypal/
 │       ├── README.md
 │       └── workflow.json
 ├── financeiro/
