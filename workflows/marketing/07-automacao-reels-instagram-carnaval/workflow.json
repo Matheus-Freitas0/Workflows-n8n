@@ -1,0 +1,2177 @@
+{
+    "name": "Template Carnaval - time instagram",
+    "nodes": [
+      {
+        "parameters": {
+          "name": "Analyze_Reels",
+          "description": "Call this tool for queries related to analyzing reels and send the username only.",
+          "workflowId": {
+            "__rl": true,
+            "value": "PKy2GTdEotU0LTVP",
+            "mode": "list",
+            "cachedResultName": "Projects — COMING: Analyze Reels"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "username": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('username', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "username"
+            ],
+            "schema": [
+              {
+                "id": "username",
+                "displayName": "username",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2,
+        "position": [
+          500,
+          840
+        ],
+        "id": "a428a993-364c-4d91-8fb2-46062b5bb30f",
+        "name": "Analyze Reels"
+      },
+      {
+        "parameters": {
+          "name": "Repurpose",
+          "description": "Call this tool for queries related to repurposing content, send only the record ID of a record here.",
+          "workflowId": {
+            "__rl": true,
+            "value": "EpTTREKl1fpdFpkR",
+            "mode": "list",
+            "cachedResultName": "Projects — COMING: Instagram Repurposer"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Record_ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Record_ID', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "Record_ID"
+            ],
+            "schema": [
+              {
+                "id": "Record_ID",
+                "displayName": "Record_ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2,
+        "position": [
+          640,
+          820
+        ],
+        "id": "c8e01e8d-2da5-4975-8722-443bd3d2296d",
+        "name": "Repurpose"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4o-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          80,
+          720
+        ],
+        "id": "bff461af-aa3e-492d-8caa-bb003b1aa2d0",
+        "name": "ChatGPT"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('Telegram Trigger') }}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.3,
+        "position": [
+          220,
+          780
+        ],
+        "id": "4fb2ad91-89be-4b72-9f1a-aa36e7346d8c",
+        "name": "Memory"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Text: {{ $json.message.text }} \nVoice: {{ $json.text }} ",
+          "options": {
+            "systemMessage": "=### Role:\nYou are a highly efficient, fun, and enthusiastic personal assistant specializing in Instagram. Your expertise allows you to expertly interpret user queries and seamlessly route them to the correct Instagram tool.\n\n### Task:\nProcess all Instagram-related requests by identifying the intent—whether fetching, analyzing, deleting, repurposing reels or finding competitors—and then acting accordingly.\n\n### Instructions:\n\n- Fetching Reels: show 10 records of only (username, caption, views, likes, shares and Record ID only)\n- Fetching Usernames: output these (username (hypperlink using URL) and followers)\n- Repurposing reels: fetch and send the corresponding Record ID only to the \"Repurpose\" tool.\n- Find competitors: send the username only.\n- Analyze Reels: send the username only.\n\n### Extras:\n- Incorporate numeral emojis (e.g., 1️⃣, 2️⃣, 3️⃣) when listing steps and include emojis throughout your responses.\n- Notify the user if a tool fails to respond.\n- If no records exist, mention this to the user.\n- If query is unclear, inform the user of the services you can provide.\n- When fetching results, prioritize by highest Views number.\n\n### Constraints:\n\n- Do not send the full script on completion of repurposing.\n- Never display full captions if they exceed 60 characters; always truncate appropriately.\n- If you are uncertain about the intended action, ask the user for more details before proceeding."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          380,
+          320
+        ],
+        "id": "4d1d4705-8c88-42ac-a296-2ccb96622d68",
+        "name": "Nadia"
+      },
+      {
+        "parameters": {
+          "resource": "audio",
+          "operation": "transcribe",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          180,
+          180
+        ],
+        "id": "11e2ba9f-8cb2-43d6-b503-75e6fac0ad12",
+        "name": "OpenAI"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.message.voice }}",
+                      "rightValue": "voice",
+                      "operator": {
+                        "type": "object",
+                        "operation": "exists",
+                        "singleValue": true
+                      },
+                      "id": "e2f7ed3e-f0ca-44c7-93aa-ab8d0dba0135"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Voice"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "b17b5d14-0a3b-4bf9-ab6c-8759394aee48",
+                      "leftValue": "={{ $json.message.text }}",
+                      "rightValue": "text",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Text"
+              }
+            ]
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          -180,
+          320
+        ],
+        "id": "21b35642-9d4c-462a-8eb0-54c9593249bf",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "fileId": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}"
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          180
+        ],
+        "id": "09bf51e6-25f8-49ff-bed8-ec7c69deb7d2",
+        "name": "Telegram1",
+        "webhookId": "53042c04-7f1c-44cc-b00c-4f638cb864b1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "fef76fb8-7518-4bcd-8107-9ddca403149b",
+                "leftValue": "={{ $json.message.chat.id }}",
+                "rightValue": null,
+                "operator": {
+                  "type": "number",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -400,
+          320
+        ],
+        "id": "96ab4b85-709e-40db-a76d-f00026c3047f",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+          "text": "={{ $json.output }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          840,
+          320
+        ],
+        "id": "f7cedc94-e09d-4a98-b8a8-172de0181253",
+        "name": "Telegram",
+        "webhookId": "927ce694-1b0f-40c8-8622-4d925e707ca4"
+      },
+      {
+        "parameters": {
+          "updates": [
+            "*"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -600,
+          320
+        ],
+        "id": "0633f150-2239-4792-8efc-fd8671d2c3f6",
+        "name": "Telegram Trigger",
+        "webhookId": "89686180-428b-44a1-9cc8-47c2c1463ae5"
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Call this tool to fetch Instagram reels records.",
+          "operation": "search",
+          "base": {
+            "__rl": true,
+            "value": "appD73frcXl2LXxZ6",
+            "mode": "list",
+            "cachedResultName": "Content",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6"
+          },
+          "table": {
+            "__rl": true,
+            "value": "tblBQW6pQdmVrpq0A",
+            "mode": "list",
+            "cachedResultName": "IG Reels",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6/tblBQW6pQdmVrpq0A"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.airtableTool",
+        "typeVersion": 2.1,
+        "position": [
+          780,
+          760
+        ],
+        "id": "45c987fa-ef8c-4d93-aaea-55ffc86425ee",
+        "name": "Fetch Instagram Reels"
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Call this tool to fetch username records.",
+          "operation": "search",
+          "base": {
+            "__rl": true,
+            "value": "appD73frcXl2LXxZ6",
+            "mode": "list",
+            "cachedResultName": "Content",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6"
+          },
+          "table": {
+            "__rl": true,
+            "value": "tblmD59R4B2Uvz6Lo",
+            "mode": "list",
+            "cachedResultName": "IG Competitors",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6/tblmD59R4B2Uvz6Lo"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.airtableTool",
+        "typeVersion": 2.1,
+        "position": [
+          920,
+          700
+        ],
+        "id": "393595ab-e69f-489b-a4cc-1e7ad18a3891",
+        "name": "Fetch Usernames"
+      },
+      {
+        "parameters": {
+          "name": "Competitors",
+          "description": "Call this tool for queries related to finding competitors by sending the username only.",
+          "workflowId": {
+            "__rl": true,
+            "value": "vRLghsnYcjhNHuqa",
+            "mode": "list",
+            "cachedResultName": "Projects — Find Competitors"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "username": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('username', ``, 'string') }}"
+            },
+            "matchingColumns": [
+              "username"
+            ],
+            "schema": [
+              {
+                "id": "username",
+                "displayName": "username",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2,
+        "position": [
+          360,
+          820
+        ],
+        "id": "16722acc-9aa5-4bd9-8e5d-1c1b0933f2a1",
+        "name": "Find Competitors"
+      },
+      {
+        "parameters": {
+          "content": "## Como usar\n\n## 1. Para encontrar concorrentes, use um nome de usuário base (um dos seus concorrentes) e envie uma mensagem (por exemplo, \"Encontre concorrentes como justinbieber\").\n\n## 2. Para analisar os reels, pergunte simplesmente (por exemplo, \"Analisar reels para justinbieber\")\n\n## 3. Para reaproveitar:\n\n## - primeiro solicite os reels (por exemplo, \"Buscar reels para justinbieber\"\n## - Escolha qual reel você deseja reaproveitar, (por exemplo, \"Reaproveitar reel número 4)\n\nObservação: todos os dados serão exibidos no Airtable",
+          "height": 500,
+          "width": 940
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -680,
+          1280
+        ],
+        "typeVersion": 1,
+        "id": "d2942260-6bfd-4399-b71a-212accfc5f16",
+        "name": "Sticky Note6"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Script: {{ $json.text }}\nCaption: {{ $('Get Record ID').item.json[\"Reel Caption\"] }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "=### Role:\n\nYou are a master at repurposing scripts for videos, making video scripts which are even more engaging, driving shares from viewers.\n\n### Task:\n\nYou will repurpose scripts provided for you, improving on it in areas where you deem it weak, but keeping the same tone and structure.\n\n### Instructions:\n\n1. Repurpose the provided script with ALL time stamps, keeping similar word counts, flow and structure\n2. Repurpose the provided caption, using the same hashtags if applicable, keeping similar word counts, flow and structure\n3. Output the Airtable Record ID on completion as well.\n\n### Example:\n\n- Hook: 0-3 seconds\n.. etc.\n\n### Constraints:\n\n- Don't overuse exclamation marks in scripts"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          2600,
+          280
+        ],
+        "id": "9a7cf528-5c4c-4d74-ae6d-ddaf03d680e6",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "workflowInputs": {
+            "values": [
+              {
+                "name": "Record_ID"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          1480,
+          280
+        ],
+        "id": "f3848a00-14e1-4a36-b907-0c2feb559031",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "descriptionType": "manual",
+          "toolDescription": "Call this tool to create caption and script",
+          "operation": "create",
+          "base": {
+            "__rl": true,
+            "value": "appD73frcXl2LXxZ6",
+            "mode": "list",
+            "cachedResultName": "Content",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6"
+          },
+          "table": {
+            "__rl": true,
+            "value": "tblPBOFh5W6mdEmc6",
+            "mode": "list",
+            "cachedResultName": "IG Repurpose",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6/tblPBOFh5W6mdEmc6"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Name of content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name_of_content', ``, 'string') }}",
+              "Caption": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Caption', ``, 'string') }}",
+              "Script": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Script', ``, 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Name of content",
+                "displayName": "Name of content",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Caption",
+                "displayName": "Caption",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Script",
+                "displayName": "Script",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Original video",
+                "displayName": "Original video",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": true
+              },
+              {
+                "id": "Record ID",
+                "displayName": "Record ID",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.airtableTool",
+        "typeVersion": 2.1,
+        "position": [
+          2680,
+          660
+        ],
+        "id": "097f943a-8605-4cea-8925-06da05b0c4d3",
+        "name": "Create Script"
+      },
+      {
+        "parameters": {
+          "url": "={{ $json['Link to Reel'] }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1980,
+          280
+        ],
+        "id": "6fe835a4-4ffe-4e7d-b7fe-493332d50a15",
+        "name": "Get Video"
+      },
+      {
+        "parameters": {
+          "model": "claude-3-5-sonnet-20241022",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+        "typeVersion": 1.2,
+        "position": [
+          2480,
+          660
+        ],
+        "id": "d3c1c419-bf63-411a-8df5-f953825d5e0c",
+        "name": "3.5 Sonnet"
+      },
+      {
+        "parameters": {
+          "resource": "audio",
+          "operation": "transcribe",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.openAi",
+        "typeVersion": 1.8,
+        "position": [
+          2320,
+          280
+        ],
+        "id": "474da431-b726-46da-8e31-f731bc0f940b",
+        "name": "Whisper"
+      },
+      {
+        "parameters": {
+          "base": {
+            "__rl": true,
+            "value": "appD73frcXl2LXxZ6",
+            "mode": "list",
+            "cachedResultName": "Content",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6"
+          },
+          "table": {
+            "__rl": true,
+            "value": "tblBQW6pQdmVrpq0A",
+            "mode": "list",
+            "cachedResultName": "IG Reels",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6/tblBQW6pQdmVrpq0A"
+          },
+          "id": "={{ $json.Record_ID }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.airtable",
+        "typeVersion": 2.1,
+        "position": [
+          1700,
+          280
+        ],
+        "id": "14de99c3-6a98-479e-8be3-cc2861f7a9ae",
+        "name": "Get Record ID"
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\t\"script_record_ID\": \"Airtable record ID of the script\"\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.2,
+        "position": [
+          2900,
+          660
+        ],
+        "id": "55019401-e85d-41b9-84c3-60dca98c65fe",
+        "name": "Structured Output Parser"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "base": {
+            "__rl": true,
+            "value": "appD73frcXl2LXxZ6",
+            "mode": "list",
+            "cachedResultName": "Content",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6"
+          },
+          "table": {
+            "__rl": true,
+            "value": "tblPBOFh5W6mdEmc6",
+            "mode": "list",
+            "cachedResultName": "IG Repurpose",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6/tblPBOFh5W6mdEmc6"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Record ID": "={{ $json.output.script_record_ID }}",
+              "Original video": "={{ $('Get Record ID').item.json['Link to Reel'] }}"
+            },
+            "matchingColumns": [
+              "Record ID"
+            ],
+            "schema": [
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": false,
+                "defaultMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": true,
+                "removed": true
+              },
+              {
+                "id": "Name of content",
+                "displayName": "Name of content",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": true
+              },
+              {
+                "id": "Caption",
+                "displayName": "Caption",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": true
+              },
+              {
+                "id": "Script",
+                "displayName": "Script",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": true
+              },
+              {
+                "id": "Original video",
+                "displayName": "Original video",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Record ID",
+                "displayName": "Record ID",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.airtable",
+        "typeVersion": 2.1,
+        "position": [
+          2960,
+          280
+        ],
+        "id": "5ec21745-6bf6-46ca-b1b9-38d86bd2728f",
+        "name": "Update Record"
+      },
+      {
+        "parameters": {
+          "jsCode": "return [\n  {\n    json: {\n      query: \"Task has completed successfully.\"\n    }\n  }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3140,
+          280
+        ],
+        "id": "5d850ea9-13be-4529-92be-97c6a5f1ac08",
+        "name": "Success"
+      },
+      {
+        "parameters": {
+          "content": "## Download the video",
+          "height": 260,
+          "width": 300,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1880,
+          200
+        ],
+        "typeVersion": 1,
+        "id": "57e62333-abb5-4e68-bc7d-0134f04da2e5",
+        "name": "Sticky Note12"
+      },
+      {
+        "parameters": {
+          "content": "## Transcribe video",
+          "height": 260,
+          "width": 300,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          2220,
+          200
+        ],
+        "typeVersion": 1,
+        "id": "522c4159-9d5b-4ed3-86ca-f53c0950735b",
+        "name": "Sticky Note13"
+      },
+      {
+        "parameters": {
+          "content": "## Repurpose the script",
+          "height": 260,
+          "width": 340,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          2560,
+          200
+        ],
+        "typeVersion": 1,
+        "id": "33fd6015-99e4-4db0-83d9-718691462c85",
+        "name": "Sticky Note14"
+      },
+      {
+        "parameters": {
+          "content": "## Send to Airtable",
+          "height": 220,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          2600,
+          600
+        ],
+        "typeVersion": 1,
+        "id": "af97c7a1-72de-43d9-b15d-33568b3757f9",
+        "name": "Sticky Note15"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "response.body.items",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          2280,
+          1260
+        ],
+        "id": "79de2ead-7d97-426d-8d80-86acf42212fe",
+        "name": "Split Out"
+      },
+      {
+        "parameters": {
+          "operation": "create",
+          "base": {
+            "__rl": true,
+            "value": "appD73frcXl2LXxZ6",
+            "mode": "list",
+            "cachedResultName": "Content",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6"
+          },
+          "table": {
+            "__rl": true,
+            "value": "tblBQW6pQdmVrpq0A",
+            "mode": "list",
+            "cachedResultName": "IG Reels",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6/tblBQW6pQdmVrpq0A"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Views": "={{ $('Reels Data').item.json['IG View Count'] }}",
+              "Likes": "={{ $('Reels Data').item.json['IG Like Count'] }}",
+              "Comments": "={{ $('Reels Data').item.json['IG Comment Count'] }}",
+              "Username": "={{ $('Reels Data').item.json.Username }}",
+              "Reel Caption": "={{ $('Reels Data').item.json['Caption Text'] }}",
+              "Link to Reel": "={{ $('Reels Data').item.json.video_url }}",
+              "Shares": "={{ $('Reels Data').item.json['IG Reshares'] }}",
+              "Engagement Calculation": "={{ $json.calculationPercentage }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Username",
+                "displayName": "Username",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Reel Caption",
+                "displayName": "Reel Caption",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Views",
+                "displayName": "Views",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "number",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Likes",
+                "displayName": "Likes",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "number",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Comments",
+                "displayName": "Comments",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "number",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Shares",
+                "displayName": "Shares",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "number",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Engagement Calculation",
+                "displayName": "Engagement Calculation",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Overall score",
+                "displayName": "Overall score",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": true,
+                "removed": false
+              },
+              {
+                "id": "Link to Reel",
+                "displayName": "Link to Reel",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Date added",
+                "displayName": "Date added",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": true,
+                "removed": false
+              },
+              {
+                "id": "Record ID",
+                "displayName": "Record ID",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.airtable",
+        "typeVersion": 2.1,
+        "position": [
+          2920,
+          1260
+        ],
+        "id": "10ac6e4e-1c3b-464a-aefe-f24ed4c8b21e",
+        "name": "Send to Airtable"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "8afa13e2-39cb-44a7-a0fb-6448588b1174",
+                "name": "Username",
+                "value": "={{ $json.media.caption.user.username }}",
+                "type": "string"
+              },
+              {
+                "id": "8042f4ba-53fa-4d8e-99b0-adb39771361d",
+                "name": "Caption Text",
+                "value": "={{ $json.media.caption.text }}",
+                "type": "string"
+              },
+              {
+                "id": "5191c6fd-75ab-4fb9-a224-ebcdd7b0b0e9",
+                "name": "IG View Count",
+                "value": "={{ $json.media.ig_play_count }}",
+                "type": "number"
+              },
+              {
+                "id": "8a6fee3c-81ad-4b44-8e97-c5d4a9261244",
+                "name": "IG Like Count",
+                "value": "={{ $json.media.like_count }}",
+                "type": "number"
+              },
+              {
+                "id": "dd750016-5861-4a7e-8313-439578e3cf2d",
+                "name": "IG Comment Count",
+                "value": "={{ $json.media.comment_count }}",
+                "type": "number"
+              },
+              {
+                "id": "28b5ff6f-ffa4-4d6b-b9d2-f786dca4e9b0",
+                "name": "IG Reshares",
+                "value": "={{ $json.media.reshare_count }}",
+                "type": "number"
+              },
+              {
+                "id": "6812b3d1-f510-42a2-b9de-8f0e6872fb5f",
+                "name": "video_url",
+                "value": "={{ $json.media.video_versions[1].url }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2440,
+          1260
+        ],
+        "id": "40784027-5713-477a-928f-6fbff7fea2fb",
+        "name": "Reels Data"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://rocketapi-for-instagram.p.rapidapi.com/instagram/user/get_clips",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "x-rapidapi-key",
+                "value": "your rocket api key here"
+              },
+              {
+                "name": "x-rapidapi-host",
+                "value": "rocketapi-for-instagram.p.rapidapi.com"
+              },
+              {
+                "name": "Content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "id",
+                "value": "={{ $json.response.body.data.user.id }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2040,
+          1260
+        ],
+        "id": "0250969c-8646-4e2d-aa26-e807fa992fdc",
+        "name": "Scrape Reels"
+      },
+      {
+        "parameters": {
+          "jsCode": "return items.map(item => {\n  const igViewCount = item.json[\"IG View Count\"];\n  const reshareCount = item.json[\"IG Reshares\"];\n\n  let calculationResult = 0;\n  if (igViewCount && igViewCount !== 0) {\n    calculationResult = (reshareCount / igViewCount) * 100;\n  }\n\n  const calculationPercentage = calculationResult.toFixed(2) + '%';\n\n  return {\n    json: {\n      ...item.json,\n      calculationResult,\n      calculationPercentage\n    }\n  };\n});"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2640,
+          1260
+        ],
+        "id": "57afbb02-94a6-4b08-9ebf-28a7a2b61d7a",
+        "name": "Calculate Share %"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://rocketapi-for-instagram.p.rapidapi.com/instagram/user/get_info",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-type",
+                "value": "application/json"
+              },
+              {
+                "name": "x-rapidapi-key",
+                "value": "your rocket api key here"
+              },
+              {
+                "name": "x-rapidapi-host",
+                "value": "rocketapi-for-instagram.p.rapidapi.com"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "username",
+                "value": "={{ $json.username }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1680,
+          1260
+        ],
+        "id": "a75e6066-6a09-44b5-8c07-804cfca7172c",
+        "name": "Get ID"
+      },
+      {
+        "parameters": {
+          "content": "# Competidores",
+          "height": 140,
+          "width": 1780,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          820,
+          2360
+        ],
+        "typeVersion": 1,
+        "id": "8dc68311-a562-4f9b-a7e5-52edc72d1f38",
+        "name": "Sticky Note8"
+      },
+      {
+        "parameters": {
+          "content": "## Basta inserir sua chave de API \"Rocketapi\" no campo para todos os nós de solicitação HTTP que a utilizam.\n## Link to page for API: https://rapidapi.com/rocketapi/api/rocketapi-for-instagram",
+          "height": 220,
+          "width": 720,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1520,
+          1520
+        ],
+        "typeVersion": 1,
+        "id": "25c6e11b-4f98-4d39-963c-2f3312e86ca8",
+        "name": "Sticky Note10"
+      },
+      {
+        "parameters": {
+          "jsCode": "return [\n  {\n    json: {\n      query: \"Task has completed successfully.\"\n    }\n  }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3140,
+          1260
+        ],
+        "id": "a2c85ff2-de56-4e0e-a989-af99382b1f36",
+        "name": "Success1"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://rocketapi-for-instagram.p.rapidapi.com/instagram/user/get_similar_accounts",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "x-rapidapi-key",
+                "value": "your rocket api key here"
+              },
+              {
+                "name": "x-rapidapi-host",
+                "value": "rocketapi-for-instagram.p.rapidapi.com"
+              },
+              {
+                "name": "Content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "id",
+                "value": "={{ $json.response.body.data.user.id }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1900,
+          2800
+        ],
+        "id": "30fde3bb-0a5d-47a5-8b31-88548215a08a",
+        "name": "Get Similar Accounts"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f189c46d-10b1-40a7-bf2b-f02c1ff09ecd",
+                "name": "ID",
+                "value": "={{ $json.node.id }}",
+                "type": "string"
+              },
+              {
+                "id": "82e85e61-924f-435e-a3c1-6b74fa037f04",
+                "name": "Username",
+                "value": "={{ $json.node.username }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2300,
+          2800
+        ],
+        "id": "940b7701-ad20-4f9a-99ee-0004c504047e",
+        "name": "Account Info"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          2460,
+          2800
+        ],
+        "id": "bf032959-4ecb-4440-bde9-9fc69074925e",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://rocketapi-for-instagram.p.rapidapi.com/instagram/user/get_info",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "x-rapidapi-key",
+                "value": "05190f78f6msh18b5c339652b410p105a0ejsn01a80d032b0b"
+              },
+              {
+                "name": "x-rapidapi-host",
+                "value": "rocketapi-for-instagram.p.rapidapi.com"
+              },
+              {
+                "name": "Content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "username",
+                "value": "={{ $json.Username }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2880,
+          2800
+        ],
+        "id": "c0f2443c-4811-4a1a-915f-41ef0b630716",
+        "name": "Get Followings"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "2ae926dd-b51f-4a6a-a720-42b699dd4d3b",
+                "leftValue": "={{ $json.Followers }}",
+                "rightValue": 5000,
+                "operator": {
+                  "type": "number",
+                  "operation": "gte"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2880,
+          2500
+        ],
+        "id": "0b28200a-1b07-4cb4-9586-b8c966059088",
+        "name": "Filter Low Followers"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "4767a594-2b11-425a-9cf9-8c9430697fe5",
+                "name": "Username",
+                "value": "={{ $json.response.body.data.user.username }}",
+                "type": "string"
+              },
+              {
+                "id": "fb26be26-d09d-4df3-a76b-626e56dcad95",
+                "name": "Followers",
+                "value": "={{ $json.response.body.data.user.edge_followed_by.count }}",
+                "type": "number"
+              },
+              {
+                "id": "7d464e7d-0061-4ab7-821f-f88a242e4a9f",
+                "name": "Bio",
+                "value": "={{ $json.response.body.data.user.biography }}",
+                "type": "string"
+              },
+              {
+                "id": "cc1364a2-e1cf-4b4d-931e-6e12fe782121",
+                "name": "Influencer Category",
+                "value": "={{ $json.response.body.data.user.category_name }}",
+                "type": "string"
+              },
+              {
+                "id": "32a6cae3-4656-4f33-9268-49bbe8db908a",
+                "name": "User ID",
+                "value": "={{ $json.response.body.data.user.id }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          2620,
+          2640
+        ],
+        "id": "5fead635-c6c6-410a-b3eb-0cdd7aeee51a",
+        "name": "More Account Info"
+      },
+      {
+        "parameters": {
+          "jsCode": "return items.map(item => {\n  const username = item.json.Username;\n  const instagramURL = `https://www.instagram.com/${username}`;\n  \n  return {\n    json: {\n      ...item.json,\n      username,\n      instagramURL\n    }\n  };\n});"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3120,
+          2500
+        ],
+        "id": "fa9b3b3f-ee89-443a-b57e-5adf29a4e054",
+        "name": "Create URLs"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://rocketapi-for-instagram.p.rapidapi.com/instagram/user/get_info",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "x-rapidapi-key",
+                "value": "your rocket api key here"
+              },
+              {
+                "name": "x-rapidapi-host",
+                "value": "rocketapi-for-instagram.p.rapidapi.com"
+              },
+              {
+                "name": "Content-type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "username",
+                "value": "={{ $json.username }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1560,
+          2800
+        ],
+        "id": "2b2ad23e-a0fa-4bb9-a766-0fea327afff3",
+        "name": "Get ID1"
+      },
+      {
+        "parameters": {
+          "fieldToSplitOut": "response.body.data.user.edge_chaining.edges",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitOut",
+        "typeVersion": 1,
+        "position": [
+          2140,
+          2800
+        ],
+        "id": "f3411273-e443-461a-bc21-37aac58820fa",
+        "name": "Split Out1"
+      },
+      {
+        "parameters": {
+          "operation": "create",
+          "base": {
+            "__rl": true,
+            "value": "appD73frcXl2LXxZ6",
+            "mode": "list",
+            "cachedResultName": "Content",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6"
+          },
+          "table": {
+            "__rl": true,
+            "value": "tblmD59R4B2Uvz6Lo",
+            "mode": "list",
+            "cachedResultName": "IG Competitors",
+            "cachedResultUrl": "https://airtable.com/appD73frcXl2LXxZ6/tblmD59R4B2Uvz6Lo"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Followers": "={{ $json.Followers }}",
+              "Username": "={{ $json.Username }}",
+              "Bio": "={{ $json.Bio }}",
+              "Category": "={{ $json[\"Influencer Category\"] }}",
+              "URL": "={{ $json.instagramURL }}",
+              "User ID": "={{ $('More Account Info').item.json['User ID'] }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Username",
+                "displayName": "Username",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Followers",
+                "displayName": "Followers",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "number",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Bio",
+                "displayName": "Bio",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Category",
+                "displayName": "Category",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "URL",
+                "displayName": "URL",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "User ID",
+                "displayName": "User ID",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": false,
+                "removed": false
+              },
+              {
+                "id": "Record ID",
+                "displayName": "Record ID",
+                "required": false,
+                "defaultMatch": false,
+                "canBeUsedToMatch": true,
+                "display": true,
+                "type": "string",
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.airtable",
+        "typeVersion": 2.1,
+        "position": [
+          3360,
+          2500
+        ],
+        "id": "4b6700db-51c9-4e34-9708-6279ea396516",
+        "name": "Send to Airtable1"
+      },
+      {
+        "parameters": {
+          "content": "## Get ID of target user",
+          "height": 260,
+          "width": 300,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1460,
+          2720
+        ],
+        "typeVersion": 1,
+        "id": "8bbeb7e7-7e5d-407f-b4ae-83bfe5f13243",
+        "name": "Sticky Note17"
+      },
+      {
+        "parameters": {
+          "content": "## Filter low follow counts",
+          "height": 260,
+          "width": 300,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          2780,
+          2400
+        ],
+        "typeVersion": 1,
+        "id": "42d7e63d-4194-4a23-bf93-bbe95e47b430",
+        "name": "Sticky Note18"
+      },
+      {
+        "parameters": {
+          "content": "## Get follow counts",
+          "height": 260,
+          "width": 300,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          2780,
+          2700
+        ],
+        "typeVersion": 1,
+        "id": "9b138309-1f6b-4048-bf03-d433f9714256",
+        "name": "Sticky Note19"
+      },
+      {
+        "parameters": {
+          "content": "## Send to Airtable",
+          "height": 260,
+          "width": 300,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          3260,
+          2400
+        ],
+        "typeVersion": 1,
+        "id": "9deab710-5367-4bce-8a68-9e8ad6a5b826",
+        "name": "Sticky Note20"
+      },
+      {
+        "parameters": {
+          "content": "## Find similar accounts",
+          "height": 260,
+          "width": 300,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1800,
+          2720
+        ],
+        "typeVersion": 1,
+        "id": "33d65ce8-623f-45c7-acf6-e66a9dbd3350",
+        "name": "Sticky Note21"
+      },
+      {
+        "parameters": {
+          "content": "## Basta inserir sua chave de API \"Rocketapi\" no campo para todos os nós de solicitação HTTP que a utilizam.\n## Link to page for API: https://rapidapi.com/rocketapi/api/rocketapi-for-instagram",
+          "height": 220,
+          "width": 720,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1420,
+          3080
+        ],
+        "typeVersion": 1,
+        "id": "b181d283-ec6f-4a73-bca8-330a2afa84a5",
+        "name": "Sticky Note22"
+      },
+      {
+        "parameters": {
+          "content": "## Ensure Airtable credentials are setup, too.",
+          "height": 100,
+          "width": 520,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          3160,
+          2240
+        ],
+        "typeVersion": 1,
+        "id": "2a0fbf24-e20a-481c-a382-1b2a2fea17d4",
+        "name": "Sticky Note23"
+      },
+      {
+        "parameters": {
+          "jsCode": "return [\n  {\n    json: {\n      query: \"Task has completed successfully.\"\n    }\n  }\n];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3600,
+          2500
+        ],
+        "id": "3e36b3e0-5e1c-439a-b9ac-7822a7a684bf",
+        "name": "Success2"
+      }
+    ],
+    "pinData": {
+      "When Executed by Another Workflow": [
+        {
+          "json": {
+            "Record_ID": "recDLAqROHPePTMGa"
+          }
+        }
+      ]
+    },
+    "connections": {
+      "Analyze Reels": {
+        "ai_tool": [
+          [
+            {
+              "node": "Nadia",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Repurpose": {
+        "ai_tool": [
+          [
+            {
+              "node": "Nadia",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "ChatGPT": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Nadia",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Nadia",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Telegram1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Nadia",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram1": {
+        "main": [
+          [
+            {
+              "node": "OpenAI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI": {
+        "main": [
+          [
+            {
+              "node": "Nadia",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Nadia": {
+        "main": [
+          [
+            {
+              "node": "Telegram",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram Trigger": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Instagram Reels": {
+        "ai_tool": [
+          [
+            {
+              "node": "Nadia",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Usernames": {
+        "ai_tool": [
+          [
+            {
+              "node": "Nadia",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Find Competitors": {
+        "ai_tool": [
+          [
+            {
+              "node": "Nadia",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Update Record",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "Get Record ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Script": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Video": {
+        "main": [
+          [
+            {
+              "node": "Whisper",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "3.5 Sonnet": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Whisper": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Record ID": {
+        "main": [
+          [
+            {
+              "node": "Get Video",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Record": {
+        "main": [
+          [
+            {
+              "node": "Success",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out": {
+        "main": [
+          [
+            {
+              "node": "Reels Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reels Data": {
+        "main": [
+          [
+            {
+              "node": "Calculate Share %",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Scrape Reels": {
+        "main": [
+          [
+            {
+              "node": "Split Out",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Calculate Share %": {
+        "main": [
+          [
+            {
+              "node": "Send to Airtable",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get ID": {
+        "main": [
+          [
+            {
+              "node": "Scrape Reels",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send to Airtable": {
+        "main": [
+          [
+            {
+              "node": "Success1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Similar Accounts": {
+        "main": [
+          [
+            {
+              "node": "Split Out1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Account Info": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "More Account Info",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get Followings",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Followings": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter Low Followers": {
+        "main": [
+          [
+            {
+              "node": "Create URLs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "More Account Info": {
+        "main": [
+          [
+            {
+              "node": "Filter Low Followers",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create URLs": {
+        "main": [
+          [
+            {
+              "node": "Send to Airtable1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get ID1": {
+        "main": [
+          [
+            {
+              "node": "Get Similar Accounts",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split Out1": {
+        "main": [
+          [
+            {
+              "node": "Account Info",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send to Airtable1": {
+        "main": [
+          [
+            {
+              "node": "Success2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "9173f0c5-b73e-4361-9d60-5ed8d3b3150f",
+    "meta": {
+      "instanceId": "86d0b539cdbfaefdd305e9f4d9320d6449af6a05b20f421bc7ca5b2501068fb2"
+    },
+    "id": "09xid52x1EpZ3qiZ",
+    "tags": []
+  }

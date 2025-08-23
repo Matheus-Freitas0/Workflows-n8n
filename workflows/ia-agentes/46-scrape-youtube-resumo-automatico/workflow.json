@@ -1,0 +1,456 @@
+{
+    "name": "Template Carnaval - Scrape youtube",
+    "nodes": [
+      {
+        "parameters": {
+          "url": "=https://api.apify.com/v2/actor-runs/{{ $json.data.id}}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "apifyApi",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "waitForFinish",
+                "value": "60"
+              }
+            ]
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "39663782-89cf-4ba6-9911-2af2e62195b5",
+        "name": "Get Actor Run",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          580,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://api.apify.com/v2/datasets/{{$json.data.defaultDatasetId}}/items",
+          "options": {}
+        },
+        "id": "f1d3928b-7c6e-4f7b-b7fc-c29e763b6cb2",
+        "name": "Get DataSet",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          800,
+          400
+        ],
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.apify.com/v2/acts/xXOR6XE5SNC1QD138/runs",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "apifyApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"video_url\": {{ $('Set input').item.json.url }}\n}",
+          "options": {}
+        },
+        "id": "75b1a761-9e7d-46b4-b410-5395ec60ddd0",
+        "name": "Start Act",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          360,
+          400
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "aadba50f-3fb0-43ec-80f2-7faa73928071",
+                "name": "url",
+                "value": "https://www.youtube.com/watch?v=2eL1r9PW7iA",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -120,
+          200
+        ],
+        "id": "742e6165-8d31-4e4c-a9aa-203154ff9794",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -320,
+          200
+        ],
+        "id": "5be010c3-2c0e-4e79-9736-f7f60bf91966",
+        "name": "When clicking ‘Test workflow’"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1,
+        "position": [
+          1240,
+          580
+        ],
+        "id": "3f278b06-41a2-4d8c-90fd-21a8692f498e",
+        "name": "OpenAI Chat Model"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $('Get DataSet').item.json.text }}",
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=You are designed to process transcriptions of video content and provide concise, clear summaries. The tool is ideal for users who want to quickly understand the main points, key takeaways, or actionable insights from video content without having to go through the entire transcript.\n\n\nInstructions:\n\nContent Analysis: Carefully review the entire transcription for key themes, arguments, and important details. Look for main ideas, key points, or any actionable insights provided throughout the transcription. Identify recurring topics or speakers and note their contributions, especially if they are crucial to the overall message.\n\n\nSummarization Format: Decide on the most appropriate format based on the transcription’s length and complexity: Short Bullet Points: For quick, easy-to-digest takeaways. Full-Text Paragraph(s): For a more detailed, cohesive summary. Combination of Both: When necessary, include bullet points for key insights and a paragraph for context or explanations. Focus on clarity and conciseness, ensuring that the main points are easily understandable.\n\n\nTone and Structure: Tailor the tone of the summary to fit the content of the video: Formal Tone: For professional, academic, or business-related content. Informal Tone: For casual, conversational, or entertainment-based content. Maintain a logical flow in the summary, presenting points in an order that makes sense and ensures easy comprehension.\n\n\nLength of Summary: The length of the summary should be dynamic and appropriate for the transcription provided: Concise Summary: For short transcriptions or when only key points need to be conveyed. Extended Summary: For longer transcriptions with more detail and nuance. Ensure the summary is detailed enough to provide valuable insights but brief enough to avoid unnecessary elaboration.\n\n\nClarity and Relevance: Ensure that the summary focuses only on the most relevant information. Avoid irrelevant or overly detailed sections unless they contribute to understanding the key message of the video. If speakers are mentioned, clearly attribute points to the correct speaker(s), especially if they are central to the content."
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.5,
+        "position": [
+          1340,
+          400
+        ],
+        "id": "7b483ba8-d7f6-453e-a324-bec3cfff5bdc",
+        "name": "Video Summary"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $('Get DataSet').item.json.transcript.map(item => `[${item.start} - ${item.end}] ${item.text}`).join('\\n') }}",
+          "messages": {
+            "messageValues": [
+              {
+                "message": "=This GPT Assistant is designed to analyze video transcription data provided in a JSON format and extract key timestamps alongside their corresponding topics or sections. The goal is to help users quickly identify significant parts of a video.\n\nInstructions:\nYou will analyze the file and produce the output as:\nTimestamps -\n00:00:00 - AI Automation for Viral Instagram Scripts\n00:03:54 - Generating Viral Scripts ...\n01:03:00 - The Viral Content Creation Process Each timestamp will mark a new topic, section, or significant shift detected in the transcription.\n\nSteps for Analysis: The assistant reads through the transcription data. Identifies transitions or new sections based on keywords (e.g., \"next,\" \"topic,\" \"now let's move on,\" or other patterns). Groups the relevant content under specific timestamps. Outputs the result in a clean, user-friendly format as shown above.\n\nUse Case Examples: Quickly identifying sections of a webinar, training, or presentation video. Summarizing lengthy podcasts or tutorials into key moments. Extracting insights for creating video summaries or timestamps for platforms like YouTube."
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.5,
+        "position": [
+          980,
+          400
+        ],
+        "id": "c040a63c-1ea2-4a63-8ed8-cf1fdf3ab46d",
+        "name": "Transcript Chunking"
+      },
+      {
+        "parameters": {
+          "content": "## Apify - Extrair transcrição de URL de vídeo\nhttps://console.apify.com/actors/xXOR6XE5SNC1QD138/input",
+          "height": 300,
+          "width": 660,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          280,
+          280
+        ],
+        "id": "c1451e3e-77e8-4701-ab54-67ca725b4954",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "content": "## Divida a transcrição em seções principais",
+          "height": 300,
+          "width": 340,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          960,
+          280
+        ],
+        "id": "9d7d4fba-b9fb-4599-9e34-932a107951e9",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "## Resumir conteúdo de vídeo\nUsando transcrição",
+          "height": 300,
+          "width": 340,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1320,
+          280
+        ],
+        "id": "043f4833-ff2d-4cad-9ac5-a555ef41324c",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "content": "## Adequado apenas para links do YouTube, Twitter e TikTok (não para shorts do YouTube, por exemplo).",
+          "height": 120,
+          "width": 620,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          280,
+          660
+        ],
+        "id": "74347237-796b-4db6-b8f8-463e40a37db0",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "ba223339-9daf-4a69-9a5c-baac25e07509",
+                "name": "id",
+                "value": "={{ $('Set input').item.json?.id }}",
+                "type": "string"
+              },
+              {
+                "id": "12f943c0-4a09-4409-99f1-9152d9ee25c2",
+                "name": "Video_summary",
+                "value": "={{ $('Video Summary').item.json.text }}",
+                "type": "string"
+              },
+              {
+                "id": "8f5e417f-b81f-43e9-9a40-710ddf6fa4bf",
+                "name": "Script_summary",
+                "value": "={{ $('Transcript Chunking').item.json.text }}",
+                "type": "string"
+              },
+              {
+                "id": "02e8be39-dc33-4bbb-b172-fb6e89910851",
+                "name": "Transcript",
+                "value": "={{ $('Get DataSet').item.json.transcript.map(item => `[${item.start} - ${item.end}] ${item.text}`).join('\\n') }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1760,
+          400
+        ],
+        "id": "61a9a412-718a-47b4-a6a4-2f1f2c0423ed",
+        "name": "Set output"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "92179010-4964-4d18-b5a7-624ba720606d",
+                "name": "url",
+                "value": "=\"{{ $json.url }}\"",
+                "type": "string"
+              },
+              {
+                "id": "11bfae12-3a7a-44dc-a582-3f064f32d678",
+                "name": "update_airtable",
+                "value": "",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          120,
+          400
+        ],
+        "id": "5da6abc4-8141-4451-9e3f-3f3892cc949d",
+        "name": "Set input"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          980,
+          620
+        ],
+        "id": "d4825cbd-da09-4f24-a064-6e3a5ffade28",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "content": "## Abastece seu banco de dados"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1940,
+          380
+        ],
+        "typeVersion": 1,
+        "id": "b8f1ac01-665f-46de-8871-7820ad98a74b",
+        "name": "Sticky Note4"
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "Get Actor Run": {
+        "main": [
+          [
+            {
+              "node": "Get DataSet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get DataSet": {
+        "main": [
+          [
+            {
+              "node": "Transcript Chunking",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Start Act": {
+        "main": [
+          [
+            {
+              "node": "Get Actor Run",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Set input",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Transcript Chunking",
+              "type": "ai_languageModel",
+              "index": 0
+            },
+            {
+              "node": "Video Summary",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Video Summary": {
+        "main": [
+          [
+            {
+              "node": "Set output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Transcript Chunking": {
+        "main": [
+          [
+            {
+              "node": "Video Summary",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set input": {
+        "main": [
+          [
+            {
+              "node": "Start Act",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "0d1dd9f3-c1c0-4443-82b2-ac946167a908",
+    "meta": {
+      "instanceId": "86d0b539cdbfaefdd305e9f4d9320d6449af6a05b20f421bc7ca5b2501068fb2"
+    },
+    "id": "uBdJpB2bsrvkdJWQ",
+    "tags": []
+  }
