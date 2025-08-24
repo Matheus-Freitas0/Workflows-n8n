@@ -1,0 +1,478 @@
+{
+    "name": "Presente de Natal 09 Criador de ladingpages",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "7cde247b-3f46-43fd-91b6-db5081ab644a",
+        "name": "When clicking ‘Test workflow’",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1300,
+          720
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "2ff8c128-15af-4f0f-97f4-728c5b075ff4",
+        "name": "Anthropic Chat Model",
+        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+        "typeVersion": 1.2,
+        "position": [
+          460,
+          1000
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "0720273e-c5ea-4c9c-94dc-54ac284a20dd",
+                "name": "domain",
+                "value": "automationforstaffing.com",
+                "type": "string"
+              },
+              {
+                "id": "6fc1f97c-8e5c-4ae9-aac0-00b22c580b42",
+                "name": "intended_audience",
+                "value": "The intended audience is staffing owners of staffing companies or c-suite / upper management of staffing companies that are decision makers and could potentially be interested in automation for their business.",
+                "type": "string"
+              },
+              {
+                "id": "aeffacc3-abf5-4ee9-9b3d-2da7de292714",
+                "name": "site_title",
+                "value": "Automation For Staffing",
+                "type": "string"
+              },
+              {
+                "id": "a56e1c58-c9eb-445f-9a5b-6fa6a33830cc",
+                "name": "target_company_type",
+                "value": "Staffing Agency",
+                "type": "string"
+              },
+              {
+                "id": "35a7c413-c899-4b58-9947-90d2be06bb0f",
+                "name": "use_case_details",
+                "value": "=The use case that I'd like to emphasize for this landing page is around timesheet collection / approval, invoice generation, and payroll automation as an automated workflow end to end to reduce timesheet, invoicing, and payroll by over 80%.",
+                "type": "string"
+              },
+              {
+                "id": "5013fbb3-82de-4121-8e73-202775b0fcbb",
+                "name": "company_overview_prompt",
+                "value": "Workflowsy is a consulting service specialized in automating recurring business tasks to help business owners focus on their core operations. Our goal is to eliminate the tasks you dread, freeing up time for what you actually enjoy—running your business.|\n\nWorkflowsy is not intended to:\n- Automate people out of a job\n- Automate all aspects of a business\n- Remove the 'human' aspect of a business\n\nOur Guiding Principles:\n\n1. Produces Business Value: Our approach centers around understanding you and your business to implement automations that provide actual value.\n2. Sustainable For The Business: We prefer no-code and low-code tools like Make.com and Zapier because they are accessible for our clients to maintain and adapt over time.\n3. Scales With You: Our automations are designed to scale with your business, enhancing output, quality, and workplace satisfaction, without replacing human jobs.\n\nHow We Work:\n- No-Code: Simple, drag-and-drop tools intended for non-technical users. Ideal for initial forays into automation.  \nTools: Make.com, Zapier, Microsoft Power Automate\n\n- Low-Code: For clients with some technical expertise, providing a bit more flexibility.  \nTools: No-Code Tools + Programming Languages like Python, Javascript\n\n- Code: For the most demanding and bespoke automations requiring programming knowledge.  \nTools: Programming Languages like Python, Javascript",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "303c114c-de72-40bd-bb2e-206111d7b399",
+        "name": "Background Information",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -1080,
+          720
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Get the first item from the previous node\nconst input = items[0].json;\n\n// Initialize an empty array to store the new items\nlet newItems = [];\n\n// Loop through each key in the input object\nfor (const key in input) {\n  // Create a new item for each key-value pair\n  newItems.push({ json: { [key]: input[key] } });\n}\n\n// Return the new items array\nreturn newItems;\n"
+        },
+        "id": "0035eed8-89bb-45ae-afe9-1500ad1957ed",
+        "name": "Split out into items",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -620,
+          720
+        ]
+      },
+      {
+        "parameters": {
+          "options": {
+            "reset": false
+          }
+        },
+        "id": "97587bc9-a2a4-476d-a406-6edf7c722ec2",
+        "name": "Loop Over Items",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -40,
+          720
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "fee07208-b8d1-45e7-ae4c-66737723cf62",
+                "name": "={{ $json.keys().last() }}",
+                "value": "={{ $('Split out into items').item.json.values().last() }}",
+                "type": "string"
+              },
+              {
+                "id": "a89f3e97-ed2a-4908-9bcf-f062dce45281",
+                "name": "metatitle",
+                "value": "={{ $json.keys().last() }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "88267405-8b13-4ec2-9830-b2fcdb044694",
+        "name": "Component",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -380,
+          720
+        ]
+      },
+      {
+        "parameters": {
+          "schemaType": "manual",
+          "inputSchema": "{\n  \"$id\": \"https://example.com/section.schema.json\",\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"title\": \"Section Content Schema\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"section_metatitle\": {\n      \"type\": \"string\",\n      \"description\": \"The metatitle of the section.\"\n    },\n    \"section_content\": {\n      \"description\": \"The content of the section, which can be a string, an array of strings, or an object containing FAQs.\",\n      \"anyOf\": [\n        { \"$ref\": \"#/$defs/stringContent\" },\n        { \"$ref\": \"#/$defs/arrayContent\" },\n        { \"$ref\": \"#/$defs/faqContent\" }\n      ]\n    }\n  },\n  \"required\": [\"section_metatitle\", \"section_content\"],\n  \"additionalProperties\": true,\n  \"$defs\": {\n    \"stringContent\": {\n      \"type\": \"string\",\n      \"description\": \"The content of the section as a single string.\"\n    },\n    \"arrayContent\": {\n      \"type\": \"array\",\n      \"description\": \"The content of the section as an array of strings.\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"faqContent\": {\n      \"type\": \"object\",\n      \"description\": \"The content of the section as an object containing FAQs.\",\n      \"properties\": {\n        \"faqItems\": {\n          \"type\": \"array\",\n          \"description\": \"A list of FAQ items.\",\n          \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"question\": {\n                \"type\": \"string\",\n                \"description\": \"The FAQ question.\"\n              },\n              \"answer\": {\n                \"type\": \"string\",\n                \"description\": \"The FAQ answer.\"\n              }\n            },\n            \"required\": [\"question\", \"answer\"]\n          }\n        }\n      },\n      \"required\": [\"faqItems\"]\n    }\n  }\n}\n"
+        },
+        "id": "d891e1cb-015b-44ec-8a3a-18d51c1bddff",
+        "name": "Structured Output Parser",
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.2,
+        "position": [
+          760,
+          1000
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e27bb1e1-b62c-409a-9ad4-78ed2b845675",
+                "name": "config_output",
+                "value": "={\n    \"header\": \"{{ $('Background Information').item.json.site_title }}\",\n    \"icon\": \"money-bill\",\n    \"title\": \"{{ $json.data[0].output.section_content }}\",\n    \"description\": \"{{ $json.data[1].output.section_content }}\",\n    \"buttonText\": \"{{ $json.data[2].output.section_content }}\",\n    \"userReviews\": [\n      {\n        \"name\": \"user1\",\n        \"image\": \"https://via.placeholder.com/40\"\n      },\n      {\n        \"name\": \"user2\",\n        \"image\": \"https://via.placeholder.com/40\"\n      },\n      {\n        \"name\": \"user3\",\n        \"image\": \"https://via.placeholder.com/40\"\n      }\n    ],\n    \"videoUrl\": \"https://www.youtube.com/embed/XMhU3bRsezA\",\n    \"imageUrl\": \"https://via.placeholder.com/600x400\",\n    \"painpointsTitle\": \"{{ $json.data[3].output.section_content }}\",\n    \"painpoints\": {{ $json.data[4].output.section_content.toJsonString() }},\n    \"shortParagraph\": \"{{ $json.data[5].output.section_content }}\",\n    \"contactFormOptions\": [\n      \"Automated invoicing\",\n      \"Customer support workflows\",\n      \"Supply chain management\",\n      \"Data analytics\",\n      \"Employee onboarding\"\n    ],\n    \"howItWorksTitle\": \"How It Works\",\n    \"howItWorksDescription\": \"{{ $json.data[9].output.section_content }}\",\n    \"howItWorksSteps\": {{ $json.data[10].output.section_content.toJsonString() }},\n    \"theAutomationSpeaksTitle\": \"The Automation Speaks for Itself\",\n    \"theAutomationSpeaksText\": \"{{ $json.data[7].output.section_content }}\",\n    \"theAutomationSpeaksImage\": \"https://via.placeholder.com/500x600\",\n    \"socialValidationTitle\": \"Social Validation\",\n    \"socialValidationText\": \"Here are some testimonials from our satisfied clients and partners. Their success stories speak volumes about the effectiveness of our solutions.\",\n    \"faqTitle\": \"Frequently Asked Questions\",\n    \"faqItems\": {{ $json.data[11].output.section_content.faqItems.toJsonString() }},\n    \"secondCtaTitle\": \"{{ $json.data[12].output.section_content }}\",\n    \"secondCtaTestimonial\": \"\\\"I saw my teams time spent on timesheets, payroll, and invoicing reduced by 80%.\\\" - Owner of Staffing Organization\",\n    \"secondCtaButtonText\": \"{{ $json.data[13].output.section_content }}\",\n    \"secondCtaUsers\": [\n      { \"image\": \"https://via.placeholder.com/40\" },\n      { \"image\": \"https://via.placeholder.com/40\" },\n      { \"image\": \"https://via.placeholder.com/40\" },\n      { \"image\": \"https://via.placeholder.com/40\" },\n      { \"image\": \"https://via.placeholder.com/40\" },\n      { \"image\": \"https://via.placeholder.com/40\" },\n      { \"image\": \"https://via.placeholder.com/40\" },\n      { \"image\": \"https://via.placeholder.com/40\" },\n      { \"image\": \"https://via.placeholder.com/40\" }\n    ],\n    \"footerText\": \"&copy; 2024 {{ $('Background Information').item.json.site_title }}. All rights reserved.\"\n  }\n  ",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "c8f18ac8-5280-4c3f-95ee-6f450a719853",
+        "name": "Configuration Creator RAW",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          460,
+          460
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "c4b5ed51-01b1-4895-b491-87afa0632377",
+                "name": "output",
+                "value": "={{ $json.config_output.replace(/\\n\\n/g,'')}}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ec063e04-0bd2-4ff9-a3a7-12c8266aeba2",
+        "name": "Config Output (Finalized)",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          660,
+          460
+        ]
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=You are a landing page writing assistant that has been tasked with generating components of a landing page that will be combined together to build landing pages very quickly.\n\nFor background, the this is the company you're building landing pages for.\n\n{{ $('Background Information').item.json.company_overview_prompt }}\n\nWorkflowsy has bought a bunch of domains in the automation space (automationforstaffing.com, automationforecommerce.com, etc.) that they would like to stand up individual websites on have really target uses cases on that are specific to a given industry / profession.\n\nYou will be provided with a section that needs to be generated an instructions to guide the overall generation.\n\nAdd in </br> between new lines in your outputs.",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "type": "HumanMessagePromptTemplate",
+                "message": "=Section Content Instructions: {{ $('Component').item.json.values().first() }}\n\nSection Metatitle: {{ $json.metatitle }}\n"
+              }
+            ]
+          }
+        },
+        "id": "f78841d9-a6cf-4594-a6ce-87295c39d6a6",
+        "name": "Text Content Generator",
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.4,
+        "position": [
+          520,
+          740
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "19d27226-4ae7-460e-a25e-a24b2e85b87d",
+                "name": "hero_header_title_prompt",
+                "value": "=I need to create a title for the hero section of my landing page. The landing page is for a domain called {{ $json.site_title }} with a domain {{ $json.domain }} of that is intended to serve as a page dedicated to an offer(s) around automation services for a {{ $json.target_company_type }}. Below is guidance for a how to create a great header for the landing page.\n\n1/ Explain what you do\n\nWhen your product is unique all you have to do is explain what you do as simply as possible.\n\n2/ Hooks\n\nMost products aren't unique. So a hook adds oomph. The easiest way to write hooks is to address your customer's biggest objection.\n\n3/ Own your niche\n\nSome startups transcend hooks. Another pattern is to own your niche in one line. Write with conviction. You're THE solution.\n\nThe title should be no more than 10 words long.\n\nIntegrate the title to algin with the use case provided here: {{ $json.use_case_details }}",
+                "type": "string"
+              },
+              {
+                "id": "6f9508ed-12d1-45d6-a1a1-8e7aeea6c899",
+                "name": "hero_subtitle_prompt",
+                "value": "=We now need to create a subtitle for the landing page. Here is some guidance for how to best create subtitles for this landing page.\n\nSubtitles are where you get specific. Introduce the product. Explain how it creates the value in your title.\n\nEx. Privy's conversion, email marketing, and text message tools (this is the introduction), help you get more customers from your traffic (this is the value)\n\nIntegrate the title to algin with the use case provided here: {{ $json.use_case_details }}",
+                "type": "string"
+              },
+              {
+                "id": "57975354-ca37-4be2-b659-ff62ff5e8ced",
+                "name": "hero_call_to_action",
+                "value": "=The call to action should be 3-5 words tops encouraging the potential prospect to reach out / start automating / etc whatever is relevant to the offer.",
+                "type": "string"
+              },
+              {
+                "id": "0946ebd1-6843-4c50-9e37-f5627f17ffad",
+                "name": "=industry_painpoints_header",
+                "value": "=Generate an attention-grabbing and industry-specific title for a section on a landing page that highlights the key pain points businesses face in {{ $json.target_company_type }} businesses. The title should be concise, impactful, and clearly convey that our consultancy understands these challenges deeply.\n\nMake it no more than 10 words long\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}",
+                "type": "string"
+              },
+              {
+                "id": "384faf11-834f-4a7f-b69e-fbe5faf916c5",
+                "name": "industry_painpoints",
+                "value": "=Describe the top 3-5 pain points faced by businesses in the {{ $json.target_company_type }} industry. Each pain point should be described in a way that resonates with decision-makers, highlighting the impact on efficiency, costs, and business growth. Make sure to articulate the pain points in a way that emphasizes the need for automation solutions.\n\nIf it makes sense, integrate the title to align with the use case provided here: {{ $json.use_case_details }}\n\nThe response must be an array of bullet points.\n\nThe content section of the response should resemble this structure:\n[\n  \"<b>{painpoint high level}:</b> {painpoint description}\",\n  \"<b>{painpoint high level}:</b> {painpoint description}\",\n  \"<b>{painpoint high level}:</b> {painpoint description}\",\n  \"<b>{painpoint high level}:</b> {painpoint description}\",\n  \"<b>{painpoint high level}:</b> {painpoint description}\",\n]\n\nThe step number and step should all be one string, not separated by a colon.\n\nEnsure that the response is valid JSON and the array elements are strings properly formatted for JSON.\n",
+                "type": "string"
+              },
+              {
+                "id": "82a2c8a1-6b73-4b51-ac88-98058607b326",
+                "name": "industry_painpoints_blurb",
+                "value": "=Write a concise paragraph that summarizes the key pain points in {{ $json.target_company_type }} companies and positions our automation consultancy as the perfect solution to these challenges. The paragraph should be engaging, build credibility, and include a call to action encouraging the visitor to learn more or get in touch.\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}",
+                "type": "string"
+              },
+              {
+                "id": "4a25c3bd-ca2c-4943-9a01-fffc5cc3b670",
+                "name": "automation_speaks_for_itself_header",
+                "value": "=Generate a compelling header for a landing page section that introduces the effectiveness of automation solutions and highlights how they directly demonstrate their value in {{ $json.target_company_type }} companies. The header should be concise, impactful, and convey a sense of confidence and proof in the automation’s capabilities.\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}",
+                "type": "string"
+              },
+              {
+                "id": "0c9530ac-2bd7-4ad3-b36f-010ce51b54ae",
+                "name": "automation_speaks_for_itself_blurb",
+                "value": "=Write a brief description of a specific automation use case in {{ $json.target_company_type }}. The description should articulate how if you were to implement this for your business that it could produce business value and articulate on the underlying value.\n\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}\n\nWrap any steps that have a colon in them in a bold tag <b> </b>",
+                "type": "string"
+              },
+              {
+                "id": "aefd0adc-d205-4ee0-b1ce-695c47c476ea",
+                "name": "how_it_works_header",
+                "value": "=Generate a clear and engaging title for a 'How It Works' section on a landing page that explains the process of implementing automation solutions for a {{ $json.target_company_type }}. The title should be concise, inviting, and convey that the steps are simple and effective.\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}",
+                "type": "string"
+              },
+              {
+                "id": "166ba63d-9f93-4282-aaf7-dd7d6e691867",
+                "name": "how_it_works_paragraph",
+                "value": "=Write a brief description for a 'How It Works' section on a landing page that explains the process of implementing automation solutions for businesses in a {{ $json.target_company_type }}. The description should be concise, clear, and reassuring, emphasizing ease of use, effectiveness, and minimal disruption to current operations. Do not list out steps in this description.\n\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}",
+                "type": "string"
+              },
+              {
+                "id": "d4e5832d-ca2e-458c-93bc-b7d299f39a0a",
+                "name": "how_it_works_steps",
+                "value": "=Outline a step-by-step process for how the automation solution is implemented in a {{ $json.target_company_type }}. Each step should be clearly defined, easy to understand, and highlight the key actions taken by both the consultancy and the client. Include any relevant details that demonstrate the thoroughness and effectiveness of the process.\n\nLimit this to 6 steps max.\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}\n\nThe content section of the response should resemble this structure.\n[\n      \"<b>Step Number and high level description:</b> {step}\",\n      \"<b>Step Number and high level description:</b> {step}\",\n      \"<b>Step Number and high level description:</b> {step}\",\n      \"<b>Step Number and high level description:</b> {step}\",\n      \"<b>Step Number and high level description:</b> {step}\"\n],\n\nThe step number and step should all be one string, not separated by a colon.\n\nEnsure that the response is valid JSON. Do not include new line characters but rather rely on json for proper formatting.",
+                "type": "string"
+              },
+              {
+                "id": "dc077723-1914-4d1b-9648-f5efa86fb5b1",
+                "name": "faq_questions",
+                "value": "=Generate a list of frequently asked questions (FAQs) and their corresponding answers for a landing page about automation solutions. The questions should address concerns and curiosities potential clients might have, such as the types of tools that will be built, how the solutions are tailored to their specific business needs, implementation process, security, and ongoing support. The answers should be clear, concise, and informative, demonstrating expertise and reassuring potential clients about the process.\n\nAs a reminder this is for a {{ $json.target_company_type }}.\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}\n\nIt should follow the following format for the section_content output\n\"faqItems\": [\n      {\n        \"question\": \"What is automation?\",\n        \"answer\": \"Automation involves using technology to perform tasks with minimal human intervention.\"\n      },\n      {\n        \"question\": \"How can automation benefit my business?\",\n        \"answer\": \"Automation can increase efficiency, reduce errors, save time, and lower costs.\"\n      },\n      {\n        \"question\": \"What types of tasks can be automated?\",\n        \"answer\": \"Tasks such as invoicing, customer support, supply chain management, and data analysis can be automated.\"\n      }\n    ],",
+                "type": "string"
+              },
+              {
+                "id": "77062a9b-b689-4dd8-be81-85b6b0ce3c70",
+                "name": "second_cta_title",
+                "value": "=Generate a persuasive and engaging call-to-action title for a footer section on a landing page. The title should encourage visitors to join other businesses who are benefiting from the services, emphasizing the effectiveness and popularity of the solution.\n\nAs a reminder this is for a {{ $json.target_company_type }}.\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}\n",
+                "type": "string"
+              },
+              {
+                "id": "65866dc1-6ece-44cb-9a87-ec1eeee76154",
+                "name": "second_cta_text",
+                "value": "=Generate a concise and action-oriented button text for a call-to-action about the use case provided below. The text should convey simplicity and immediacy.\n\nAs a reminder this is for a {{ $json.target_company_type }}.\n\nIf it makes sense, integrate the title to algin with the use case provided here: {{ $json.use_case_details }}\n",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "51b34b62-9588-41e9-8b86-ce6d0013b541",
+        "name": "AI Prompts - Full",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -840,
+          720
+        ]
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "id": "f7356be2-396c-4f9b-bbd7-2273f58b2f57",
+        "name": "Aggregate Content",
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          240,
+          600
+        ]
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Background Information",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Anthropic Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Text Content Generator",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Background Information": {
+        "main": [
+          [
+            {
+              "node": "AI Prompts - Full",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Split out into items": {
+        "main": [
+          [
+            {
+              "node": "Component",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Aggregate Content",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Text Content Generator",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Component": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Text Content Generator",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Configuration Creator RAW": {
+        "main": [
+          [
+            {
+              "node": "Config Output (Finalized)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Text Content Generator": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Prompts - Full": {
+        "main": [
+          [
+            {
+              "node": "Split out into items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate Content": {
+        "main": [
+          [
+            {
+              "node": "Configuration Creator RAW",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "ed9f8240-dec4-4218-a772-ff7f9a2e1a3b",
+    "meta": {
+      "instanceId": "86d0b539cdbfaefdd305e9f4d9320d6449af6a05b20f421bc7ca5b2501068fb2"
+    },
+    "id": "haKbXEhbZktdPalY",
+    "tags": []
+  }

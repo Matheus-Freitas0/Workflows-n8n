@@ -1,0 +1,532 @@
+{
+    "name": "P7 | Buscador de Palavras Chave",
+    "nodes": [
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "e570e3eb-e9f2-46b7-833f-166ced371b15",
+                "leftValue": "={{ $json.body.data.key.fromMe }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "false",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "e5d47ca2-114f-405b-a4cb-d8a5b575baa0",
+                "leftValue": "={{ $json.body.data.message.conversation }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "5c59b2e5-6807-4ab6-bded-0a7bb5588d2b",
+        "name": "É Mensagem de Texto?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -1000,
+          760
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "122d2b54-5ce8-456c-ae61-75000d0401ac",
+                "name": "palavras",
+                "value": "={{ $json.palavra_chave }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "07602244-1216-4ba2-bf41-de57b01b128b",
+        "name": "Palavra Chave",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -640,
+          740
+        ]
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "id": "36cc3aee-269e-4c78-bd55-5b0a0c418e45",
+        "name": "Agregar",
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          -260,
+          660
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Obtém os dados do node Merge\nconst dados = $item(\"0\").$node[\"Agregar\"].json[\"data\"];\n\n// Extrai a mensagem do primeiro item dentro de \"data\"\nconst mensagemRecebida = dados[0].mensagem;\n\n// Extrai a lista de palavras-chave, ignorando o primeiro item que é a mensagem\nconst palavrasChave = dados.slice(1);\n\n// Função para encontrar uma palavra-chave na mensagem\nfunction encontraPalavraChave(mensagem, palavras) {\n    return palavras.find(item => mensagem.toLowerCase().includes(item.palavras.toLowerCase()));\n}\n\n// Verifica se alguma palavra-chave está presente e identifica qual foi\nconst palavraEncontrada = encontraPalavraChave(mensagemRecebida, palavrasChave);\n\n// Retorna o resultado de acordo com a verificação\nif (palavraEncontrada) {\n    return [{ json: { mensagem: mensagemRecebida, YES: true, palavraChave: palavraEncontrada.palavras } }];\n} else {\n    return [{ json: { NO: true } }];\n}\n"
+        },
+        "id": "906983d8-61fb-44c7-8f29-b82313f2f63b",
+        "name": "Comparar",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -120,
+          660
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "6461bffe-216b-4f5d-9c5a-5c1d90409772",
+                "leftValue": "={{ $json.YES }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "f4812254-9b12-4129-8625-5bb67c18f633",
+        "name": "Tem a Palavra?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          20,
+          660
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "070258a3-43d0-46dc-8678-1848944839f9",
+        "name": "Fim",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -780,
+          920
+        ]
+      },
+      {
+        "parameters": {
+          "databaseId": 175325,
+          "tableId": 430675,
+          "returnAll": true,
+          "additionalOptions": {}
+        },
+        "id": "79a89a64-9358-414d-8d1a-8caff6ec1a80",
+        "name": "Buscas Palavras",
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          -780,
+          740
+        ],
+        "alwaysOutputData": false,
+        "credentials": {
+          "baserowApi": {
+            "id": "JI4LEKdN3srB4aLS",
+            "name": "Baserow Flux Automate"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5ae64771-97cd-4955-9204-76cd2c7dee92",
+                "leftValue": "={{ $('Execute Workflow Trigger').item.json.body.data.key.participant }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "7b31d4ec-8ce6-4b9f-b0fd-e25c711db557",
+                "leftValue": "",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "8ab53197-84c2-4e44-becd-b27b5003a817",
+        "name": "Veio de Grupo?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          220,
+          640
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://evolution.fluxautomate.com.br/message/sendText/fluxnocode",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"number\": \"5535997333909\",\n    \"text\": \"🔎 _Achamos uma palavra chave que você selecionou_.\\n\\n👉🏻 *Palavra Chave:* {{ $item(\"0\").$node[\"Tem a Palavra?\"].json[\"palavraChave\"] }}\\n🔔 *Mensagem enviada:* {{ $item(\"0\").$node[\"Tem a Palavra?\"].json[\"mensagem\"] }}\\n\\n👤 *Quem enviou:* {{ $('Execute Workflow Trigger').item.json.body.data.pushName }}\\n📲 *Telefone:* {{ $('Execute Workflow Trigger').item.json.body.data.key.participant.replaceAll(\"@s.whatsapp.net\",\"\") }}\",\n    \"delay\": 1200,\n    \"quoted\": {\n         \"key\": {\n             \"id\": \"{{ $('É Mensagem de Texto?').item.json.body.data.key.id }}\"\n         }\n    }\n}\n",
+          "options": {
+            "redirect": {
+              "redirect": {}
+            }
+          }
+        },
+        "id": "b07c1cd8-6edd-4feb-8a71-e6ba08933730",
+        "name": "Evolution",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          400,
+          560
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://evolution.fluxautomate.com.br/message/sendText/fluxnocode",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"number\": \"5535997333909\",\n    \"text\": \"🔎 _Achamos uma palavra chave que você selecionou_.\\n\\n👉🏻 *Palavra Chave:* {{ $item(\"0\").$node[\"Tem a Palavra?\"].json[\"palavraChave\"] }}\\n🔔 *Mensagem enviada:* {{ $item(\"0\").$node[\"Tem a Palavra?\"].json[\"mensagem\"] }}\\n\\n👤 *Quem enviou:* {{ $('Execute Workflow Trigger').item.json.body.data.pushName }}\\n📲 *Telefone:* {{ $('Execute Workflow Trigger').item.json.body.data.key.remoteJid.replaceAll(\"@s.whatsapp.net\",\"\") }}\"\n}",
+          "options": {
+            "redirect": {
+              "redirect": {}
+            }
+          }
+        },
+        "id": "a5600ae2-0f05-4c15-a506-a10a13037c81",
+        "name": "Evolution1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          400,
+          720
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "c91f0cea-64e9-4812-9bd7-0fba14eb0920",
+        "name": "Fim1",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          220,
+          940
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6012c2c5-8975-4121-8d5e-523c1ef9e011",
+                "name": "mensagem",
+                "value": "={{ $('Execute Workflow Trigger').item.json.body.data.message.conversation }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "2fc1df73-17cb-49cb-9f58-4b798bda4cb2",
+        "name": "Mensagem",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -640,
+          580
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "65d975c6-8ede-4fb1-9de3-af4ee947bcab",
+        "name": "Merclar",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          -400,
+          660
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Validação Inicial",
+          "height": 590.9085590655134,
+          "width": 557.6458379846789,
+          "color": 5
+        },
+        "id": "32f0b644-777a-44aa-a867-53ad46badc60",
+        "name": "Sticky Note",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -1055.1676912543057,
+          496.14347077837965
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Comparação de Palavra",
+          "height": 589.4175259891621,
+          "width": 627.668599851327,
+          "color": 7
+        },
+        "id": "cee8217f-8a7e-4564-a2f9-90027268c539",
+        "name": "Sticky Note1",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -460,
+          497.63450385473095
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Envio de Mensagem",
+          "height": 590.6190616038738,
+          "width": 430.6876919652245,
+          "color": 4
+        },
+        "id": "e7d02931-90bd-49f1-89cc-1fea5ff83692",
+        "name": "Sticky Note2",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          200,
+          497.5969287705766
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "12460b33-81f9-4c41-a8a6-99c4b1e61278",
+        "name": "Execute Workflow Trigger",
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1,
+        "position": [
+          -1200,
+          760
+        ]
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "É Mensagem de Texto?": {
+        "main": [
+          [
+            {
+              "node": "Mensagem",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Buscas Palavras",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Fim",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Palavra Chave": {
+        "main": [
+          [
+            {
+              "node": "Merclar",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Agregar": {
+        "main": [
+          [
+            {
+              "node": "Comparar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Comparar": {
+        "main": [
+          [
+            {
+              "node": "Tem a Palavra?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tem a Palavra?": {
+        "main": [
+          [
+            {
+              "node": "Veio de Grupo?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Fim1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscas Palavras": {
+        "main": [
+          [
+            {
+              "node": "Palavra Chave",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Veio de Grupo?": {
+        "main": [
+          [
+            {
+              "node": "Evolution",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Evolution1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mensagem": {
+        "main": [
+          [
+            {
+              "node": "Merclar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merclar": {
+        "main": [
+          [
+            {
+              "node": "Agregar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Execute Workflow Trigger": {
+        "main": [
+          [
+            {
+              "node": "É Mensagem de Texto?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "9edea14a-1c79-433a-b6a0-0ccc3169e0de",
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "619b17cd1b492527794139da1bcb865e53d9b06f94f0bce867b7bc44cff77b3b"
+    },
+    "id": "daxoAYsWoVXZ0bsS",
+    "tags": [
+      {
+        "createdAt": "2025-02-12T12:24:52.743Z",
+        "updatedAt": "2025-02-12T12:57:02.254Z",
+        "id": "IEEotBOwvCC1isJA",
+        "name": "FLUX"
+      }
+    ]
+  }

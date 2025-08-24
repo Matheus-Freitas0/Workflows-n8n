@@ -1,0 +1,1650 @@
+{
+    "name": "Presente de Natal 07 -  Extração de dados",
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1Z-afO0Ww36N_O962Nt2ITDR92rgUBpWA",
+            "mode": "list",
+            "cachedResultName": "Document_Data_Extraction",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1Z-afO0Ww36N_O962Nt2ITDR92rgUBpWA"
+          },
+          "event": "fileCreated",
+          "options": {}
+        },
+        "id": "5708ae76-9476-430b-acb7-30b9d0cfddc4",
+        "name": "Google Drive Trigger",
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          -700,
+          640
+        ],
+        "disabled": true
+      },
+      {
+        "parameters": {},
+        "id": "5c18b1ce-ecfc-4985-bc74-3547533628cc",
+        "name": "When clicking ‘Test workflow’",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -700,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.pdfrest.com/jpg",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Accept",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "parameterType": "formBinaryData",
+                "name": "file",
+                "inputDataFieldName": "document_data"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "93bc8cc7-74e5-47ff-832e-98620e1fcfb1",
+        "name": "pdfrest Convert PDF to Image",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          460,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          },
+          "options": {
+            "binaryPropertyName": "document_data"
+          }
+        },
+        "id": "0a71f83c-58bd-417a-9c6b-f9c95c21f15b",
+        "name": "TESTING - Get File From Google Drive",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          -240,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openAiApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "=Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"gpt-4o-mini\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an expert in image analysis and structured data extraction. You will be given an image and should determine the document type from the provided image. The options are Invoice, Resume, or Shipping Label. If it is neither, return 'Unknown'. Your response must adhere to the provided JSON schema.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Please determine the document type of this image. {{ ($('Set Extraction Method').item.json.use_openai_vision) === false ? $('Create Image Code Blocks').item.json.sanitizedText : '' }}\"\n        }\n  {{ $('Set Extraction Method').item.json.use_openai_vision === true ? ',' + JSON.stringify($('Create Image Code Blocks').item.json.imageBlocks).slice(1, -1) : '' }}\n      ]\n    }\n  ],\n  \"response_format\": {\n    \"type\": \"json_schema\",\n    \"json_schema\": {\n      \"name\": \"document_type_analysis\",\n      \"schema\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"document_type\": {\n            \"type\": \"string\",\n            \"enum\": [\"Invoice\", \"Resume\", \"Shipping Label\", \"Unknown\"]\n          },\n          \"confidence_score\": {\n            \"type\": \"number\"\n          },\n          \"analysis_details\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"detected_keywords\": {\n                \"type\": \"array\",\n                \"items\": { \"type\": \"string\" }\n              },\n              \"reasoning\": { \"type\": \"string\" },\n              \"timestamp\": { \"type\": \"string\" }\n            },\n            \"required\": [\"detected_keywords\", \"reasoning\", \"timestamp\"],\n            \"additionalProperties\": false\n          }\n        },\n        \"required\": [\"document_type\", \"confidence_score\", \"analysis_details\"],\n        \"additionalProperties\": false\n      },\n      \"strict\": true\n    }\n  }\n}\n",
+          "options": {}
+        },
+        "id": "e6a54349-7f26-4071-9d01-64c01d3062fa",
+        "name": "OpenAI Document Type Identification",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1240,
+          880
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openAiApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "=Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an AI assistant specializing in extracting structured data from files. Please analyze the provided document and output JSON that strictly adheres to the given schema.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Extract the invoice details from this document. {{ ($('Set Extraction Method').item.json.use_openai_vision) === false ? $('Create Image Code Blocks').item.json.sanitizedText : '' }}\"\n        }\n{{ $('Set Extraction Method').item.json.use_openai_vision === true ? ',' + JSON.stringify($('Create Image Code Blocks').item.json.imageBlocks).slice(1, -1) : '' }}\n    ]\n    }\n  ],\n  \"response_format\": {\n    \"type\": \"json_schema\",\n    \"json_schema\": {\n      \"name\": \"Invoice_Schema\",\n      \"description\": \"Schema for structured invoice data extraction\",\n      \"strict\": true,\n      \"schema\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"invoice_number\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Unique identifier for the invoice\"\n          },\n          \"order_number\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Order number associated with the invoice\"\n          },\n          \"invoice_date\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Date when the invoice was issued\"\n          },\n          \"due_date\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Payment due date\"\n          },\n          \"total_due\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Total amount due for the invoice\"\n          },\n          \"from\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"name\": { \"type\": [\"string\", \"null\"], \"description\": \"Name of the issuer\" },\n              \"address\": { \"type\": [\"string\", \"null\"], \"description\": \"Address of the issuer\" },\n              \"email\": { \"type\": [\"string\", \"null\"], \"description\": \"Email address of the issuer\" }\n            },\n            \"required\": [\"name\", \"address\", \"email\"],\n            \"additionalProperties\": false\n          },\n          \"to\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"name\": { \"type\": [\"string\", \"null\"], \"description\": \"Name of the recipient\" },\n              \"address\": { \"type\": [\"string\", \"null\"], \"description\": \"Address of the recipient\" },\n              \"email\": { \"type\": [\"string\", \"null\"], \"description\": \"Email address of the recipient\" }\n            },\n            \"required\": [\"name\", \"address\", \"email\"],\n            \"additionalProperties\": false\n          },\n          \"services\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"description\": { \"type\": [\"string\", \"null\"], \"description\": \"Service description\" },\n                \"rate\": { \"type\": [\"string\", \"null\"], \"description\": \"Rate per unit or hour\" },\n                \"quantity\": { \"type\": [\"string\", \"null\"], \"description\": \"Quantity of the service provided\" },\n                \"subtotal\": { \"type\": [\"string\", \"null\"], \"description\": \"Subtotal amount for the service\" }\n              },\n              \"required\": [\"description\", \"rate\", \"quantity\", \"subtotal\"],\n              \"additionalProperties\": false\n            }\n          },\n          \"subtotal\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Subtotal amount for the invoice\"\n          },\n          \"tax\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Tax amount applied to the invoice\"\n          },\n          \"total\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Total amount including tax\"\n          },\n          \"bank_details\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"account_number\": {\n                \"type\": [\"string\", \"null\"],\n                \"description\": \"Bank account number for payment\"\n              },\n              \"bsb_number\": {\n                \"type\": [\"string\", \"null\"],\n                \"description\": \"Bank BSB number\"\n              }\n            },\n            \"required\": [\"account_number\", \"bsb_number\"],\n            \"additionalProperties\": false\n          }\n        },\n        \"required\": [\n          \"invoice_number\",\n          \"order_number\",\n          \"invoice_date\",\n          \"due_date\",\n          \"total_due\",\n          \"from\",\n          \"to\",\n          \"services\",\n          \"subtotal\",\n          \"tax\",\n          \"total\",\n          \"bank_details\"\n        ],\n        \"additionalProperties\": false\n      }\n    }\n  }\n}\n\n\n",
+          "options": {}
+        },
+        "id": "db8c31a9-48b2-4301-a070-4a5e1f955847",
+        "name": "OpenAI Invoice Extract With Structured Output",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1800,
+          640
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openAiApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "=Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an AI assistant specializing in extracting structured data from files. Please analyze the provided document and output JSON that strictly adheres to the given schema.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Extract the shipping label details from this document. {{ ($('Set Extraction Method').item.json.use_openai_vision) === false ? $('Create Image Code Blocks').item.json.sanitizedText : '' }}\"\n        }\n  {{ $('Set Extraction Method').item.json.use_openai_vision === true ? ',' + JSON.stringify($('Create Image Code Blocks').item.json.imageBlocks).slice(1, -1) : '' }}\n      ]\n    }\n  ],\n  \"response_format\": {\n    \"type\": \"json_schema\",\n    \"json_schema\": {\n      \"name\": \"shipping_label_extraction\",\n      \"description\": \"Schema for extracting structured shipping label details, such as tracking numbers, addresses, package information, and delivery details.\",\n      \"strict\": true,\n      \"schema\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"shipment_id\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"A unique identifier for the shipment, often a tracking number.\"\n          },\n          \"shipment_date\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The date the shipment was processed, in YYYY-MM-DD format.\"\n          },\n          \"carrier\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The name of the shipping carrier (e.g., UPS, FedEx, DHL, USPS).\"\n          },\n          \"tracking_number\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The tracking number associated with the shipment.\"\n          },\n          \"sender\": {\n            \"type\": \"object\",\n            \"description\": \"Details about the sender of the shipment.\",\n            \"properties\": {\n              \"name\": { \"type\": [\"string\", \"null\"], \"description\": \"The sender's name.\" },\n              \"address\": { \"type\": [\"string\", \"null\"], \"description\": \"The full address of the sender.\" }\n            },\n            \"required\": [\"name\", \"address\"],\n            \"additionalProperties\": false\n          },\n          \"recipient\": {\n            \"type\": \"object\",\n            \"description\": \"Details about the recipient of the shipment.\",\n            \"properties\": {\n              \"name\": { \"type\": [\"string\", \"null\"], \"description\": \"The recipient's name.\" },\n              \"address\": { \"type\": [\"string\", \"null\"], \"description\": \"The full address of the recipient.\" }\n            },\n            \"required\": [\"name\", \"address\"],\n            \"additionalProperties\": false\n          },\n          \"parcel_details\": {\n            \"type\": \"object\",\n            \"description\": \"Details about the parcel being shipped.\",\n            \"properties\": {\n              \"weight\": {\n                \"type\": [\"number\", \"null\"],\n                \"description\": \"The weight of the parcel in kilograms or pounds.\"\n              },\n              \"dimensions\": {\n                \"type\": \"object\",\n                \"description\": \"The dimensions of the parcel.\",\n                \"properties\": {\n                  \"length\": { \"type\": [\"number\", \"null\"], \"description\": \"Length of the parcel.\" },\n                  \"width\": { \"type\": [\"number\", \"null\"], \"description\": \"Width of the parcel.\" },\n                  \"height\": { \"type\": [\"number\", \"null\"], \"description\": \"Height of the parcel.\" }\n                },\n                \"required\": [\"length\", \"width\", \"height\"],\n                \"additionalProperties\": false\n              }\n            },\n            \"required\": [\"weight\", \"dimensions\"],\n            \"additionalProperties\": false\n          },\n          \"shipping_service\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The specific shipping service (e.g., Express, Overnight, Ground).\"\n          },\n          \"delivery_date\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The estimated or actual delivery date, in YYYY-MM-DD format.\"\n          },\n          \"cost\": {\n            \"type\": [\"number\", \"null\"],\n            \"description\": \"The shipping cost in the applicable currency.\"\n          },\n          \"currency\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The currency for the shipping cost (e.g., USD, EUR).\"\n          },\n          \"barcode_data\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Any barcode or QR code data extracted from the shipping label.\"\n          }\n        },\n        \"required\": [\n          \"shipment_id\",\n          \"shipment_date\",\n          \"carrier\",\n          \"tracking_number\",\n          \"sender\",\n          \"recipient\",\n          \"parcel_details\",\n          \"shipping_service\",\n          \"delivery_date\",\n          \"cost\",\n          \"currency\",\n          \"barcode_data\"\n        ],\n        \"additionalProperties\": false\n      }\n    }\n  }\n}\n",
+          "options": {}
+        },
+        "id": "54ccb444-d300-47dc-a6de-03e4bd13aae5",
+        "name": "OpenAI Shipping Label Extract With Structured Output",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1800,
+          1100
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.openai.com/v1/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "openAiApi",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "=Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are an AI assistant specializing in extracting structured data from files. Please analyze the provided document and output JSON that strictly adheres to the given schema.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Extract the resume details from this document. {{ ($('Set Extraction Method').item.json.use_openai_vision) === false ? $('Create Image Code Blocks').item.json.sanitizedText : '' }}\"\n        }\n  {{ $('Set Extraction Method').item.json.use_openai_vision === true ? ',' + JSON.stringify($('Create Image Code Blocks').item.json.imageBlocks).slice(1, -1) : '' }}\n      ]\n    }\n  ],\n  \"response_format\": {\n    \"type\": \"json_schema\",\n    \"json_schema\": {\n      \"name\": \"resume_extraction\",\n      \"description\": \"Schema for structured resume data extraction.\",\n      \"strict\": true,\n      \"schema\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"full_name\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The individual's full name.\"\n          },\n          \"email\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The individual's email address.\"\n          },\n          \"phone_number\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The individual's phone number.\"\n          },\n          \"address\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"The individual's address.\"\n          },\n          \"linkedin_profile\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"LinkedIn profile URL.\"\n          },\n          \"github_profile\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"GitHub profile URL.\"\n          },\n          \"summary\": {\n            \"type\": [\"string\", \"null\"],\n            \"description\": \"Professional summary or bio.\"\n          },\n          \"work_experience\": {\n            \"type\": \"array\",\n            \"description\": \"List of work experiences.\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"job_title\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Job title.\"\n                },\n                \"company\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Company name.\"\n                },\n                \"location\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Job location.\"\n                },\n                \"start_date\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Start date in YYYY-MM-DD format.\"\n                },\n                \"end_date\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"End date in YYYY-MM-DD format or 'Present'.\"\n                },\n                \"responsibilities\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Responsibilities or achievements.\"\n                }\n              },\n              \"required\": [\"job_title\", \"company\", \"location\", \"start_date\", \"end_date\", \"responsibilities\"],\n              \"additionalProperties\": false\n            }\n          },\n          \"education\": {\n            \"type\": \"array\",\n            \"description\": \"List of educational qualifications.\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"degree\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Degree name.\"\n                },\n                \"field_of_study\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Field of study.\"\n                },\n                \"institution\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Institution name.\"\n                },\n                \"graduation_date\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Graduation date in YYYY-MM-DD format.\"\n                }\n              },\n              \"required\": [\"degree\", \"field_of_study\", \"institution\", \"graduation_date\"],\n              \"additionalProperties\": false\n            }\n          },\n          \"skills\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": [\"string\", \"null\"],\n              \"description\": \"A skill listed on the resume.\"\n            },\n            \"description\": \"List of skills.\"\n          },\n          \"certifications\": {\n            \"type\": \"array\",\n            \"description\": \"List of certifications.\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"name\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Certification name.\"\n                },\n                \"organization\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Issuing organization.\"\n                },\n                \"date\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Certification date in YYYY-MM-DD format.\"\n                }\n              },\n              \"required\": [\"name\", \"organization\", \"date\"],\n              \"additionalProperties\": false\n            }\n          },\n          \"languages\": {\n            \"type\": \"array\",\n            \"description\": \"List of languages spoken.\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"language\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Language name.\"\n                },\n                \"proficiency\": {\n                  \"type\": [\"string\", \"null\"],\n                  \"description\": \"Proficiency level (e.g., Fluent, Beginner).\"\n                }\n              },\n              \"required\": [\"language\", \"proficiency\"],\n              \"additionalProperties\": false\n            }\n          }\n        },\n        \"required\": [\n          \"full_name\",\n          \"email\",\n          \"phone_number\",\n          \"address\",\n          \"linkedin_profile\",\n          \"github_profile\",\n          \"summary\",\n          \"work_experience\",\n          \"education\",\n          \"skills\",\n          \"certifications\",\n          \"languages\"\n        ],\n        \"additionalProperties\": false\n      }\n    }\n  }\n}\n",
+          "options": {}
+        },
+        "id": "8fd8b4bc-4fc5-421a-9a79-fbec1f320204",
+        "name": "OpenAI Resume Extract With Structured Output",
+        "type": "n8n-nodes-base.httpRequest",
+        "position": [
+          1800,
+          880
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1ZTgJUY1EvOXfEEImEWopmgkurOeFs38fXVcOkMyi74A",
+            "mode": "list",
+            "cachedResultName": "Invoice Export Tracker",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZTgJUY1EvOXfEEImEWopmgkurOeFs38fXVcOkMyi74A/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZTgJUY1EvOXfEEImEWopmgkurOeFs38fXVcOkMyi74A/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "invoice_number": "={{ $json.choices[0].message.content.parseJson().invoice_number }}",
+              "order_number": "={{ $json.choices[0].message.content.parseJson().order_number }}",
+              "invoice_date": "={{ $json.choices[0].message.content.parseJson().invoice_date }}",
+              "due_date": "={{ $json.choices[0].message.content.parseJson().due_date }}",
+              "total_due": "={{ $json.choices[0].message.content.parseJson().total_due }}",
+              "from_name": "={{ $json.choices[0].message.content.parseJson().from.name }}",
+              "from_address": "={{ $json.choices[0].message.content.parseJson().from.address }}",
+              "bank_bsb_number": "={{ $json.choices[0].message.content.parseJson().bank_details.bsb_number }}",
+              "bank_account_number": "={{ $json.choices[0].message.content.parseJson().bank_details.account_number }}",
+              "total": "={{ $json.choices[0].message.content.parseJson().total }}",
+              "tax": "={{ $json.choices[0].message.content.parseJson().tax }}",
+              "subtotal": "={{ $json.choices[0].message.content.parseJson().subtotal }}",
+              "service_subtotal": "={{ $json.choices[0].message.content.parseJson().services.last().subtotal }}",
+              "service_quantity": "={{ $json.choices[0].message.content.parseJson().services.last().quantity }}",
+              "service_description": "={{ $json.choices[0].message.content.parseJson().services.last().description }}",
+              "to_email": "={{ $json.choices[0].message.content.parseJson().to.email }}",
+              "to_address": "={{ $json.choices[0].message.content.parseJson().to.address }}",
+              "to_name": "={{ $json.choices[0].message.content.parseJson().to.name }}",
+              "from_email": "={{ $json.choices[0].message.content.parseJson().from.email }}",
+              "service_rate": "={{ $json.choices[0].message.content.parseJson().services.last().rate }}"
+            },
+            "matchingColumns": [
+              "invoice_number"
+            ],
+            "schema": [
+              {
+                "id": "invoice_number",
+                "displayName": "invoice_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "order_number",
+                "displayName": "order_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "invoice_date",
+                "displayName": "invoice_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "due_date",
+                "displayName": "due_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "total_due",
+                "displayName": "total_due",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "from_name",
+                "displayName": "from_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "from_address",
+                "displayName": "from_address",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "from_email",
+                "displayName": "from_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "to_name",
+                "displayName": "to_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "to_address",
+                "displayName": "to_address",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "to_email",
+                "displayName": "to_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "service_description",
+                "displayName": "service_description",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "service_rate",
+                "displayName": "service_rate",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "service_quantity",
+                "displayName": "service_quantity",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "service_subtotal",
+                "displayName": "service_subtotal",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "subtotal",
+                "displayName": "subtotal",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "tax",
+                "displayName": "tax",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "total",
+                "displayName": "total",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "bank_account_number",
+                "displayName": "bank_account_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "bank_bsb_number",
+                "displayName": "bank_bsb_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "0552bcf3-98c6-4052-bcc2-829abab2cd3f",
+        "name": "Write to Invoice Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2140,
+          640
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1ZTgJUY1EvOXfEEImEWopmgkurOeFs38fXVcOkMyi74A",
+            "mode": "list",
+            "cachedResultName": "Data Extraction Spreadsheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZTgJUY1EvOXfEEImEWopmgkurOeFs38fXVcOkMyi74A/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1987199046,
+            "mode": "list",
+            "cachedResultName": "Resumes",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZTgJUY1EvOXfEEImEWopmgkurOeFs38fXVcOkMyi74A/edit#gid=1987199046"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "full_name": "={{ $json.choices[0].message.content.parseJson().full_name }}",
+              "email": "={{ $json.choices[0].message.content.parseJson().email }}",
+              "phone_number": "={{ $json.choices[0].message.content.parseJson().phone_number }}",
+              "address": "={{ $json.choices[0].message.content.parseJson().address }}",
+              "linkedin_profile": "={{ $json.choices[0].message.content.parseJson().linkedin_profile }}",
+              "github_profile": "={{ $json.choices[0].message.content.parseJson().github_profile }}",
+              "summary": "={{ $json.choices[0].message.content.parseJson().summary }}",
+              "work_experience_1_job_title": "={{ $json.choices[0].message.content.parseJson().work_experience[0].job_title }}",
+              "work_experience_1_company": "={{ $json.choices[0].message.content.parseJson().work_experience[0].company }}",
+              "work_experience_1_location": "={{ $json.choices[0].message.content.parseJson().work_experience[0].location }}",
+              "language_2_proficiency": "=",
+              "language_2": "=",
+              "language_1_proficiency": "=",
+              "language_1": "={{ $json.choices[0].message.content.parseJson().languages }}",
+              "certification_1_date": "={{ $json.choices[0].message.content.parseJson().certifications[0].date }}",
+              "certification_1_organization": "={{ $json.choices[0].message.content.parseJson().certifications[0].organization }}",
+              "certification_1_name": "={{ $json.choices[0].message.content.parseJson().certifications[0].name }}",
+              "skill_3": "=",
+              "skill_2": "=",
+              "skill_1": "={{ $json.choices[0].message.content.parseJson().skills }}",
+              "education_2_graduation_date": "=",
+              "education_2_institution": "=",
+              "education_2_field_of_study": "=",
+              "education_2_degree": "=",
+              "education_1_graduation_date": "={{ $json.choices[0].message.content.parseJson().education[0].graduation_date }}",
+              "education_1_institution": "={{ $json.choices[0].message.content.parseJson().education[0].institution }}",
+              "education_1_field_of_study": "={{ $json.choices[0].message.content.parseJson().education[0].field_of_study }}",
+              "education_1_degree": "={{ $json.choices[0].message.content.parseJson().education[0].field_of_study }}",
+              "work_experience_2_responsibilities": "={{ $json.choices[0].message.content.parseJson().work_experience[1].responsibilities }}",
+              "work_experience_2_end_date": "={{ $json.choices[0].message.content.parseJson().work_experience[1].end_date }}",
+              "work_experience_2_start_date": "={{ $json.choices[0].message.content.parseJson().work_experience[1].start_date }}",
+              "work_experience_2_location": "={{ $json.choices[0].message.content.parseJson().work_experience[1].location }}",
+              "work_experience_2_company": "={{ $json.choices[0].message.content.parseJson().work_experience[1].company }}",
+              "work_experience_2_job_title": "={{ $json.choices[0].message.content.parseJson().work_experience[1].job_title }}",
+              "work_experience_1_responsibilities": "={{ $json.choices[0].message.content.parseJson().work_experience[0].responsibilities }}",
+              "work_experience_1_end_date": "={{ $json.choices[0].message.content.parseJson().work_experience[0].end_date }}",
+              "work_experience_1_start_date": "={{ $json.choices[0].message.content.parseJson().work_experience[0].start_date }}"
+            },
+            "matchingColumns": [
+              "full_name"
+            ],
+            "schema": [
+              {
+                "id": "full_name",
+                "displayName": "full_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "phone_number",
+                "displayName": "phone_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "address",
+                "displayName": "address",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "linkedin_profile",
+                "displayName": "linkedin_profile",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "github_profile",
+                "displayName": "github_profile",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "summary",
+                "displayName": "summary",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_1_job_title",
+                "displayName": "work_experience_1_job_title",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_1_company",
+                "displayName": "work_experience_1_company",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_1_location",
+                "displayName": "work_experience_1_location",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_1_start_date",
+                "displayName": "work_experience_1_start_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_1_end_date",
+                "displayName": "work_experience_1_end_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_1_responsibilities",
+                "displayName": "work_experience_1_responsibilities",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_2_job_title",
+                "displayName": "work_experience_2_job_title",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_2_company",
+                "displayName": "work_experience_2_company",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_2_location",
+                "displayName": "work_experience_2_location",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_2_start_date",
+                "displayName": "work_experience_2_start_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_2_end_date",
+                "displayName": "work_experience_2_end_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "work_experience_2_responsibilities",
+                "displayName": "work_experience_2_responsibilities",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "education_1_degree",
+                "displayName": "education_1_degree",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "education_1_field_of_study",
+                "displayName": "education_1_field_of_study",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "education_1_institution",
+                "displayName": "education_1_institution",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "education_1_graduation_date",
+                "displayName": "education_1_graduation_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "education_2_degree",
+                "displayName": "education_2_degree",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "education_2_field_of_study",
+                "displayName": "education_2_field_of_study",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "education_2_institution",
+                "displayName": "education_2_institution",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "education_2_graduation_date",
+                "displayName": "education_2_graduation_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "skill_1",
+                "displayName": "skill_1",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "skill_2",
+                "displayName": "skill_2",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "skill_3",
+                "displayName": "skill_3",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "certification_1_name",
+                "displayName": "certification_1_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "certification_1_organization",
+                "displayName": "certification_1_organization",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "certification_1_date",
+                "displayName": "certification_1_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "language_1",
+                "displayName": "language_1",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "language_1_proficiency",
+                "displayName": "language_1_proficiency",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "language_2",
+                "displayName": "language_2",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "language_2_proficiency",
+                "displayName": "language_2_proficiency",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "cc0d72c9-81d6-428c-9031-8428e11d8f6c",
+        "name": "Write to Resume Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2140,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "appendOrUpdate",
+          "documentId": {
+            "__rl": true,
+            "value": "1ZTgJUY1EvOXfEEImEWopmgkurOeFs38fXVcOkMyi74A",
+            "mode": "list",
+            "cachedResultName": "Data Extraction Spreadsheet",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZTgJUY1EvOXfEEImEWopmgkurOeFs38fXVcOkMyi74A/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 715269992,
+            "mode": "list",
+            "cachedResultName": "Shipping Labels",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZTgJUY1EvOXfEEImEWopmgkurOeFs38fXVcOkMyi74A/edit#gid=715269992"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "shipment_id": "={{ $json.choices[0].message.content.parseJson().shipment_id }}",
+              "shipment_date": "={{ $json.choices[0].message.content.parseJson().shipment_date }}",
+              "carrier": "={{ $json.choices[0].message.content.parseJson().carrier }}",
+              "tracking_number": "={{ $json.choices[0].message.content.parseJson().tracking_number }}",
+              "sender.address": "={{ $json.choices[0].message.content.parseJson().sender.address }}",
+              "recipient.name": "={{ $json.choices[0].message.content.parseJson().recipient.name }}",
+              "recipient.address": "={{ $json.choices[0].message.content.parseJson().recipient.address }}",
+              "parcel_details.weight": "={{ $json.choices[0].message.content.parseJson().parcel_details.weight }}",
+              "parcel_details.dimensions.length": "={{ $json.choices[0].message.content.parseJson().parcel_details.dimensions.length }}",
+              "sender.name": "={{ $json.choices[0].message.content.parseJson().sender.name }}",
+              "parcel_details.dimensions.width": "={{ $json.choices[0].message.content.parseJson().parcel_details.dimensions.width }}",
+              "parcel_details.dimensions.height": "={{ $json.choices[0].message.content.parseJson().parcel_details.dimensions.height }}",
+              "shipping_service": "={{ $json.choices[0].message.content.parseJson().shipping_service }}",
+              "delivery_date": "={{ $json.choices[0].message.content.parseJson().delivery_date }}",
+              "cost": "={{ $json.choices[0].message.content.parseJson().cost }}",
+              "currency": "={{ $json.choices[0].message.content.parseJson().currency }}",
+              "barcode_data": "={{ $json.choices[0].message.content.parseJson().barcode_data }}"
+            },
+            "matchingColumns": [
+              "shipment_id"
+            ],
+            "schema": [
+              {
+                "id": "shipment_id",
+                "displayName": "shipment_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "shipment_date",
+                "displayName": "shipment_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "carrier",
+                "displayName": "carrier",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "tracking_number",
+                "displayName": "tracking_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "sender.name",
+                "displayName": "sender.name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "sender.address",
+                "displayName": "sender.address",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "recipient.name",
+                "displayName": "recipient.name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "recipient.address",
+                "displayName": "recipient.address",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "parcel_details.weight",
+                "displayName": "parcel_details.weight",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "parcel_details.dimensions.length",
+                "displayName": "parcel_details.dimensions.length",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "parcel_details.dimensions.width",
+                "displayName": "parcel_details.dimensions.width",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "parcel_details.dimensions.height",
+                "displayName": "parcel_details.dimensions.height",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "shipping_service",
+                "displayName": "shipping_service",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "delivery_date",
+                "displayName": "delivery_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "cost",
+                "displayName": "cost",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "currency",
+                "displayName": "currency",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "barcode_data",
+                "displayName": "barcode_data",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "cbc0bcde-9442-4895-bf4e-98e0c7a3584a",
+        "name": "Write to Shipping Label Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2140,
+          1100
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Step 1: Retrieve outputUrls and ensure it's handled safely\nlet outputUrls = items[0]?.json?.outputUrl || [];\n\n// Step 2: Ensure outputUrls is parsed and always an array\nif (typeof outputUrls === \"string\") {\n    try {\n        outputUrls = JSON.parse(outputUrls);\n    } catch (error) {\n        throw new Error(\"Failed to parse outputUrls: \" + error.message);\n    }\n}\n\nif (!Array.isArray(outputUrls)) {\n    outputUrls = []; // Default to empty array if not valid\n}\n\n// Step 3: Generate the image blocks from outputUrls\nconst imageBlocks = outputUrls.map(url => ({\n    type: \"image_url\",\n    image_url: { url }\n}));\n\n// Step 4: Sanitize extracted text if imageBlocks is empty\nlet sanitizedText = \"\";\nif (imageBlocks.length === 0) {\n    const extractedText = items[0]?.json?.['Extracted Text'] || \"\";\n    sanitizedText = extractedText\n        .replace(/\\n+/g, ' ')       // Normalize newlines into spaces\n        .replace(/\\\\/g, '')         // Remove escape backslashes\n        .replace(/\"/g, '\\\\\"')       // Escape double quotes\n        .replace(/^\\s+|\\s+$/g, ''); // Trim leading/trailing whitespace\n}\n\n\n// Step 5: Return either imageBlocks or sanitized text\nif (imageBlocks.length > 0) {\n    return [{ json: { imageBlocks } }];\n} else {\n    return [{ json: { sanitizedText } }];\n}\n"
+        },
+        "id": "18e11312-6d21-44b7-9ff2-757fdaf608b7",
+        "name": "Create Image Code Blocks",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          940,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "387fb9f5-a847-4386-be88-333259482ceb",
+                "name": "outputUrl",
+                "value": "={{ $('pdfrest Convert PDF to Image').item.json.outputUrl }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "906c620a-4d63-438d-a1e0-da2cab0c139a",
+        "name": "Page(s)",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          720,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "content": "Generates Image Blocks to support multiple images (pages) as inputs in a single API call.",
+          "height": 314.12407430303017,
+          "width": 229.6302114251941
+        },
+        "id": "a5cfbf1a-6e8f-43ac-93d9-05c66cee9d80",
+        "name": "Sticky Note",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          880,
+          760
+        ]
+      },
+      {
+        "parameters": {
+          "content": "Converts PDF Pages to Images",
+          "height": 314.12407430303017,
+          "width": 229.6302114251941
+        },
+        "id": "9e130e3f-e4db-4c18-ad7d-516ee1377fa7",
+        "name": "Sticky Note1",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          400,
+          780
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "e26750d4-2817-4175-bbb7-470700c75591",
+                "name": "use_openai_vision",
+                "value": false,
+                "type": "boolean"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "596b482e-37fb-4528-9e13-8438f4fd3021",
+        "name": "Set Extraction Method",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -440,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "ff7e2a77-d3e4-4c7d-8702-4c477b1b6925",
+                "leftValue": "={{ $('Set Extraction Method').item.json.use_openai_vision }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "a1c4add1-2e17-46d4-b7cd-0411be8c3099",
+        "name": "Use OpenAI Vision?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          180,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "pdf",
+          "binaryPropertyName": "document_data",
+          "options": {}
+        },
+        "id": "d436acb8-b30a-4fdb-b452-1bd5ca0c6507",
+        "name": "Extract Text from PDF File",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          460,
+          460
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "cb42ba43-753f-4908-a83e-0be123a9c332",
+                "name": "Extracted Text",
+                "value": "={{ $json.text.replace(/\\n/g, '\\\\n').replace(/\"/g, '\\\\\"').replace(/•/g, '-') }}\n\n",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "53ce929f-96e7-48aa-91ed-5675ddfe24ed",
+        "name": "Extracted Text",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          720,
+          460
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('TESTING - Get File From Google Drive').item.binary.document_data.fileExtension }}",
+                      "rightValue": "pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PDF File"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "187dd2a5-ec1a-4b6b-8e04-0be4cd1f50ad",
+        "name": "File Type",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          -40,
+          880
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('OpenAI Document Type Identification').item.json.choices[0].message.content.parseJson().document_type }}",
+                      "rightValue": "Invoice",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Invoices"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "740aafc7-9a8f-489e-b7b6-63232d42ffd4",
+                      "leftValue": "={{ $('OpenAI Document Type Identification').item.json.choices[0].message.content.parseJson().document_type }}",
+                      "rightValue": "Resume",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Resume"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "loose",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "57c55d78-65e1-4589-85c3-34ba9340883b",
+                      "leftValue": "={{ $('OpenAI Document Type Identification').item.json.choices[0].message.content.parseJson().document_type }}",
+                      "rightValue": "Shipping Label",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Shipping Label"
+              }
+            ]
+          },
+          "looseTypeValidation": true,
+          "options": {}
+        },
+        "id": "4ec280ed-97e8-44bd-b60e-062ab1d4f662",
+        "name": "Switch",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          1500,
+          880
+        ]
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Set Extraction Method",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "pdfrest Convert PDF to Image": {
+        "main": [
+          [
+            {
+              "node": "Page(s)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TESTING - Get File From Google Drive": {
+        "main": [
+          [
+            {
+              "node": "File Type",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Document Type Identification": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Invoice Extract With Structured Output": {
+        "main": [
+          [
+            {
+              "node": "Write to Invoice Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive Trigger": {
+        "main": [
+          [
+            {
+              "node": "Set Extraction Method",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Resume Extract With Structured Output": {
+        "main": [
+          [
+            {
+              "node": "Write to Resume Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Shipping Label Extract With Structured Output": {
+        "main": [
+          [
+            {
+              "node": "Write to Shipping Label Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Image Code Blocks": {
+        "main": [
+          [
+            {
+              "node": "OpenAI Document Type Identification",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Page(s)": {
+        "main": [
+          [
+            {
+              "node": "Create Image Code Blocks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Extraction Method": {
+        "main": [
+          [
+            {
+              "node": "TESTING - Get File From Google Drive",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Use OpenAI Vision?": {
+        "main": [
+          [
+            {
+              "node": "pdfrest Convert PDF to Image",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extract Text from PDF File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Text from PDF File": {
+        "main": [
+          [
+            {
+              "node": "Extracted Text",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extracted Text": {
+        "main": [
+          [
+            {
+              "node": "Create Image Code Blocks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "File Type": {
+        "main": [
+          [
+            {
+              "node": "Use OpenAI Vision?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "OpenAI Invoice Extract With Structured Output",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "OpenAI Resume Extract With Structured Output",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "OpenAI Shipping Label Extract With Structured Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "946d619b-355a-4fc6-98ea-169fc2dc73ac",
+    "meta": {
+      "instanceId": "86d0b539cdbfaefdd305e9f4d9320d6449af6a05b20f421bc7ca5b2501068fb2"
+    },
+    "id": "i2EFwJ4wKNGgzJ0V",
+    "tags": [
+      {
+        "createdAt": "2024-12-13T16:39:16.240Z",
+        "updatedAt": "2024-12-13T16:39:16.240Z",
+        "id": "4Je3X0MRsUGoFflj",
+        "name": "Demo"
+      },
+      {
+        "createdAt": "2024-12-13T16:39:16.249Z",
+        "updatedAt": "2024-12-13T16:39:16.249Z",
+        "id": "XMYcRJ6ChsXO8jNt",
+        "name": "For Distribution"
+      },
+      {
+        "createdAt": "2024-12-13T16:39:16.254Z",
+        "updatedAt": "2024-12-13T16:39:16.254Z",
+        "id": "p85hdZysZdibPZDe",
+        "name": "Getting Automated"
+      }
+    ]
+  }

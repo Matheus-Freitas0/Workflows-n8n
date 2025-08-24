@@ -1,0 +1,1154 @@
+{
+    "name": "P6 | Resumidor de Grupo de whatsapp",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## Filtra os grupos a serem resumidos",
+          "height": 524.5997919948246,
+          "width": 506.2482096082735,
+          "color": 7
+        },
+        "id": "cb1b3b0b-606c-40a2-9b9c-eaf263e1bf58",
+        "name": "Sticky Note1",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          421,
+          1281
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Filtra as mensagens dos grupos escolhidos",
+          "height": 525.4232299408883,
+          "width": 2115.406105289604,
+          "color": 5
+        },
+        "id": "7415aac3-f1cb-4985-804c-ef4dfb26beb5",
+        "name": "Sticky Note2",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          960,
+          1280
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "b222c34c-4147-4449-8919-a8f3f30043d3",
+        "name": "Calculator",
+        "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+        "typeVersion": 1,
+        "position": [
+          2080,
+          1600
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Apaga conversas no banco de dados de mensagens",
+          "height": 466.09235993838263,
+          "width": 916.5396020338169,
+          "color": 3
+        },
+        "id": "e5efa784-289b-4999-9ff5-5e02d98e0a0c",
+        "name": "Sticky Note",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          2160,
+          780
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "b728dc90-944d-40f4-a3e2-c95b6844511f",
+        "name": "No Operation, do nothing",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1700,
+          1060
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "0dc0235f-016c-40da-b20e-4168aeed0c51",
+        "name": "Loop de Grupos",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          780,
+          1340
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "11482eb2-0e8c-4522-a9a9-d06ce5fc9944",
+                "leftValue": "={{ $json }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "5a393ad5-3cd7-4926-a504-450a8a091e04",
+        "name": "Está Vazio?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1241,
+          1420
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "0b14cd5e-cccb-47f2-a66f-4b7280ab1769",
+                "name": "Mensagem",
+                "value": "=Nome do Participante: {{ $json.nome_participante }}\nMensagem: {{ $json.mensagem }}\nData:  {{ new Date($item(\"0\").$node[\"Está Vazio?\"].json[\"data_hora\"]).toLocaleString(\"pt-BR\", { timeZone: \"America/Sao_Paulo\" }) }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "294c4ceb-42cf-472d-b145-246eab6f9814",
+        "name": "Mensagem",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1501,
+          1400
+        ]
+      },
+      {
+        "parameters": {
+          "fieldsToAggregate": {
+            "fieldToAggregate": [
+              {
+                "fieldToAggregate": "Mensagem"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "f120d7ea-4f0b-4d9c-ae4b-b255a2e912aa",
+        "name": "Agrega",
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1681,
+          1400
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "dbdc9694-6b6c-419e-a8a5-f69e588449c2",
+                "name": "Mensagem",
+                "value": "={{ $json.Mensagem }}",
+                "type": "array"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "10504e52-a47c-4956-99e4-98c04de69261",
+        "name": "Mapeia Todas as Mensagens",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1861,
+          1400
+        ]
+      },
+      {
+        "parameters": {
+          "amount": 20
+        },
+        "id": "5ada6fc5-af60-4574-99ba-629b239c37af",
+        "name": "Aguarde 20s",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2621,
+          1400
+        ],
+        "webhookId": "a7c9ddf1-3073-4c61-942d-3ecf89b1d14b"
+      },
+      {
+        "parameters": {},
+        "id": "77eb0660-7737-49a6-87a0-6a5b5d890bb1",
+        "name": "Volte",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2881,
+          1580
+        ]
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "daysInterval": "={{ 1 }}",
+                "triggerAtHour": "={{ 22 }}",
+                "triggerAtMinute": "={{ 30 }}"
+              }
+            ]
+          }
+        },
+        "id": "b465f441-542e-4c00-8f65-e4c68f071617",
+        "name": "Hoje as 22h",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          461,
+          1340
+        ]
+      },
+      {
+        "parameters": {
+          "databaseId": 175307,
+          "tableId": 430633,
+          "returnAll": true,
+          "additionalOptions": {}
+        },
+        "id": "d0e0c853-809b-44ca-b476-b95f9a59e404",
+        "name": "Busca Todas as Mensagens",
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          2340,
+          900
+        ],
+        "credentials": {
+          "baserowApi": {
+            "id": "JI4LEKdN3srB4aLS",
+            "name": "Baserow Flux Automate"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "ab75734a-4a1b-43b4-9501-a2e78d3fdd57",
+        "name": "Loop Mensagens",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          2500,
+          900
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "databaseId": 175307,
+          "tableId": 430633,
+          "rowId": "={{ $json.id }}"
+        },
+        "id": "3dd59461-cc2c-4e22-85f6-077e4dfd95cb",
+        "name": "Apaga Mensagens",
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          2644,
+          1000
+        ],
+        "credentials": {
+          "baserowApi": {
+            "id": "JI4LEKdN3srB4aLS",
+            "name": "Baserow Flux Automate"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "id": "9301a740-461e-4ff4-832b-9174543d5e9d",
+        "name": "Aguarde 1s",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2784,
+          1000
+        ],
+        "webhookId": "c519e903-ea54-4a1f-86ce-2dc02d351357"
+      },
+      {
+        "parameters": {},
+        "id": "ecf7a638-0cd6-4985-af1a-637f7a5376a4",
+        "name": "Volte1",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          2924,
+          1000
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Cadastra mensagem",
+          "height": 463.6800588279142,
+          "width": 870.2248774837949,
+          "color": 6
+        },
+        "id": "c1fe1c12-1e5e-4ed2-8568-9a0d5a341f92",
+        "name": "Sticky Note3",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1260,
+          780
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "800dc772-e317-479a-bd57-89f07a1b02f2",
+        "name": "Loop",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          780,
+          880
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "89b249b9-ed1e-4c18-bfc1-1a7aa84325a9",
+        "name": "Volte2",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1080,
+          960
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Cadastrar Grupos na Tabela",
+          "height": 466.24469231746946,
+          "width": 808.0863002777314,
+          "color": 4
+        },
+        "id": "7ecb23ea-78b0-4093-9625-dd641dce22ce",
+        "name": "Sticky Note4",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          420,
+          780
+        ]
+      },
+      {
+        "parameters": {
+          "url": "=https://evolution.fluxautomate.com.br/group/fetchAllGroups/fluxnocode/?getParticipants=false",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "d3574e85-175e-43fd-aa9e-48281aa284f8",
+        "name": "Cadastrar Grupos",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          620,
+          880
+        ],
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "operation": "create",
+          "databaseId": 175307,
+          "tableId": 430632,
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": 3325929,
+                "fieldValue": "={{ $json.id }}"
+              },
+              {
+                "fieldId": 3325930,
+                "fieldValue": "={{ $json.subject }}"
+              }
+            ]
+          }
+        },
+        "id": "1a1fe783-b24f-40ab-8cf5-92ed504f4033",
+        "name": "Cadastrar Grupo",
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          940,
+          960
+        ],
+        "credentials": {
+          "baserowApi": {
+            "id": "JI4LEKdN3srB4aLS",
+            "name": "Baserow Flux Automate"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "f34f7659-ddcf-4b71-aba4-d5ee04220e20",
+          "options": {}
+        },
+        "id": "152497c2-23ef-435a-b837-4dc049bbd70e",
+        "name": "Webhook1",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          460,
+          880
+        ],
+        "webhookId": "f34f7659-ddcf-4b71-aba4-d5ee04220e20"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5ae64771-97cd-4955-9204-76cd2c7dee92",
+                "leftValue": "={{ $json.body.data.key.participant }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "9f35e175-e548-49ad-8ae7-4a595638a09a",
+                "leftValue": "={{ $json.body.data.message.conversation }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "12621b37-b3a4-4be5-88e3-9db215986bb6",
+                "leftValue": "={{ $json.body.data.messageType }}",
+                "rightValue": "conversation",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              },
+              {
+                "id": "7834963f-00cd-43e3-bc9e-cd8016594464",
+                "leftValue": "",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "aff35a6d-cfce-4239-8172-599da2214019",
+        "name": "If2",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          1480,
+          1040
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "create",
+          "databaseId": 175307,
+          "tableId": 430633,
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": 3325932,
+                "fieldValue": "={{ $json.id_grupo }}"
+              },
+              {
+                "fieldId": 3325933,
+                "fieldValue": "={{ $json.nome_grupo }}"
+              },
+              {
+                "fieldId": 3325934,
+                "fieldValue": "={{ $('Webhook').item.json.body.data.key.id }}"
+              },
+              {
+                "fieldId": 3325935,
+                "fieldValue": "={{ $('Webhook').item.json.body.data.pushName }}"
+              },
+              {
+                "fieldId": 3325936,
+                "fieldValue": "={{ $('Webhook').item.json.body.data.key.participant }}"
+              },
+              {
+                "fieldId": 3325937,
+                "fieldValue": "={{ $('Webhook').item.json.body.data.message.conversation }}"
+              },
+              {
+                "fieldId": 3325939,
+                "fieldValue": "={{ $now.plus({ hours: 3 }).setZone('America/Sao_Paulo').toFormat('yyyy-MM-dd HH:mm') }}"
+              }
+            ]
+          }
+        },
+        "id": "35ef9e05-0307-4555-835d-a751fb2bdcee",
+        "name": "Cadastra Mensagem",
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          1980,
+          900
+        ],
+        "credentials": {
+          "baserowApi": {
+            "id": "JI4LEKdN3srB4aLS",
+            "name": "Baserow Flux Automate"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "daysInterval": "={{ 1 }}",
+                "triggerAtHour": "={{ 0 }}",
+                "triggerAtMinute": "={{ 0 }}"
+              }
+            ]
+          }
+        },
+        "id": "50966373-d830-4138-8215-689a0d81fade",
+        "name": "Hoje a 00h",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          2200,
+          900
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "aca1f2f7-c41a-4399-83d2-dd54d3a57e09",
+                "leftValue": "={{ $json.id_grupo }}",
+                "rightValue": "={{ $('If2').item.json.body.data.key.remoteJid }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "c030834a-11d7-46a6-956d-a34275139c80",
+        "name": "Filter",
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.2,
+        "position": [
+          1840,
+          900
+        ]
+      },
+      {
+        "parameters": {
+          "databaseId": 175307,
+          "tableId": 430632,
+          "returnAll": true,
+          "additionalOptions": {
+            "filters": {
+              "fields": [
+                {
+                  "field": 3325931,
+                  "value": "True"
+                }
+              ]
+            }
+          }
+        },
+        "id": "ebdabc66-4850-4729-adf0-b3d2924b5e46",
+        "name": "Busca Grupos",
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          1700,
+          900
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "baserowApi": {
+            "id": "JI4LEKdN3srB4aLS",
+            "name": "Baserow Flux Automate"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "databaseId": 175307,
+          "tableId": 430632,
+          "returnAll": true,
+          "additionalOptions": {
+            "filters": {
+              "fields": [
+                {
+                  "field": 3325931,
+                  "value": "True"
+                }
+              ]
+            }
+          }
+        },
+        "id": "326855b4-acd3-4839-8e14-d47b83208b22",
+        "name": "Buscar Todos os Grupos",
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          600,
+          1340
+        ],
+        "credentials": {
+          "baserowApi": {
+            "id": "JI4LEKdN3srB4aLS",
+            "name": "Baserow Flux Automate"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://evolution.fluxautomate.com.br/message/sendText/fluxnocode",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"number\": \"5535997333909\",\n    \"text\": \"{{ $item(\"0\").$node[\"Agente Resumidor\"].json[\"output\"].replace(/\\n/g, \"\\\\n\").replace(/['\"]/g, '') }}\"\n}",
+          "options": {
+            "redirect": {
+              "redirect": {}
+            }
+          }
+        },
+        "id": "dd76084d-f9bf-4320-81c6-dd8ff48f6b0a",
+        "name": "Evolution",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2441,
+          1400
+        ],
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "databaseId": 175307,
+          "tableId": 430633,
+          "returnAll": true,
+          "additionalOptions": {
+            "filters": {
+              "fields": [
+                {
+                  "field": 3325932,
+                  "value": "={{ $item(\"0\").$node[\"Loop de Grupos\"].json[\"id_grupo\"] }}"
+                }
+              ]
+            }
+          }
+        },
+        "id": "36d6d69c-76ed-428b-af3d-c627c3b72273",
+        "name": "Buscas Todas as Mensagens",
+        "type": "n8n-nodes-base.baserow",
+        "typeVersion": 1,
+        "position": [
+          1041,
+          1420
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "baserowApi": {
+            "id": "JI4LEKdN3srB4aLS",
+            "name": "Baserow Flux Automate"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "9d198406-6178-4d08-baa1-bc3bf64500ff",
+        "name": "OpenAI",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1,
+        "position": [
+          2241,
+          1600
+        ],
+        "credentials": {
+          "openAiApi": {
+            "id": "oRZXyr7YrdIAWzzB",
+            "name": "Open AI - Tulinho"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "agent": "openAiFunctionsAgent",
+          "promptType": "define",
+          "text": "=Este prompt foi desenvolvido para gerar resumos detalhados, organizados e objetivos de conversas que estão em <mensagens></mensagens> que foram feitas em grupos de WhatsApp. Ele segue uma estrutura padronizada mencionada em <estrutura></estrutura>, garantindo clareza e precisão nas informações extraídas. O objetivo principal é capturar e sumarizar os dados sem adicionar informações que não estejam explícitas em <mensagens></mensagens>, seguindo com exatidão tudo que estiver em <regras></regras>.\n\nEstrutura do Prompt\nO resumo será organizado nos seguintes tópicos:\n\n1. Top 5 Participantes Ativos\n2. Horários de Maior Movimento\n3. Outros Temas Relevantes\n4. Links Compartilhados\n5. Clima do Grupo\n6. Oportunidades\n7. Observações Finais\n\nObedeça sempre as regras citadas em <regras></regras>.\n\n<regras> \n**Regras Positivas (O que deve ser feito):** \n- Resuma somente informações que estiverem presentes em <mensagens></mensagens>. \n- Realize a contagem de mensagens por participante e período de horário (divisão de 3 em 3 horas). \n- Inclua links, temas e oportunidades apenas se existirem nas mensagens. \n- Para tópicos sem dados disponíveis, exiba uma mensagem amigável, como: \"_Não houve dados suficientes para este tópico._\" \n- No tópico 7, identifique e registre oportunidades mencionadas no grupo (melhorias, ideias de negócios, sugestões de aulas). \n- No tópico 6, descreva o clima do grupo (colaborativo, descontraído, tenso, etc.) com base nas interações. \n- Apresente a saída final com o título no formato: _Resumo do dia dd/MM/yyyy do grupo Nome do Grupo._\n- No Topico 1 adicione emoji na classificação das pessoas\n\n**Regras Negativas (O que NÃO deve ser feito):**\n\nNão adicione informações que não estejam explícitas nas mensagens analisadas.\nNão crie oportunidades ou temas sem base nas mensagens reais.\nNão altere a estrutura dos tópicos definidos.\nNão omita dados relevantes das mensagens. \n\n</regras>\n\n<mensagens> \n{{ $json.Mensagem }} \n</mensagens> \n\n<data> \n{{ $today.minus({days: 1}).toFormat('dd/MM/yyyy') }} \n</data>\n\n<nome_grupo>\n{{ $node[\"Buscas Todas as Mensagens\"].json[\"nome_grupo\"] }}\n</nome_grupo>\n\nEscreva um resumo detalhado e organizado das conversas contidas nas <mensagens></mensagens>.\n\nUse a estrutura abaixo:\n\n<estrutura> \n**Resumo do dia {{ $today.minus({days: 1}).toFormat('dd/MM/yyyy') }} do grupo {{ $node[\"Buscas Todas as Mensagens\"].json[\"nome_grupo\"] }}.**\n\n📊 Top 5 Participantes Ativos\n\nListe os 5 usuários mais ativos, classificando-os pelo número de mensagens enviadas.\nFormato: <Nome do Usuário> - <Número de Mensagens>\nExemplo: \"Pedro Valério - 25 mensagens\".\nNota adicional: Se houver empate no número de mensagens, os participantes devem ser listados por ordem alfabética.\n\n🕒 Horários de Maior Movimento\n\nListe os períodos de maior volume de mensagens, dividido em intervalos de 3 horas.\nAgrupe as mensagens por faixas de 3 horas e informe o total de mensagens por período, classificando por quantidade de mensagens.\nFormato: <Período + Horário> - <Número de Mensagens>\nExemplo: \"Período Noite (18:00 - 21:00) - 52 mensagens\".\nNota adicional: Se nenhum horário específico se destacar, informe que o grupo teve atividade moderada ao longo do dia.\n\n📄 Outros Temas Relevantes\n\nListe outros assuntos importantes que surgiram nas conversas.\nDestaque temas que possam ser úteis para o grupo ou para decisões futuras.\n\n🔗 Links Compartilhados\n\nRelacione os links compartilhados pelos participantes.\nFormato: <Descrição do Link>: <URL>.\nExemplo: \"Ferramenta de automação: https://fluxautomate.com.br\".\nNota adicional: Sempre que possível, inclua o nome de quem compartilhou o link, como \"Link compartilhado por João\".\n\n☀️ Clima do Grupo\n\nDescreva o tom geral das conversas: colaborativo, descontraído, tenso, etc.\nAnalise se houve interação positiva entre os participantes, troca de feedback ou algum conflito notável.\nInclua detalhes que ajudem a compreender o ambiente geral do grupo.\n\n💡 Oportunidades\n\nIdentifique ideias para aulas, negócios, sistemas, novos produtos ou melhorias mencionadas nas conversas.\nExemplo: \"Ideia de aula: Criar vídeo sobre atualização do n8n com easypanel\".\nNota adicional: Registre toda oportunidade relevante mencionada, mesmo que seja de maneira breve.\n\n😶‍🌫️ Observações Finais\n\nInclua informações relevantes que não se enquadram nos tópicos acima.\nSe o grupo demonstrar interesse em algo que não foi categorizado, este é o espaço para detalhar.\nSe algum tópico não possuir informações, utilize uma mensagem amigável como: \"Não houve dados suficientes para este tópico.\"\n\n</estrutura>\n\n\n<exemplo_output>\nResumo do dia 22/01/2024 do grupo Flux Automations.\n\n📊 Top 5 Participantes Ativos\n- Pedro Valério - 25 mensagens\n- Vanderlei Soares - 15 mensagens\n...\n\n🕒 Horários de Maior Movimento\n- Período Noite (18:00 - 21:00) - 52 mensagens\n...\n\n📄 Outros Temas Relevantes\n- Discussões sobre novas ferramentas de automação.\n- Troca de dicas para melhorar fluxos de trabalho com IA.\n\n🔗 Links Compartilhados\n- Ferramenta de automação: https://fluxautomate.com.br (Compartilhado por João).\n...\n\n☀️ Clima do Grupo\n- O grupo foi colaborativo, com grande interação entre os participantes, destacando-se nas trocas de ideias sobre automações e melhorias de fluxo de trabalho.\n\n💡 Oportunidades\n- Ideia de aula: Criar vídeo sobre atualização do n8n com easypanel.\n- Ideia de negócio: Desenvolver um sistema de agendamento automatizado com IA para pequenas empresas.\n\n😶‍🌫️ Observações Finais\n- Discussão sobre parcerias e possibilidade de eventos presenciais para networking.\n</exemplo_output>",
+          "options": {}
+        },
+        "id": "8f207bbe-3178-4c87-8681-ce993f6e0d09",
+        "name": "Agente Resumidor",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.6,
+        "position": [
+          2061,
+          1400
+        ],
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "737e788e-9c2b-487f-92a1-25e63eca5313",
+          "options": {}
+        },
+        "id": "0a9e91b7-47a2-42fa-a6ac-b2a03a90a5db",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          1300,
+          1040
+        ],
+        "webhookId": "737e788e-9c2b-487f-92a1-25e63eca5313"
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "Calculator": {
+        "ai_tool": [
+          [
+            {
+              "node": "Agente Resumidor",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop de Grupos": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Buscas Todas as Mensagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Está Vazio?": {
+        "main": [
+          [
+            {
+              "node": "Mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Loop de Grupos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mensagem": {
+        "main": [
+          [
+            {
+              "node": "Agrega",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agrega": {
+        "main": [
+          [
+            {
+              "node": "Mapeia Todas as Mensagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Mapeia Todas as Mensagens": {
+        "main": [
+          [
+            {
+              "node": "Agente Resumidor",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aguarde 20s": {
+        "main": [
+          [
+            {
+              "node": "Volte",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Volte": {
+        "main": [
+          [
+            {
+              "node": "Loop de Grupos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Hoje as 22h": {
+        "main": [
+          [
+            {
+              "node": "Buscar Todos os Grupos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca Todas as Mensagens": {
+        "main": [
+          [
+            {
+              "node": "Loop Mensagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Mensagens": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Apaga Mensagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Apaga Mensagens": {
+        "main": [
+          [
+            {
+              "node": "Aguarde 1s",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aguarde 1s": {
+        "main": [
+          [
+            {
+              "node": "Volte1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Volte1": {
+        "main": [
+          [
+            {
+              "node": "Loop Mensagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Cadastrar Grupo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Volte2": {
+        "main": [
+          [
+            {
+              "node": "Loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cadastrar Grupos": {
+        "main": [
+          [
+            {
+              "node": "Loop",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Cadastrar Grupo": {
+        "main": [
+          [
+            {
+              "node": "Volte2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook1": {
+        "main": [
+          [
+            {
+              "node": "Cadastrar Grupos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If2": {
+        "main": [
+          [
+            {
+              "node": "Busca Grupos",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Hoje a 00h": {
+        "main": [
+          [
+            {
+              "node": "Busca Todas as Mensagens",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter": {
+        "main": [
+          [
+            {
+              "node": "Cadastra Mensagem",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Busca Grupos": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar Todos os Grupos": {
+        "main": [
+          [
+            {
+              "node": "Loop de Grupos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Evolution": {
+        "main": [
+          [
+            {
+              "node": "Aguarde 20s",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscas Todas as Mensagens": {
+        "main": [
+          [
+            {
+              "node": "Está Vazio?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente Resumidor",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente Resumidor": {
+        "main": [
+          [
+            {
+              "node": "Evolution",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "If2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": true,
+    "settings": {
+      "executionOrder": "v1",
+      "timezone": "America/Sao_Paulo",
+      "saveManualExecutions": true,
+      "callerPolicy": "workflowsFromSameOwner"
+    },
+    "versionId": "9b324c79-759a-481f-8af6-65a681f5c97e",
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "619b17cd1b492527794139da1bcb865e53d9b06f94f0bce867b7bc44cff77b3b"
+    },
+    "id": "ADj8RX3aLvKYCb1R",
+    "tags": [
+      {
+        "createdAt": "2025-02-12T12:24:52.743Z",
+        "updatedAt": "2025-02-12T12:57:02.254Z",
+        "id": "IEEotBOwvCC1isJA",
+        "name": "FLUX"
+      }
+    ]
+  }
