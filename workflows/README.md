@@ -53,6 +53,26 @@ Workflows de inteligência artificial e agentes automatizados.
 - **31-revisor-automatico-mr-gitlab/** - Revisor automático de merge requests GitLab
 - **32-gerar-narracao-video-ia-tts/** - Geração de narração de vídeo com IA e TTS
 - **33-criacao-videos-pov-ia/** - Criação de vídeos POV com IA
+- **34-rag-pipeline-chatbot-reranker/** - Pipeline RAG com chatbot e reranker
+- **35-rag-agente-auto-aprendizado/** - Agente RAG com auto-aprendizado
+- **36-propriedade-agentes/** - Sistema de propriedade e gestão de agentes
+- **37-primeiro-agente-ia/** - Primeiro agente de IA básico
+- **38-orquestracao-agentes/** - Orquestração de múltiplos agentes
+- **39-n8n-gemini/** - Integração n8n com Google Gemini
+- **40-multiagent-post-blog/** - Sistema multiagent para blog
+- **41-multiagent-post-blog-titulos/** - Multiagent para títulos de blog
+- **42-curadoria-automatica-github-hackernews/** - Curadoria automática de projetos GitHub do Hacker News
+- **43-buffer-consolidacao-mensagens/** - Sistema de buffer e consolidação inteligente de mensagens
+- **44-revisor-automatico-mr-gitlab/** - Revisor automático de merge requests GitLab
+- **45-gerar-narracao-video-ia-tts/** - Geração de narração de vídeo com IA e TTS
+- **46-scrape-youtube-resumo-automatico/** - Scraping e resumo automático de vídeos YouTube
+- **47-agente-whatsapp-planner-pesquisa/** - Agente WhatsApp para planejamento e pesquisa
+- **48-agente-metricas-facebook-sheets-ai/** - Agente de métricas Facebook com Google Sheets e IA
+- **49-processamento-emails-busca-vetorial-chat/** - Processamento de emails com busca vetorial e chat
+- **50-corretor-imobiliario-ai/** - Corretor imobiliário com IA
+- **51-extracao-dados-pdfs-ia/** - Extração de dados de PDFs com IA
+- **52-atendimento-ia-telegram/** - Atendimento IA via Telegram
+- **53-assistente-ana-whatsapp/** - Assistente Ana para WhatsApp
 
 ### 📊 [Monitoramento](./monitoramento/)
 
@@ -62,6 +82,8 @@ Workflows de tracking, monitoramento e análise de dados.
 - **02-error-logger/** - Sistema de log de erros automatizado
 - **03-seguranca-webhook/** - Sistema de segurança para webhooks
 - **04-registro-uso-custo-ia-cliente/** - Registro de uso e custo de IA por cliente
+- **05-buscador-palavras-chave/** - Buscador de palavras-chave em mensagens
+- **06-resumidor-grupos-whatsapp/** - Resumidor automático de grupos WhatsApp
 
 ### 🛒 [E-commerce](./ecommerce/)
 
@@ -98,6 +120,8 @@ Workflows relacionados a marketing digital e redes sociais.
 - **04-publicacao-automatica-posts-instagram/** - Publicação automática de posts no Instagram
 - **05-respostas-automaticas-comentarios-instagram/** - Respostas automáticas a comentários do Instagram
 - **06-geracao-automatica-metadados-youtube/** - Geração automática de metadados para YouTube
+- **07-automacao-reels-instagram-carnaval/** - Automação de reels Instagram para carnaval
+- **08-geracao-automatica-landing-pages/** - Geração automática de landing pages
 
 ### ⚙️ [Automação](./automacao/)
 
@@ -396,6 +420,66 @@ workflows/
 │       ├── README.md
 │       └── workflow.json
 │   ├── 33-criacao-videos-pov-ia/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 34-rag-pipeline-chatbot-reranker/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 35-rag-agente-auto-aprendizado/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 36-propriedade-agentes/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 37-primeiro-agente-ia/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 38-orquestracao-agentes/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 39-n8n-gemini/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 40-multiagent-post-blog/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 41-multiagent-post-blog-titulos/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 42-curadoria-automatica-github-hackernews/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 43-buffer-consolidacao-mensagens/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 44-revisor-automatico-mr-gitlab/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 45-gerar-narracao-video-ia-tts/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 46-scrape-youtube-resumo-automatico/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 47-agente-whatsapp-planner-pesquisa/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 48-agente-metricas-facebook-sheets-ai/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 49-processamento-emails-busca-vetorial-chat/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 50-corretor-imobiliario-ai/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 51-extracao-dados-pdfs-ia/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 52-atendimento-ia-telegram/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   └── 53-assistente-ana-whatsapp/
 │       ├── README.md
 │       └── workflow.json
 ├── ecommerce/
@@ -413,13 +497,19 @@ workflows/
 │   ├── 01-agent-tracker/
 │   │   ├── README.md
 │   │   └── workflow.json
-│   └── 02-error-logger/
-│       ├── README.md
-│       └── workflow.json
-│   └── 03-seguranca-webhook/
-│       ├── README.md
-│       └── workflow.json
+│   ├── 02-error-logger/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 03-seguranca-webhook/
+│   │   ├── README.md
+│   │   └── workflow.json
 │   ├── 04-registro-uso-custo-ia-cliente/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 05-buscador-palavras-chave/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   └── 06-resumidor-grupos-whatsapp/
 │       ├── README.md
 │       └── workflow.json
 ├── whatsapp/
@@ -461,6 +551,12 @@ workflows/
 │       ├── README.md
 │       └── workflow.json
 │   ├── 06-geracao-automatica-metadados-youtube/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   ├── 07-automacao-reels-instagram-carnaval/
+│   │   ├── README.md
+│   │   └── workflow.json
+│   └── 08-geracao-automatica-landing-pages/
 │       ├── README.md
 │       └── workflow.json
 ├── automacao/
@@ -513,4 +609,4 @@ workflows/
 ---
 
 _Autor: Matheus Freitas_  
-_Última atualização: Janeiro 2025_
+\_Última atualização: 2025
