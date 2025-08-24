@@ -1,0 +1,232 @@
+{
+    "name": "Template Canarval - Agente whatsapp",
+    "nodes": [
+      {
+        "parameters": {
+          "updates": [
+            "messages"
+          ]
+        },
+        "id": "de407cfc-2f87-4e74-9de8-0a4baf5d9fc2",
+        "name": "WhatsApp Trigger",
+        "type": "n8n-nodes-base.whatsAppTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "webhookId": "725bead8-252c-414a-91c5-195ec761b0a5"
+      },
+      {
+        "parameters": {
+          "operation": "send",
+          "phoneNumberId": "466179296585433",
+          "recipientPhoneNumber": "+44 7562482601",
+          "textBody": "={{ $json.output }}",
+          "additionalFields": {},
+          "requestOptions": {}
+        },
+        "id": "cbec14f1-ce90-407e-a27f-3d1b4cad3a66",
+        "name": "WhatsApp Business Cloud",
+        "type": "n8n-nodes-base.whatsApp",
+        "typeVersion": 1,
+        "position": [
+          760,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "f66364c5-b758-418a-8f9a-b3a0281d7937",
+        "name": "SerpAPI",
+        "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+        "typeVersion": 1,
+        "position": [
+          620,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "982d93d5-7579-4a91-ae16-2068f77a34c7",
+        "name": "OpenAI Chat Model",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1,
+        "position": [
+          460,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "{{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}"
+        },
+        "id": "8b9492eb-e320-4fde-92b7-f5b3075a48c0",
+        "name": "Window Buffer Memory",
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.2,
+        "position": [
+          340,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "model": "deepseek-r1-distill-llama-70b",
+          "options": {}
+        },
+        "id": "90ed6b6d-0419-4323-930b-3988ad821da9",
+        "name": "Groq Chat Model",
+        "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+        "typeVersion": 1,
+        "position": [
+          140,
+          220
+        ]
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.messages[0].text.body }}",
+          "options": {
+            "systemMessage": "Role: You are an AI Planner Agent"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          140,
+          0
+        ],
+        "id": "08e9544b-3bf7-4a77-b70d-d01428f85ee7",
+        "name": "DeepSeek R1 Planner"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.output }}",
+          "options": {
+            "systemMessage": "=Role:\nYou are an AI Search Agent with access to SerpAPI. Your task is to find relevant locations, services, and resources based on the plan created by the AI Planner Agent.\n\nInstructions:\n\n- Receive the structured task plan from the planner agent as {{ $json.output }}.\n- Identify any steps that involve finding specific places, services, or resources.\n- Use SerpAPI to search for relevant results.\n- If a step involves finding a place (e.g., coworking spaces, hotels, restaurants), provide:\n- Direct links for booking or more details.\n  - Name\n  - Website\n  - Location\n  \n- If a step requires booking services, include official links.\n- Format the response clearly without using special characters such as #, *, -, or markdown formatting.\n- Prioritize trusted sources and ensure links are actionable.\n- PROVIDES AS MUCH DETAILS AS POSSIBLE.\n- Ensure the output is structured and easy to read.\n"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          460,
+          0
+        ],
+        "id": "57406045-4881-4b92-995e-fe5c3b9f9dc1",
+        "name": "Research Agent"
+      },
+      {
+        "parameters": {
+          "content": "## Como funciona:\n\nConfigurando os agentes do Planner e do Research AI:\nO Planner Agent serve como o cérebro do seu agente, estruturando suas solicitações e passando-as para o Research Agent para recuperação de dados em tempo real. No tutorial, mostro como usar o DeepSeek R1 como o modelo de raciocínio por trás do seu Planner AI.\n\nBuscando informações em tempo real:\nO Research Agent usa o SerpAPI para pesquisar na web e processa os resultados usando o GPT-4o Mini para obter os insights mais relevantes.\n\nIntegração com o WhatsApp:\nVocê pode se comunicar com seu agente de IA diretamente do WhatsApp, perfeito para planejamento rápido e pesquisa em qualquer lugar! \n\nMemória persistente para melhores respostas:\nSeu agente de IA pode ter memória persistente conectando-o a um banco de dados vetorial. Isso permite que ele se lembre de interações anteriores, recupere contexto relevante e melhore as respostas ao longo do tempo. Abordei exatamente como configurar isso no tutorial, então não deixe de conferir!",
+          "height": 580,
+          "width": 400
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -40,
+          400
+        ],
+        "typeVersion": 1,
+        "id": "c04560e2-6db3-4888-8679-aec033cac0ef",
+        "name": "Sticky Note"
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "WhatsApp Trigger": {
+        "main": [
+          [
+            {
+              "node": "DeepSeek R1 Planner",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "SerpAPI": {
+        "ai_tool": [
+          [
+            {
+              "node": "Research Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Research Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Window Buffer Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "DeepSeek R1 Planner",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Groq Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "DeepSeek R1 Planner",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "DeepSeek R1 Planner": {
+        "main": [
+          [
+            {
+              "node": "Research Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Research Agent": {
+        "main": [
+          [
+            {
+              "node": "WhatsApp Business Cloud",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "beb431c4-0bc6-4673-9bde-5bb308e14884",
+    "meta": {
+      "instanceId": "86d0b539cdbfaefdd305e9f4d9320d6449af6a05b20f421bc7ca5b2501068fb2"
+    },
+    "id": "D1LbU38MIERi1r51",
+    "tags": []
+  }
