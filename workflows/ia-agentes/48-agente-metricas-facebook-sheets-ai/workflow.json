@@ -1,0 +1,188 @@
+{
+    "name": "template carnaval - metricas facebook",
+    "nodes": [
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1tH5ks9MjlqQHV1lJKP5IV1lN1Wp3KqF6y3dY9NIUTlE",
+            "mode": "list",
+            "cachedResultName": "Aula 24",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tH5ks9MjlqQHV1lJKP5IV1lN1Wp3KqF6y3dY9NIUTlE/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Sheet1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tH5ks9MjlqQHV1lJKP5IV1lN1Wp3KqF6y3dY9NIUTlE/edit#gid=0"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.5,
+        "position": [
+          1040,
+          0
+        ],
+        "id": "5c7deb53-1b00-446c-85fc-5595185f9a79",
+        "name": "dados_projeto",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "zrRBaQGbbCMhkp2D",
+            "name": "Google Sheets account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "https://graph.facebook.com/v21.0/act_{id_conta}/insights",
+          "sendQuery": true,
+          "parametersQuery": {
+            "values": [
+              {
+                "name": "fields",
+                "valueProvider": "fieldValue",
+                "value": "impressions, clicks, campaign_name, cpm, campaign_id, purchase_roas, spend, actions"
+              },
+              {
+                "name": "access_token",
+                "valueProvider": "fieldValue",
+                "value": "{api_meta}"
+              },
+              {
+                "name": "level",
+                "valueProvider": "fieldValue",
+                "value": "campaign"
+              },
+              {
+                "name": "date_preset",
+                "valueProvider": "fieldValue",
+                "value": "{preset}"
+              }
+            ]
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+        "typeVersion": 1.1,
+        "position": [
+          1360,
+          0
+        ],
+        "id": "bf1b84d9-5184-4f5c-8252-73049305bd17",
+        "name": "insightsCampanha"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Você é um especialista em analise de insights do Meta Ads\n\n- Primeiro busque os dados do projeto utilizando a ferramenta do Sheets para definir api_meta e id_conta\n\n- Depois que tiver todas os dados utilize a tool de insight para qual o preset voce deve transformar o pedido temporal do usuário em um desses permitidos pela api: today, yesterday, this_month, last_month, this_quarter, maximum, data_maximum, last_3d, last_7d, last_14d, last_28d, last_30d, last_90d, last_week_mon_sun, last_week_sun_sat, last_quarter, last_year, this_week_mon_today, this_week_sun_today, this_year\n",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.7,
+        "position": [
+          860,
+          -240
+        ],
+        "id": "fe921a24-1408-4aa7-8fc2-e1df6d4e8f66",
+        "name": "AI Agent1"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4o",
+            "mode": "list",
+            "cachedResultName": "gpt-4o"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          780,
+          40
+        ],
+        "id": "7e128b89-b170-4c84-85b9-ab9abe996494",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "JO96jSLNRfkkZY7y",
+            "name": "OpenAi account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          540,
+          -260
+        ],
+        "id": "d7113cbc-ae7d-4fc3-bb5b-c7d285591d28",
+        "name": "When chat message received",
+        "webhookId": "969c79cb-903b-4ff2-85b7-c08d3539f178"
+      }
+    ],
+    "pinData": {},
+    "connections": {
+      "dados_projeto": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "insightsCampanha": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "active": false,
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "versionId": "a6d9698c-b9a3-4dc3-a0d4-d3dbbee14202",
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "86d0b539cdbfaefdd305e9f4d9320d6449af6a05b20f421bc7ca5b2501068fb2"
+    },
+    "id": "5K53QElEInAc78KJ",
+    "tags": []
+  }
